@@ -1,80 +1,88 @@
-import unittest
 from pytket.qasm import circuit_from_qasm, circuit_to_qasm
 from pytket.pyquil import pyquil_to_tk
 from pyquil import Program, get_qc
 from pyquil.gates import H, CNOT
-from cirq_converter import CirqConverter
-from pyquil_converter import PyquilConverter
-from qiskit_converter import QiskitConverter
+from pytket_converter import PytketConverter
 from dag_converter import DagConverter
-
+from staq_converter import StaqConverter
 from qiskit import QuantumCircuit
 from qiskit.tools.visualization import dag_drawer
+from qiskit.aqua.algorithms import Shor
 
-class TestCircuitConverter(unittest.TestCase):
-    @staticmethod
-    def __remove_new_lines(string: str) -> str:
+class TestCircuitConverter():
+    def _remove_new_lines(self, string: str) -> str:
         return string.replace('\n', '') 
     
-    @staticmethod   
-    def __draw_qiskit_circuit(circuit):
+    def _draw_qiskit_circuit(self, circuit):
         circuit.draw(output='text')
         print(circuit)   
        
         
-    def __init__(self, *args, **kwargs):
-        super(TestCircuitConverter, self).__init__(*args, **kwargs)        
-        # init example circuits
+    def __init__(self):
+        self.qiskit_circuit_create()
+        self.pyquil_circuit_create()
+        self.shor_qiskit_create()      
+        
+
+    def qiskit_circuit_create(self):
         self.qiskit_circuit = QuantumCircuit(2)
         self.qiskit_circuit.h(0)
-        self.qiskit_circuit.cx(0, 1)        
-        self.pyquil_circuit = Program(H(0), CNOT(0, 1))
-        
-        
+        self.qiskit_circuit.cx(0, 1) 
+        self.qasm = self.qiskit_circuit.qasm()
 
-    def test_pyquil_to_qasm(self):
-        qasm_converted = PyquilConverter.pyquil_to_qasm(self.pyquil_circuit)        
-        qasm = self.qiskit_circuit.qasm()
+    def pyquil_circuit_create(self):
+        self.pyquil_circuit = Program(H(0), CNOT(0, 1))       
         
-        self.assertEqual(TestCircuitConverter.__remove_new_lines(qasm), TestCircuitConverter.__remove_new_lines(qasm_converted))
+    def shor_qiskit_create(self):
+        # N = 15
+        # shor = Shor(N)
+        # shor_circuit = shor.construct_circuit()
+        # self.shor = shor_circuit.qasm()
 
-    def test_qiskit_to_qasm(self):
-        qasm = self.qiskit_circuit.qasm()
-        qasm_converted = QiskitConverter.qiskit_to_qasm(self.qiskit_circuit)
-        
-        self.assertEqual(TestCircuitConverter.__remove_new_lines(qasm), TestCircuitConverter.__remove_new_lines(qasm_converted)) 
+        with open("circuit_shor.qasm", "r") as f:
+            self.shor = f.read()
 
-        
-    def test_pyquil_conversions(self):
-        original = PyquilConverter.qasm_to_pyquil(QiskitConverter.qiskit_to_qasm(self.qiskit_circuit))
-        converted = PyquilConverter.dag_to_pyquil(PyquilConverter.pyquil_to_dag(original))    
-        # print(original)   
-        # print(converted) 
-        self.assertEqual(original, converted)
-        
-    def test_qiskit_conversions(self):
+    def test_pytket(self):
+        original = PytketConverter.pyquil_to_qasm(self.pyquil_circuit)        
+        converted = self.qiskit_circuit.qasm()
+
+        original = self.qiskit_circuit.qasm()
+        converted = PytketConverter.qiskit_to_qasm(self.qiskit_circuit)
+
+        original = PytketConverter.qasm_to_pyquil(PytketConverter.qiskit_to_qasm(self.qiskit_circuit))
+        converted = PytketConverter.dag_to_pyquil(PytketConverter.pyquil_to_dag(original))  
+
         original = self.qiskit_circuit
-        converted = QiskitConverter.dag_to_qiskit(QiskitConverter.qiskit_to_dag(original))
-        # self.__draw_qiskit_circuit(original)
-        # self.__draw_qiskit_circuit(converted)
-        self.assertEqual(original, converted)
+        converted = PytketConverter.dag_to_qiskit(PytketConverter.qiskit_to_dag(original))
+
+        original =  PytketConverter.qasm_to_cirq(PytketConverter.qiskit_to_qasm(self.qiskit_circuit))
+        converted = PytketConverter.dag_to_cirq(PytketConverter.cirq_to_dag(original))
         
-    def test_cirq_conversions(self):
-        original =  CirqConverter.qasm_to_cirq(QiskitConverter.qiskit_to_qasm(self.qiskit_circuit))
-        converted = CirqConverter.dag_to_cirq(CirqConverter.cirq_to_dag(original))
-        # print(original)   
-        # print(converted) 
-        self.assertEqual(original, converted)
-        
-    
-        
-class ManualTest():
-    @staticmethod  
-    def test_quirk_import():
-        circuit = CirqConverter.quirk_to_cirq("https://algassert.com/quirk#circuit=%7B%22cols%22%3A%5B%5B%22X%22%2C%22X%22%5D%2C%5B%22%E2%80%A2%22%2C%22%E2%80%A2%22%2C%22X%22%5D%5D%7D")
+        print(original)   
+        print(converted) 
+
+    def test_quirk_import(self):
+        circuit = PytketConverter.quirk_to_cirq("https://algassert.com/quirk#circuit=%7B%22cols%22%3A%5B%5B%22X%22%2C%22X%22%5D%2C%5B%22%E2%80%A2%22%2C%22%E2%80%A2%22%2C%22X%22%5D%5D%7D")
         print(circuit)
-    
+
+    def test_staq(self):
+        staq = StaqConverter("/home/seedrix/tools/staq/build/staq", self.shor)
+        # quil = staq.qasm_to_quil()   
+        # does not work, because of undefined Dagger instruction
+        # program = Program(quil) 
+        # projectq = staq.qasm_to_projectq()
+        # qsharp = staq.qasm_to_qsharp()
+        # cirq = staq.qasm_to_cirq()
+        # staq.inline()
+        # staq.o2()
+        staq.default_optimization()
+
+
+        
+        
+
+        
 
 if __name__ == "__main__":
-    unittest.main()
-    # ManualTest.test_quirk_import()
+    test = TestCircuitConverter()
+    test.test_staq_conversions()

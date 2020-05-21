@@ -13,4 +13,10 @@ class DagConverter:
     def dag_to_qasm(dag: DAGCircuit) -> str:
         circuit = dag_to_circuit(dag)
         return circuit.qasm()
+
+    @staticmethod 
+    def write_qasm(qasm: str, filename: str) -> None:
+        with open(filename, "w") as f:       
+            f.write(qasm)
+        
         
