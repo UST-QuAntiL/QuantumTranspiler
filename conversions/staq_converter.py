@@ -1,5 +1,5 @@
 import subprocess
-from dag_converter import DagConverter
+from qiskit_utility import qasm_to_dag, dag_to_qasm, write_qasm
 
 class StaqConverter: 
     """
@@ -15,10 +15,10 @@ class StaqConverter:
         self.set_input_qasm(qasm)  
 
     def set_input_qasm(self, qasm: str):        
-        DagConverter.write_qasm(qasm, self.input_qasm)
+        write_qasm(qasm, self.input_qasm)
 
     def set_output_qasm(self, qasm: str):
-        DagConverter.write_qasm(qasm, self.output_qasm)
+        write_qasm(qasm, self.output_qasm)
 
     def qasm_to_quil(self) -> str:
         """

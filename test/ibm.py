@@ -147,15 +147,16 @@ def dag_default(circ):
 
 
 if __name__ == "__main__":
+
     # logging.basicConfig(level='DEBUG')
     # logging.getLogger('qiskit.transpiler').setLevel('INFO')
 
     # gate_library()
     
-    c = circuit()
-    qasm = c.qasm()
-    backend = FakeTenerife()
-    new_circuit = transpile(c, backend)
+    # c = circuit()
+    # qasm = c.qasm()
+    # backend = FakeTenerife()
+    # new_circuit = transpile(c, backend)
 
-    show_figure(new_circuit)
+    # show_figure(new_circuit)
     

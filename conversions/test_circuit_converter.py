@@ -3,36 +3,59 @@ from pytket.pyquil import pyquil_to_tk
 from pyquil import Program, get_qc
 from pyquil.gates import H, CNOT
 from pytket_converter import PytketConverter
-from dag_converter import DagConverter
+from qiskit_utility import *
 from staq_converter import StaqConverter
 from qiskit import QuantumCircuit
 from qiskit.tools.visualization import dag_drawer
 from qiskit.aqua.algorithms import Shor
+from pennylane_converter import PennylaneConverter
+from pyquil.gates import H, CPHASE, MEASURE, CNOT
+
 
 class TestCircuitConverter():
     def _remove_new_lines(self, string: str) -> str:
-        return string.replace('\n', '') 
-    
+        return string.replace('\n', '')
+
     def _draw_qiskit_circuit(self, circuit):
         circuit.draw(output='text')
-        print(circuit)   
-       
-        
+        print(circuit)
+
     def __init__(self):
         self.qiskit_circuit_create()
         self.pyquil_circuit_create()
-        self.shor_qiskit_create()      
-        
+        self.shor_qiskit_create()
+        self.shor_pyquil_create()
 
     def qiskit_circuit_create(self):
-        self.qiskit_circuit = QuantumCircuit(2)
+        self.qiskit_circuit = QuantumCircuit(2, 2)
         self.qiskit_circuit.h(0)
-        self.qiskit_circuit.cx(0, 1) 
+        self.qiskit_circuit.cx(0, 1)
+        self.qiskit_circuit.measure_all()
         self.qasm = self.qiskit_circuit.qasm()
 
     def pyquil_circuit_create(self):
-        self.pyquil_circuit = Program(H(0), CNOT(0, 1))       
-        
+        self.pyquil_circuit = Program(H(0), CNOT(0, 1), H(2), CPHASE(0,1,2))
+
+    def shor_pyquil_create(self):
+        p = Program()
+        ro = p.declare('ro', memory_type='BIT', memory_size=3)
+        p.inst(H(0))
+        p.inst(H(1))
+        p.inst(H(2))
+        p.inst(H(1))
+        p.inst(CNOT(2, 3))
+        # p.inst(CPHASE(0, 1, 0))
+        p.inst(CNOT(2, 4))
+        p.inst(H(0))
+        # p.inst(CPHASE(0, 1, 2))
+        # p.inst(CPHASE(0, 0, 2))
+        p.inst(H(2))
+        p.inst(MEASURE(0, ro[0]))
+        p.inst(MEASURE(1, ro[1]))
+        p.inst(MEASURE(2, ro[2]))
+
+        self.shor_pyquil = p
+
     def shor_qiskit_create(self):
         # N = 15
         # shor = Shor(N)
@@ -40,7 +63,7 @@ class TestCircuitConverter():
         # self.shor = shor_circuit.qasm()
 
         with open("circuit_shor.qasm", "r") as f:
-            self.shor = f.read()
+            self.shor_qasm = f.read()
 
     def test_pytket(self):
         original = PytketConverter.pyquil_to_qasm(self.pyquil_circuit)        
@@ -66,7 +89,7 @@ class TestCircuitConverter():
         print(circuit)
 
     def test_staq(self):
-        staq = StaqConverter("/home/seedrix/tools/staq/build/staq", self.shor)
+        staq = StaqConverter("/home/seedrix/tools/staq/build/staq", self.shor_qasm)
         # quil = staq.qasm_to_quil()   
         # does not work, because of undefined Dagger instruction
         # program = Program(quil) 
@@ -75,14 +98,14 @@ class TestCircuitConverter():
         # cirq = staq.qasm_to_cirq()
         # staq.inline()
         # staq.o2()
-        staq.default_optimization()
-
-
+        staq.default_optimization()        
         
-        
-
+    def test_pennylane(self):
+        print(PennylaneConverter.pyquil_to_qasm(self.pyquil_circuit))
+        # print(PennylaneConverter.qasm_to_qasm(self.qiskit_circuit))
         
 
 if __name__ == "__main__":
     test = TestCircuitConverter()
-    test.test_staq_conversions()
+    # test.test_staq_conversions()
+    test.test_pennylane()

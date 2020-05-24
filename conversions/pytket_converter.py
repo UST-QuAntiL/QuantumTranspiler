@@ -3,22 +3,21 @@ import cirq
 from pytket.cirq import tk_to_cirq, cirq_to_tk
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.converters import circuit_to_dag, dag_to_circuit
-from dag_converter import DagConverter
 from pytket.qasm import circuit_to_qasm_str, circuit_from_qasm_str
 from pytket.pyquil import pyquil_to_tk, tk_to_pyquil
 from pyquil import Program
 from qiskit import QuantumCircuit
-from dag_converter import DagConverter
+from qiskit_utility import qasm_to_dag, dag_to_qasm
 from qiskit.dagcircuit import DAGCircuit
 
 class PytketConverter: 
     @staticmethod
     def cirq_to_dag(circuit: cirq.Circuit) -> DAGCircuit:
-        return DagConverter.qasm_to_dag(PytketConverter.cirq_to_qasm(circuit))
+        return qasm_to_dag(PytketConverter.cirq_to_qasm(circuit))
     
     @staticmethod
     def dag_to_cirq(dag: DAGCircuit) -> str:
-        return PytketConverter.qasm_to_cirq(DagConverter.dag_to_qasm(dag))
+        return PytketConverter.qasm_to_cirq(dag_to_qasm(dag))
         
         
     @staticmethod
@@ -39,11 +38,11 @@ class PytketConverter:
 
     @staticmethod
     def pyquil_to_dag(program: Program) -> DAGCircuit:
-        return DagConverter.qasm_to_dag(PytketConverter.pyquil_to_qasm(program))
+        return qasm_to_dag(PytketConverter.pyquil_to_qasm(program))
     
     @staticmethod
     def dag_to_pyquil(dag: DAGCircuit) -> Program:
-        return PytketConverter.qasm_to_pyquil(DagConverter.dag_to_qasm(dag))
+        return PytketConverter.qasm_to_pyquil(dag_to_qasm(dag))
     
     @staticmethod
     def pyquil_to_qasm(program: Program) -> str:
@@ -57,7 +56,7 @@ class PytketConverter:
 
     @staticmethod
     def qiskit_to_dag(circuit: QuantumCircuit) -> DAGCircuit:
-        return DagConverter.qasm_to_dag(PytketConverter.qiskit_to_qasm(circuit))    
+        return qasm_to_dag(PytketConverter.qiskit_to_qasm(circuit))    
   
     @staticmethod
     def dag_to_qiskit(dag: DAGCircuit) -> QuantumCircuit:

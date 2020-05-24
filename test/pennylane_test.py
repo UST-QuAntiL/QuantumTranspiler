@@ -1,31 +1,37 @@
 import pennylane as qml
 import numpy as np
-from ibm import circuit
-# def my_quantum_function(x, y):
-#     qml.RZ(x, wires=0)
-#     qml.CNOT(wires=[0,1])
-#     qml.RY(y, wires=1)
-#     return qml.expval(qml.PauliZ(1))
-# result = my_quantum_function(0, 1)
+from pennylane_qiskit import qiskit_device, IBMQDevice
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, execute, Aer, IBMQ
+from qiskit.test.mock import FakeTenerife  
 
-# dev = qml.device('qiskit.aer', wires=2)
-# circuit = qml.QNode(my_quantum_function, dev)
-
-# circuit(np.pi/4, 0.7)
-# print(circuit.draw(show_variable_names=True))
+def my_quantum_function(x, y):
+    qml.RZ(x, wires=0)
+    qml.CNOT(wires=[0,1])
+    qml.CNOT(wires=[1,2])
+    qml.CNOT(wires=[2,1])
+    qml.CNOT(wires=[1,0])
+    qml.RY(y, wires=1)
+    return qml.expval(qml.PauliZ(1))
+result = my_quantum_function(0, 1)
+dev = qml.device('qiskit.aer', wires=29, backend='qasm_simulator')
+circuit = qml.QNode(my_quantum_function, dev)
+ 
+circuit(np.pi/4, 0.7)
+dev._circuit.draw(output='text')
+print(dev._circuit)  
+print(circuit.draw(show_variable_names=True))
 # from pkg_resources import iter_entry_points
 # plugin_converters = {entry.name: entry for entry in iter_entry_points("pennylane.io")}
 # plugin_converter = plugin_converters["qiskit"].load()
 # plugin_converter(circuit())
 # print(plugin_converters)
 
-import pennylane_qiskit
-pennylane_qiskit.load_qasm()
+# import pennylane_qiskit
+# pennylane_qiskit.load_qasm()
 
 
-import pennylane_forest
-pennylane_forest.load_quil()
+# import pennylane_forest
+# pennylane_forest.load_quil()
 
 
-
-from pennylane.templates.layers import BasicEntanglerLayers
+# from pennylane.templates.layers import BasicEntanglerLayers
