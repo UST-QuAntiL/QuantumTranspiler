@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.converters import circuit_to_dag
 from qiskit.tools.visualization import dag_drawer
-from qiskit.extensions.standard import CHGate, U2Gate, CXGate, HGate, XGate, CCXGate, CZGate
+from qiskit.circuit.library.standard_gates import CHGate, U2Gate, CXGate, HGate, XGate, CCXGate, CZGate
+from qiskit.extensions import UnitaryGate
 from qiskit.transpiler import passes
 from qiskit.compiler import transpile
 from qiskit.transpiler import PassManager
@@ -15,8 +16,11 @@ from quantastica.qiskit_forest import ForestBackend
 import numpy as np
 from custom_unroller import Unroller as CustomUnroller
 import logging
-from qiskit.test.mock import FakeTenerife  
+from qiskit.test.mock import FakeTenerife
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
+from qiskit.circuit import Gate
+
+my_gate = Gate(name='my_gate', num_qubits=2, params=[])
 
 
 def show_and_save_figure(circuit, filename='circuit.png'):
@@ -129,9 +133,15 @@ def unroll(dag, basis):
 
 
 def gates():
-    h = HGate()
-    ccx = CCXGate()
-    print(cx.definition)
+    # h = HGate()
+    # ccx = CCXGate()
+    my_unitary = UnitaryGate([
+        [0.70710678, 0, 0.70710678, 0],
+        [0, 0.70710678, 0, 0.70710678],
+        [0, 0.70710678, 0, -0.70710678],
+        [0.70710678, 0, -0.70710678, 0]
+    ])
+    print(my_unitary.definition)
 
 
 def dag_default(circ):
@@ -143,7 +153,6 @@ def dag_default(circ):
 
     c = dag_to_circuit(dag)
     show_figure(c)
-    
 
 
 if __name__ == "__main__":
@@ -152,11 +161,10 @@ if __name__ == "__main__":
     # logging.getLogger('qiskit.transpiler').setLevel('INFO')
 
     # gate_library()
-    
+    gates()
     # c = circuit()
     # qasm = c.qasm()
     # backend = FakeTenerife()
     # new_circuit = transpile(c, backend)
 
     # show_figure(new_circuit)
-    

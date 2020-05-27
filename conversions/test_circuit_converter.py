@@ -1,14 +1,15 @@
 from pytket.qasm import circuit_from_qasm, circuit_to_qasm
 from pytket.pyquil import pyquil_to_tk
 from pyquil import Program, get_qc
-from pyquil.gates import H, CNOT
+from pyquil.gates import H, CNOT, CCNOT
 from pytket_converter import PytketConverter
-from qiskit_utility import *
+from qiskit_utility import show_figure
 from staq_converter import StaqConverter
 from qiskit import QuantumCircuit
 from qiskit.tools.visualization import dag_drawer
 from qiskit.aqua.algorithms import Shor
 from pennylane_converter import PennylaneConverter
+from quantastica_converter import QuantasticaConverter
 from pyquil.gates import H, CPHASE, MEASURE, CNOT
 
 
@@ -25,6 +26,7 @@ class TestCircuitConverter():
         self.pyquil_circuit_create()
         self.shor_qiskit_create()
         self.shor_pyquil_create()
+        self.shor_quil_create()
 
     def qiskit_circuit_create(self):
         self.qiskit_circuit = QuantumCircuit(2, 2)
@@ -34,7 +36,7 @@ class TestCircuitConverter():
         self.qasm = self.qiskit_circuit.qasm()
 
     def pyquil_circuit_create(self):
-        self.pyquil_circuit = Program(H(0), CNOT(0, 1), H(2), CPHASE(0,1,2))
+        self.pyquil_circuit = Program(H(0), CNOT(0, 1), H(2), CCNOT(0,1,2))
 
     def shor_pyquil_create(self):
         p = Program()
@@ -44,11 +46,11 @@ class TestCircuitConverter():
         p.inst(H(2))
         p.inst(H(1))
         p.inst(CNOT(2, 3))
-        # p.inst(CPHASE(0, 1, 0))
+        p.inst(CPHASE(0, 1, 0))
         p.inst(CNOT(2, 4))
         p.inst(H(0))
-        # p.inst(CPHASE(0, 1, 2))
-        # p.inst(CPHASE(0, 0, 2))
+        p.inst(CPHASE(0, 1, 2))
+        p.inst(CPHASE(0, 0, 2))
         p.inst(H(2))
         p.inst(MEASURE(0, ro[0]))
         p.inst(MEASURE(1, ro[1]))
@@ -57,36 +59,24 @@ class TestCircuitConverter():
         self.shor_pyquil = p
 
     def shor_qiskit_create(self):
-        # N = 15
-        # shor = Shor(N)
-        # shor_circuit = shor.construct_circuit()
-        # self.shor = shor_circuit.qasm()
-
         with open("circuit_shor.qasm", "r") as f:
             self.shor_qasm = f.read()
+            self.shor_qiskit = QuantumCircuit.from_qasm_str(self.shor_qasm)
+
+    def shor_quil_create(self):
+        with open("circuit_shor.quil", "r") as f:
+            self.shor_quil = f.read()
 
     def test_pytket(self):
-        original = PytketConverter.pyquil_to_qasm(self.pyquil_circuit)        
-        converted = self.qiskit_circuit.qasm()
+        qasm = PytketConverter.pyquil_to_qasm(self.shor_pyquil)       
+        # does not support cu1 gates 
+        pyquil = PytketConverter.qasm_to_pyquil(self.shor_qasm)   
+        print(pyquil)   
 
-        original = self.qiskit_circuit.qasm()
-        converted = PytketConverter.qiskit_to_qasm(self.qiskit_circuit)
-
-        original = PytketConverter.qasm_to_pyquil(PytketConverter.qiskit_to_qasm(self.qiskit_circuit))
-        converted = PytketConverter.dag_to_pyquil(PytketConverter.pyquil_to_dag(original))  
-
-        original = self.qiskit_circuit
-        converted = PytketConverter.dag_to_qiskit(PytketConverter.qiskit_to_dag(original))
-
-        original =  PytketConverter.qasm_to_cirq(PytketConverter.qiskit_to_qasm(self.qiskit_circuit))
-        converted = PytketConverter.dag_to_cirq(PytketConverter.cirq_to_dag(original))
+        # # quirk import
+        # circuit = PytketConverter.quirk_to_cirq("https://algassert.com/quirk#circuit=%7B%22cols%22%3A%5B%5B%22X%22%2C%22X%22%5D%2C%5B%22%E2%80%A2%22%2C%22%E2%80%A2%22%2C%22X%22%5D%5D%7D")
+        # print(circuit)
         
-        print(original)   
-        print(converted) 
-
-    def test_quirk_import(self):
-        circuit = PytketConverter.quirk_to_cirq("https://algassert.com/quirk#circuit=%7B%22cols%22%3A%5B%5B%22X%22%2C%22X%22%5D%2C%5B%22%E2%80%A2%22%2C%22%E2%80%A2%22%2C%22X%22%5D%5D%7D")
-        print(circuit)
 
     def test_staq(self):
         staq = StaqConverter("/home/seedrix/tools/staq/build/staq", self.shor_qasm)
@@ -101,11 +91,23 @@ class TestCircuitConverter():
         staq.default_optimization()        
         
     def test_pennylane(self):
-        print(PennylaneConverter.pyquil_to_qasm(self.pyquil_circuit))
-        # print(PennylaneConverter.qasm_to_qasm(self.qiskit_circuit))
+        # print(PennylaneConverter.pyquil_to_qasm(self.pyquil_circuit))
+        print(PennylaneConverter.qasm_to_qasm(self.shor_qiskit))
+
+    def test_quantastica(self):
+        # qasm = QuantasticaConverter.quil_to_qasm(self.shor_quil)
+        # print(qasm)
+        # circuit = QuantumCircuit.from_qasm_str(qasm)
+        # show_figure(circuit)
+
+
+        quil = QuantasticaConverter.qasm_to_quil(self.shor_qasm)
+        print(quil)
+        
+
+
         
 
 if __name__ == "__main__":
     test = TestCircuitConverter()
-    # test.test_staq_conversions()
-    test.test_pennylane()
+    test.test_pytket()

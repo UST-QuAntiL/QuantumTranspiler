@@ -11,6 +11,10 @@ from qiskit_utility import qasm_to_dag, dag_to_qasm
 from qiskit.dagcircuit import DAGCircuit
 
 class PytketConverter: 
+    """
+        not supported:
+            - from qasm: cu1 gates 
+    """
     @staticmethod
     def cirq_to_dag(circuit: cirq.Circuit) -> DAGCircuit:
         return qasm_to_dag(PytketConverter.cirq_to_qasm(circuit))

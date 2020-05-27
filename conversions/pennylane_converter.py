@@ -9,7 +9,7 @@ from pennylane_device import QASMDevice
 
 class PennylaneConverter:
     @staticmethod
-    def _function_to_qiskit_circuit(circuit_function) -> QuantumCircuit:
+    def _function_to_qiskit_circuit_own_device(circuit_function) -> QuantumCircuit:
         # pseudo device needed to construct qnode
         dev = qml.device('qiskit.aer', wires=29, backend='qasm_simulator')  
         qnode = qml.QNode(circuit_function, dev)   
@@ -20,9 +20,15 @@ class PennylaneConverter:
         # apply QASM conversion
         qasm_device = QASMDevice(width)
         qasm_device.apply(circuit_dag.operations, rotations=circuit_dag.diagonalizing_gates)  
-        # qnode()
-        qasm_device = dev
         return qasm_device._circuit
+
+    @staticmethod
+    def _function_to_qiskit_circuit(circuit_function) -> QuantumCircuit:
+        # pseudo device needed to construct qnode
+        dev = qml.device('qiskit.aer', wires=29, backend='qasm_simulator')  
+        qnode = qml.QNode(circuit_function, dev)           
+        qnode()       
+        return dev._circuit
 
     @staticmethod
     def _function_to_qasm(circuit_function) -> str:
@@ -36,19 +42,26 @@ class PennylaneConverter:
 
     @staticmethod
     def pyquil_to_qasm(program: Program) -> str:
-        width = program.wi
+        """
+            Some gates (CPHASE) lead to typeerror
+        """
+        qubit_set = program.get_qubits()
         def circuit_function():
-            pennylane_forest.load_program(program)(wires=[0,2,3])
+            pennylane_forest.load_program(program)(wires=qubit_set)
             return qml.expval(qml.PauliZ(0))
-        return PennylaneConverter._function_to_qasm(circuit_function)
+        return PennylaneConverter._function_to_qiskit_circuit_own_device(circuit_function)
         
 
     @staticmethod
     def qasm_to_qasm(circuit: QuantumCircuit) -> str:
+        """
+            test method
+            does not support measure, CU1Gate, Barrier ...
+        """
         def circuit_function():
             qml.from_qiskit(circuit)()
             return qml.expval(qml.PauliZ(0))
-        return PennylaneConverter._function_to_qasm(circuit_function)    
+        return PennylaneConverter._function_to_qiskit_circuit_own_device(circuit_function)    
 
         
 

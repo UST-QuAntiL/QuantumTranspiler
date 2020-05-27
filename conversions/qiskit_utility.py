@@ -1,6 +1,7 @@
 from qiskit.converters import circuit_to_dag, dag_to_circuit
 from qiskit.dagcircuit import DAGCircuit
 from qiskit import QuantumCircuit
+from qiskit.extensions import UnitaryGate
 
 def qasm_to_dag(qasm: str) -> DAGCircuit:
     circuit = QuantumCircuit.from_qasm_str(qasm)
@@ -18,3 +19,10 @@ def write_qasm(qasm: str, filename: str) -> None:
 def show_figure(circuit: QuantumCircuit) -> None:   
     circuit.draw(output='text')
     print(circuit)        
+
+# unitary methods: need to check their behaviour
+def check_unitary_equivalence(unitary1: UnitaryGate, unitary2: UnitaryGate) -> bool:   
+    return unitary1.__eq__(unitary2)
+
+def define_unitary(unitary: UnitaryGate) -> None:  
+    unitary.define()
