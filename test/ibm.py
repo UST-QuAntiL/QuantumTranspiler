@@ -19,6 +19,10 @@ import logging
 from qiskit.test.mock import FakeTenerife
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
 from qiskit.circuit import Gate
+from qiskit.quantum_info.operators import Operator
+from qiskit.quantum_info.random import random_unitary
+from qiskit.transpiler.passes import Unroll3qOrMore, Unroller, Optimize1qGates
+
 
 my_gate = Gate(name='my_gate', num_qubits=2, params=[])
 
@@ -135,14 +139,40 @@ def unroll(dag, basis):
 def gates():
     # h = HGate()
     # ccx = CCXGate()
-    my_unitary = UnitaryGate([
-        [0.70710678, 0, 0.70710678, 0],
-        [0, 0.70710678, 0, 0.70710678],
-        [0, 0.70710678, 0, -0.70710678],
-        [0.70710678, 0, -0.70710678, 0]
-    ])
-    print(my_unitary.definition)
+    # my_unitary = UnitaryGate([
+    #     [0.70710678, 0, 0.70710678, 0],
+    #     [0, 0.70710678, 0, 0.70710678],
+    #     [0, 0.70710678, 0, -0.70710678],
+    #     [0.70710678, 0, -0.70710678, 0]
+    # ])
 
+    matrix = 1/2 * np.array([
+        [1,0,1,0,0,1,0,-1],
+        [0,1,0,1,1,0,-1,0],
+        [0,1,0,-1,1,0,1,0],
+        [1,0,-1,0,0,1,0,1],
+        [1,0,1,0,0,-1,0,1],
+        [0,1,0,1,-1,0,1,0],
+        [0,1,0,-1,-1,0,-1,0],
+        [1,0,-1,0,0,-1,0,-1]
+    ])
+    my_unitary = UnitaryGate(matrix)
+
+    
+def unroll3q():
+    unitary = random_unitary(16, seed=42)
+    qr = QuantumRegister(4, 'qr')
+    circuit = QuantumCircuit(qr)
+    circuit.unitary(unitary, [0, 1, 2, 3])
+    dag = circuit_to_dag(circuit)
+    pass_ = Unroll3qOrMore()
+    dag = pass_.run(dag)
+    pass_ = Unroller(['u1', 'u2', 'u3', 'cx', 'ccx'])
+    dag = pass_.run(dag)
+    pass_ = Optimize1qGates()
+    dag = pass_.run(dag)
+    after_circuit =  dag_to_circuit(dag)
+    show_figure(after_circuit)
 
 def dag_default(circ):
     dag = circuit_to_dag(circ)
@@ -161,7 +191,7 @@ if __name__ == "__main__":
     # logging.getLogger('qiskit.transpiler').setLevel('INFO')
 
     # gate_library()
-    gates()
+    unroll3q()
     # c = circuit()
     # qasm = c.qasm()
     # backend = FakeTenerife()

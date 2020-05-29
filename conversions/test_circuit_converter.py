@@ -10,10 +10,10 @@ from qiskit.tools.visualization import dag_drawer
 from qiskit.aqua.algorithms import Shor
 from pennylane_converter import PennylaneConverter
 from quantastica_converter import QuantasticaConverter
-from pyquil.gates import H, CPHASE, MEASURE, CNOT
+from pyquil.gates import *
+from pyquil_converter import PyquilConverter
 
-
-class TestCircuitConverter():
+class TestCircuitConverter:
     def _remove_new_lines(self, string: str) -> str:
         return string.replace('\n', '')
 
@@ -36,7 +36,13 @@ class TestCircuitConverter():
         self.qasm = self.qiskit_circuit.qasm()
 
     def pyquil_circuit_create(self):
-        self.pyquil_circuit = Program(H(0), CNOT(0, 1), H(2), CCNOT(0,1,2))
+        self.pyquil_circuit = Program()
+        ro = self.pyquil_circuit.declare('ro', 'BIT', 1)
+        self.pyquil_circuit += H(0)
+        self.pyquil_circuit += CNOT(0, 1)
+        self.pyquil_circuit += H(2)
+        self.pyquil_circuit += CCNOT(0,1,2)
+        self.pyquil_circuit += MEASURE(0, ro[0])
 
     def shor_pyquil_create(self):
         p = Program()
@@ -99,10 +105,12 @@ class TestCircuitConverter():
         # print(qasm)
         # circuit = QuantumCircuit.from_qasm_str(qasm)
         # show_figure(circuit)
-
-
         quil = QuantasticaConverter.qasm_to_quil(self.shor_qasm)
         print(quil)
+
+    def test_pyquil_own(self):
+        PyquilConverter.import_pyquil(self.pyquil_circuit)
+
         
 
 
@@ -110,4 +118,4 @@ class TestCircuitConverter():
 
 if __name__ == "__main__":
     test = TestCircuitConverter()
-    test.test_pytket()
+    test.test_pyquil_own()

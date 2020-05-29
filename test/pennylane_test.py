@@ -7,13 +7,13 @@ from qiskit.test.mock import FakeTenerife
 def my_quantum_function(x, y):
     qml.RZ(x, wires=0)
     qml.CNOT(wires=[0,1])
-    qml.CNOT(wires=[1,2])
-    qml.CNOT(wires=[2,1])
     qml.CNOT(wires=[1,0])
     qml.RY(y, wires=1)
     return qml.expval(qml.PauliZ(1))
 result = my_quantum_function(0, 1)
-dev = qml.device('qiskit.aer', wires=29, backend='qasm_simulator')
+# dev = qml.device('qiskit.aer', wires=29, backend='qasm_simulator')
+dev = qml.device('strawberryfields.fock', wires=2, cutoff_dim=10)
+
 circuit = qml.QNode(my_quantum_function, dev)
  
 circuit(np.pi/4, 0.7)

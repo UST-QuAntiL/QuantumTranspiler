@@ -10,10 +10,9 @@ from pytket.backends.ibm import AerBackend
 from pytket.backends.forest import ForestBackend
 from pytket.circuit import Circuit, Node, Op, OpType, Qubit
 import numpy as np
-import search_compiler as sc
 from qiskit.extensions.standard import CHGate, U2Gate, CnotGate, HGate, XGate, ToffoliGate, CCXGate
-import search_compiler as sc
-from pytket.projectq import tk_to_projectq
+# import search_compiler as sc
+
 def show_ket_circuit(circuit: Circuit):
     circuit = QuantumCircuit.from_qasm_str(circuit_to_qasm_str(circuit, "circuit.qasm"))
     show_figure(circuit)
@@ -39,12 +38,11 @@ circ = QuantumCircuit(3, 2)
 toffoliGate = CCXGate()
 circ.ccx(0,1,2)
 c = qiskit_to_tk(circ)
-c = (circ)
 
 show_ket_circuit(c)
 
-b = AerBackend()    
-# b= ForestBackend("Aspen-7-28Q-A")           
+# b = AerBackend()    
+b= ForestBackend("Aspen-7-28Q-A")           
 b.compile_circuit(c)
 
 show_ket_circuit(c)
