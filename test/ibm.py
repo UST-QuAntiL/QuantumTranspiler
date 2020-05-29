@@ -22,6 +22,7 @@ from qiskit.circuit import Gate
 from qiskit.quantum_info.operators import Operator
 from qiskit.quantum_info.random import random_unitary
 from qiskit.transpiler.passes import Unroll3qOrMore, Unroller, Optimize1qGates
+import qiskit.circuit.library.standard_gates as qiskit
 
 
 my_gate = Gate(name='my_gate', num_qubits=2, params=[])
@@ -147,18 +148,45 @@ def gates():
     # ])
 
     matrix = 1/2 * np.array([
-        [1,0,1,0,0,1,0,-1],
-        [0,1,0,1,1,0,-1,0],
-        [0,1,0,-1,1,0,1,0],
-        [1,0,-1,0,0,1,0,1],
-        [1,0,1,0,0,-1,0,1],
-        [0,1,0,1,-1,0,1,0],
-        [0,1,0,-1,-1,0,-1,0],
-        [1,0,-1,0,0,-1,0,-1]
+        [1, 0, 1, 0, 0, 1, 0, -1],
+        [0, 1, 0, 1, 1, 0, -1, 0],
+        [0, 1, 0, -1, 1, 0, 1, 0],
+        [1, 0, -1, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, -1, 0, 1],
+        [0, 1, 0, 1, -1, 0, 1, 0],
+        [0, 1, 0, -1, -1, 0, -1, 0],
+        [1, 0, -1, 0, 0, -1, 0, -1]
     ])
     my_unitary = UnitaryGate(matrix)
 
-    
+    phi = np.pi
+    cu1 = np.array([
+        [1,0,0,0],
+        [0,1,0,0],
+        [0,0,1,0],
+        [0,0,0,np.e**(1j*phi)]
+    ], dtype=complex)
+
+    crz = np.array([
+        [1,0,0,0],
+        [0,np.e**(-1j*(phi/2)),0,0],
+        [0,0,1,0],
+        [0,0,0,np.e**(1j*(phi/2))]
+    ], dtype=complex)
+
+    cphase = np.array([
+        [1,0,0,0],
+        [0,1,0,0],
+        [0,0,1,0],
+        [0,0,0,np.e**(1j*phi)]
+    ], dtype=complex)
+
+    cu1gate = UnitaryGate(cphase)
+    crzgate = UnitaryGate(crz)
+    cphase = UnitaryGate(cphase)
+    check_equivalence(cu1gate, cphase)
+
+
 def unroll3q():
     unitary = random_unitary(16, seed=42)
     qr = QuantumRegister(4, 'qr')
@@ -171,8 +199,9 @@ def unroll3q():
     dag = pass_.run(dag)
     pass_ = Optimize1qGates()
     dag = pass_.run(dag)
-    after_circuit =  dag_to_circuit(dag)
+    after_circuit = dag_to_circuit(dag)
     show_figure(after_circuit)
+
 
 def dag_default(circ):
     dag = circuit_to_dag(circ)
@@ -185,16 +214,22 @@ def dag_default(circ):
     show_figure(c)
 
 
+def check_equivalence(gate1, gate2):
+    if (gate1 == gate2):
+        print("eq")
+
+
 if __name__ == "__main__":
 
     # logging.basicConfig(level='DEBUG')
     # logging.getLogger('qiskit.transpiler').setLevel('INFO')
 
     # gate_library()
-    unroll3q()
     # c = circuit()
     # qasm = c.qasm()
     # backend = FakeTenerife()
     # new_circuit = transpile(c, backend)
-
+    gates()
     # show_figure(new_circuit)
+
+    # qiskit_gates.CRZGate(np.pi)

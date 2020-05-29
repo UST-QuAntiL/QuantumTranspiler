@@ -26,12 +26,12 @@ print(circuit.draw(show_variable_names=True))
 # plugin_converter(circuit())
 # print(plugin_converters)
 
-# import pennylane_qiskit
-# pennylane_qiskit.load_qasm()
+import pennylane_qiskit
+pennylane_qiskit.load_qasm()
 
 
-# import pennylane_forest
-# pennylane_forest.load_quil()
+import pennylane_forest
+pennylane_forest.load_program()
 
 
 # from pennylane.templates.layers import BasicEntanglerLayers

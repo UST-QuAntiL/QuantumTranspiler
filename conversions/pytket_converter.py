@@ -1,4 +1,5 @@
 from pytket.qasm import circuit_to_qasm_str, circuit_from_qasm_str
+from pytket.qiskit import tk_to_qiskit
 import cirq
 from pytket.cirq import tk_to_cirq, cirq_to_tk
 from qiskit.dagcircuit import DAGCircuit
@@ -73,3 +74,8 @@ class PytketConverter:
     @staticmethod
     def qasm_to_qiskit(qasm: str) -> QuantumCircuit:
         return QuantumCircuit.from_qasm_str(qasm)  
+
+    @staticmethod
+    def pyquil_to_qiskit(program: Program) -> QuantumCircuit:
+        circuit = pyquil_to_tk(program)
+        return tk_to_qiskit(circuit)

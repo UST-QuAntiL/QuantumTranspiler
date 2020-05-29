@@ -12,6 +12,7 @@ from pennylane_converter import PennylaneConverter
 from quantastica_converter import QuantasticaConverter
 from pyquil.gates import *
 from pyquil_converter import PyquilConverter
+import numpy as np
 
 class TestCircuitConverter:
     def _remove_new_lines(self, string: str) -> str:
@@ -37,12 +38,17 @@ class TestCircuitConverter:
 
     def pyquil_circuit_create(self):
         self.pyquil_circuit = Program()
-        ro = self.pyquil_circuit.declare('ro', 'BIT', 1)
+        ro = self.pyquil_circuit.declare('ro', 'BIT', 3)
+        ra = self.pyquil_circuit.declare('ra', 'BIT', 2)
         self.pyquil_circuit += H(0)
         self.pyquil_circuit += CNOT(0, 1)
-        self.pyquil_circuit += H(2)
-        self.pyquil_circuit += CCNOT(0,1,2)
+        self.pyquil_circuit += RX(np.pi, 2)
+        self.pyquil_circuit += CCNOT(0, 1, 2)
+        self.pyquil_circuit += H(4)
+        self.pyquil_circuit += X(1)
         self.pyquil_circuit += MEASURE(0, ro[0])
+        self.pyquil_circuit += MEASURE(0, ra[1])
+        self.pyquil_circuit += MEASURE(1, ra[0])
 
     def shor_pyquil_create(self):
         p = Program()
@@ -74,28 +80,29 @@ class TestCircuitConverter:
             self.shor_quil = f.read()
 
     def test_pytket(self):
-        qasm = PytketConverter.pyquil_to_qasm(self.shor_pyquil)       
-        # does not support cu1 gates 
-        pyquil = PytketConverter.qasm_to_pyquil(self.shor_qasm)   
-        print(pyquil)   
+        # qasm = PytketConverter.pyquil_to_qasm(self.shor_pyquil)
+        qiskit = PytketConverter.pyquil_to_qiskit(self.pyquil_circuit)
+        # does not support cu1 gates
+        # pyquil = PytketConverter.qasm_to_pyquil(self.shor_qasm)
+        # print(pyquil)
 
         # # quirk import
         # circuit = PytketConverter.quirk_to_cirq("https://algassert.com/quirk#circuit=%7B%22cols%22%3A%5B%5B%22X%22%2C%22X%22%5D%2C%5B%22%E2%80%A2%22%2C%22%E2%80%A2%22%2C%22X%22%5D%5D%7D")
         # print(circuit)
-        
 
     def test_staq(self):
-        staq = StaqConverter("/home/seedrix/tools/staq/build/staq", self.shor_qasm)
-        # quil = staq.qasm_to_quil()   
+        staq = StaqConverter(
+            "/home/seedrix/tools/staq/build/staq", self.shor_qasm)
+        # quil = staq.qasm_to_quil()
         # does not work, because of undefined Dagger instruction
-        # program = Program(quil) 
+        # program = Program(quil)
         # projectq = staq.qasm_to_projectq()
         # qsharp = staq.qasm_to_qsharp()
         # cirq = staq.qasm_to_cirq()
         # staq.inline()
         # staq.o2()
-        staq.default_optimization()        
-        
+        staq.default_optimization()
+
     def test_pennylane(self):
         # print(PennylaneConverter.pyquil_to_qasm(self.pyquil_circuit))
         print(PennylaneConverter.qasm_to_qasm(self.shor_qiskit))
@@ -111,11 +118,8 @@ class TestCircuitConverter:
     def test_pyquil_own(self):
         PyquilConverter.import_pyquil(self.pyquil_circuit)
 
-        
-
-
-        
 
 if __name__ == "__main__":
     test = TestCircuitConverter()
     test.test_pyquil_own()
+    # test.test_pytket()
