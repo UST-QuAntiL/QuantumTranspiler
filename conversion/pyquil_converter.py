@@ -1,10 +1,10 @@
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from pyquil import Program
 from pyquil.quilbase import Declare, Gate, Halt, Measurement, Pragma, DefGate
-from qiskit_utility import show_figure
-from gate_mappings import gate_mapping_qiskit, gate_mapping_pyquil
+from circuit.qiskit_utility import show_figure
+from conversion.gate_mappings import gate_mapping_qiskit, gate_mapping_pyquil
 from qiskit.extensions import UnitaryGate
-from qiskit.circuit import Qubit
+from qiskit.circuit import Qubit, Clbit
 
 
 class PyquilConverter:
@@ -14,7 +14,7 @@ class PyquilConverter:
         return PyquilConverter.import_pyquil(program)
 
     @staticmethod
-    def import_pyquil(program: Program) -> (QuantumCircuit, {int: Qubit}, {}):
+    def import_pyquil(program: Program) -> (QuantumCircuit, {int: Qubit}, {str: Clbit}):
         qubit_set = program.get_qubits()
         qreg_mapping = {}
         creg_mapping = {}        
@@ -31,7 +31,8 @@ class PyquilConverter:
                         "Unsupported memory type:" + str(instr.memory_type))
 
                 cr = ClassicalRegister(instr.memory_size, instr.name)
-                creg_mapping[instr.name] = cr
+                for i in range(instr.memory_size):
+                    creg_mapping[instr.name + "_" + str(i)] = cr[i]
                 circuit.add_register(cr)
 
             elif isinstance(instr, Gate):
@@ -39,9 +40,8 @@ class PyquilConverter:
 
             elif isinstance(instr, Measurement):
                 qubit = qreg_mapping[instr.qubit.index]
-                creg = creg_mapping[instr.classical_reg.name]
-                bit = creg[instr.classical_reg.offset]
-                circuit.measure(qubit, bit)
+                clbit = creg_mapping[instr.classical_reg.name + "_" + str(instr.classical_reg.offset)]
+                circuit.measure(qubit, clbit)
 
             elif isinstance(instr, Pragma):
                 # http://docs.rigetti.com/en/stable/basics.html#pragmas

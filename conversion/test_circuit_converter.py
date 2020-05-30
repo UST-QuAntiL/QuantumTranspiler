@@ -2,16 +2,16 @@ from pytket.qasm import circuit_from_qasm, circuit_to_qasm
 from pytket.pyquil import pyquil_to_tk
 from pyquil import Program, get_qc
 from pyquil.gates import H, CNOT, CCNOT
-from pytket_converter import PytketConverter
-from qiskit_utility import show_figure
-from staq_converter import StaqConverter
+from conversion.pytket_converter import PytketConverter
+from circuit.qiskit_utility import show_figure
+from conversion.staq_converter import StaqConverter
 from qiskit import QuantumCircuit
 from qiskit.tools.visualization import dag_drawer
 from qiskit.aqua.algorithms import Shor
-from pennylane_converter import PennylaneConverter
-from quantastica_converter import QuantasticaConverter
+from conversion.pennylane_converter import PennylaneConverter
+from conversion.quantastica_converter import QuantasticaConverter
 from pyquil.gates import *
-from pyquil_converter import PyquilConverter
+from conversion.pyquil_converter import PyquilConverter
 import numpy as np
 
 class TestCircuitConverter:

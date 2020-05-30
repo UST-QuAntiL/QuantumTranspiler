@@ -8,7 +8,7 @@ from pytket.qasm import circuit_to_qasm_str, circuit_from_qasm_str
 from pytket.pyquil import pyquil_to_tk, tk_to_pyquil
 from pyquil import Program
 from qiskit import QuantumCircuit
-from qiskit_utility import qasm_to_dag, dag_to_qasm
+from circuit.qiskit_utility import qasm_to_dag, dag_to_qasm
 from qiskit.dagcircuit import DAGCircuit
 
 class PytketConverter: 

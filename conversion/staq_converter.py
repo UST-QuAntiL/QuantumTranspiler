@@ -1,5 +1,5 @@
 import subprocess
-from qiskit_utility import qasm_to_dag, dag_to_qasm, write_qasm
+from circuit.qiskit_utility import qasm_to_dag, dag_to_qasm, write_qasm
 
 class StaqConverter: 
     """

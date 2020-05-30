@@ -2,10 +2,10 @@ import pennylane as qml
 import pennylane_qiskit
 import pennylane_forest
 from pyquil import Program
-from qiskit_utility import show_figure
+from circuit.qiskit_utility import show_figure
 from qiskit import QuantumCircuit
 import pennylane_forest
-from pennylane_device import QASMDevice 
+from conversion.pennylane_device import QASMDevice 
 
 class PennylaneConverter:
     @staticmethod
