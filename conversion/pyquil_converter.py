@@ -5,7 +5,7 @@ from circuit.qiskit_utility import show_figure
 from conversion.gate_mappings import gate_mapping_qiskit, gate_mapping_pyquil
 from qiskit.extensions import UnitaryGate
 from qiskit.circuit import Qubit, Clbit
-
+from pyquil.gates import NOP
 
 class PyquilConverter:
     @staticmethod
@@ -36,7 +36,7 @@ class PyquilConverter:
                 circuit.add_register(cr)
 
             elif isinstance(instr, Gate):
-                PyquilConverter._handle_gate(circuit, instr, qreg_mapping, creg_mapping)
+                PyquilConverter._handle_gate(circuit, instr, program, qreg_mapping)
 
             elif isinstance(instr, Measurement):
                 qubit = qreg_mapping[instr.qubit.index]
@@ -49,8 +49,11 @@ class PyquilConverter:
                 # e.g. rewiring and delays
                 # can be alternatively implemented with qiskit (https://qiskit.org/documentation/stubs/qiskit.pulse.Delay.html)
                 continue
+            elif isinstance(instr, NOP):                
+                continue
             elif isinstance(instr, Halt):
                 break
+            # TODO classical operations http://docs.rigetti.com/en/stable/apidocs/gates.html
             else:
                 raise NotImplementedError(
                     "Unsupported instruction: " + str(instr))
@@ -59,20 +62,42 @@ class PyquilConverter:
         return (circuit, qreg_mapping, creg_mapping)
 
     @staticmethod
-    def _handle_gate(circuit, instr, qreg_mapping, creg_mapping) -> None:        
-        if (instr.name in gate_mapping_pyquil) or (isinstance(instr, DefGate)):
-            if (instr.name in gate_mapping_pyquil):
-                # get the instruction
-                instr_qiskit_class = gate_mapping_pyquil[instr.name]
-                # TODO check if division by pi is necessary (pytket does this)
-                params = instr.params
-                instr_qiskit = instr_qiskit_class(*params)
-            else:
-                instr_qiskit = UnitaryGate(instr.matrix)
-            # get the qubits on which the instruction operates
-            qargs = [qreg_mapping[qubit.index]
-                        for qubit in instr.qubits]
-            circuit.append(instr_qiskit, qargs=qargs)
+    def _handle_gate(circuit, instr, program, qreg_mapping) -> None:     
+          
+        if instr.name in gate_mapping_pyquil:           
+            # get the instruction
+            instr_qiskit_class = gate_mapping_pyquil[instr.name]
+            # TODO check if division by pi is necessary (pytket does this)
+            params = instr.params
+            instr_qiskit = instr_qiskit_class(*params)
 
+        # custom gates
         else:
-            raise NotImplementedError("Unsupported Gate: " + str(instr))
+            gate_found = False
+            for gate in program.defined_gates:
+                if gate.name == instr.name:
+                    gate_found = True
+                    instr_qiskit = UnitaryGate(gate.matrix, label=gate.name)
+            
+            if not gate_found:
+                raise NotImplementedError("Unsupported Gate: " + str(instr))
+                
+            
+
+        # get the qubits on which the instruction operates
+        qargs = [qreg_mapping[qubit.index]
+                    for qubit in instr.qubits]
+        circuit.append(instr_qiskit, qargs=qargs)
+
+      
+
+
+    @staticmethod
+    def export_quil(circuit: QuantumCircuit) -> str:
+        program = PyquilConverter.export_pyquil(circuit)
+        return program.out()
+
+    @staticmethod
+    def export_pyquil(circuit: QuantumCircuit) -> Program:
+        print("he")
+        

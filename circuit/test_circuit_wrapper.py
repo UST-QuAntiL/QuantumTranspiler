@@ -9,6 +9,7 @@ from qiskit.aqua.algorithms import Shor
 from pyquil.gates import *
 import numpy as np
 from circuit.circuit_wrapper import CircuitWrapper
+from pyquil.quilbase import Declare, Gate, Halt, Measurement, Pragma, DefGate
 
 class TestCircuitWrapper:
     def __init__(self):
@@ -33,6 +34,13 @@ class TestCircuitWrapper:
         self.pyquil_circuit += CNOT(0, 1)
         self.pyquil_circuit += RX(np.pi, 2)
         self.pyquil_circuit += CCNOT(0, 1, 2)
+        sqrt_x = np.array([[ 0.5+0.5j,  0.5-0.5j],
+                   [ 0.5-0.5j,  0.5+0.5j]])
+        sqrt_x_definition = DefGate("SQRT-X", sqrt_x)
+        self.pyquil_circuit += sqrt_x_definition
+        SQRTX = sqrt_x_definition.get_constructor()
+        self.pyquil_circuit += SQRTX(0)
+
         self.pyquil_circuit += H(4)
         self.pyquil_circuit += X(1)
         self.pyquil_circuit += MEASURE(0, ro[0])
@@ -69,9 +77,14 @@ class TestCircuitWrapper:
             self.shor_quil = f.read()
 
     def test_pyquil_import(self):
+        print(self.pyquil_circuit)
         wrapper = CircuitWrapper(pyquil_program=self.pyquil_circuit)
-        show_figure(wrapper.circuit)
+        show_figure(wrapper.circuit) 
 
+    def test_pyquil_export(self):
+        wrapper = CircuitWrapper(qiskit_circuit=self.qiskit_circuit)
+        pyquil = wrapper.export_pyquil()
+        print(pyquil)
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()

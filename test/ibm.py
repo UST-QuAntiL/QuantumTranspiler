@@ -22,7 +22,7 @@ from qiskit.circuit import Gate
 from qiskit.quantum_info.operators import Operator
 from qiskit.quantum_info.random import random_unitary
 from qiskit.transpiler.passes import Unroll3qOrMore, Unroller, Optimize1qGates
-import qiskit.circuit.library.standard_gates as qiskit
+import qiskit.circuit.library.standard_gates as qiskit_gate
 
 
 my_gate = Gate(name='my_gate', num_qubits=2, params=[])
@@ -213,6 +213,9 @@ def dag_default(circ):
     c = dag_to_circuit(dag)
     show_figure(c)
 
+def gate_to_matrix():
+    gate = qiskit_gate.CZGate()
+    print(gate.to_matrix())
 
 def check_equivalence(gate1, gate2):
     if (gate1 == gate2):
@@ -229,7 +232,7 @@ if __name__ == "__main__":
     # qasm = c.qasm()
     # backend = FakeTenerife()
     # new_circuit = transpile(c, backend)
-    gates()
+    gate_to_matrix()
     # show_figure(new_circuit)
 
     # qiskit_gates.CRZGate(np.pi)
