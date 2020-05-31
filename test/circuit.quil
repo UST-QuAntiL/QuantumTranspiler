@@ -1,6 +1,0 @@
-DECLARE ro BIT[2]
-
-H 0
-CCNOT 0 1 2
-MEASURE 0 ro[0]
-MEASURE 1 ro[1]

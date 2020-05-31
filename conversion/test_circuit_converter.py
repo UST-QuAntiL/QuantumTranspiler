@@ -13,77 +13,16 @@ from conversion.quantastica_converter import QuantasticaConverter
 from pyquil.gates import *
 from conversion.pyquil_converter import PyquilConverter
 import numpy as np
+from examples.example_circuits import ExampleCircuits
 
 class TestCircuitConverter:
-    def _remove_new_lines(self, string: str) -> str:
-        return string.replace('\n', '')
-
-    def _draw_qiskit_circuit(self, circuit):
-        circuit.draw(output='text')
-        print(circuit)
-
-    def __init__(self):
-        self.qiskit_circuit_create()
-        self.pyquil_circuit_create()
-        self.shor_qiskit_create()
-        self.shor_pyquil_create()
-        self.shor_quil_create()
-
-    def qiskit_circuit_create(self):
-        self.qiskit_circuit = QuantumCircuit(2, 2)
-        self.qiskit_circuit.h(0)
-        self.qiskit_circuit.cx(0, 1)
-        self.qiskit_circuit.measure_all()
-        self.qasm = self.qiskit_circuit.qasm()
-
-    def pyquil_circuit_create(self):
-        self.pyquil_circuit = Program()
-        ro = self.pyquil_circuit.declare('ro', 'BIT', 3)
-        ra = self.pyquil_circuit.declare('ra', 'BIT', 2)
-        self.pyquil_circuit += H(0)
-        self.pyquil_circuit += CNOT(0, 1)
-        self.pyquil_circuit += RX(np.pi, 2)
-        self.pyquil_circuit += CCNOT(0, 1, 2)
-        self.pyquil_circuit += H(4)
-        self.pyquil_circuit += X(1)
-        self.pyquil_circuit += MEASURE(0, ro[0])
-        self.pyquil_circuit += MEASURE(0, ra[1])
-        self.pyquil_circuit += MEASURE(1, ra[0])
-
-    def shor_pyquil_create(self):
-        p = Program()
-        ro = p.declare('ro', memory_type='BIT', memory_size=3)
-        p.inst(H(0))
-        p.inst(H(1))
-        p.inst(H(2))
-        p.inst(H(1))
-        p.inst(CNOT(2, 3))
-        p.inst(CPHASE(0, 1, 0))
-        p.inst(CNOT(2, 4))
-        p.inst(H(0))
-        p.inst(CPHASE(0, 1, 2))
-        p.inst(CPHASE(0, 0, 2))
-        p.inst(H(2))
-        p.inst(MEASURE(0, ro[0]))
-        p.inst(MEASURE(1, ro[1]))
-        p.inst(MEASURE(2, ro[2]))
-
-        self.shor_pyquil = p
-
-    def shor_qiskit_create(self):
-        with open("circuit_shor.qasm", "r") as f:
-            self.shor_qasm = f.read()
-            self.shor_qiskit = QuantumCircuit.from_qasm_str(self.shor_qasm)
-
-    def shor_quil_create(self):
-        with open("circuit_shor.quil", "r") as f:
-            self.shor_quil = f.read()
-
     def test_pytket(self):
-        # qasm = PytketConverter.pyquil_to_qasm(self.shor_pyquil)
-        qiskit = PytketConverter.pyquil_to_qiskit(self.pyquil_circuit)
+        program = ExampleCircuits.pyquil_shor()
+        print(program)
+        # qasm = PytketConverter.pyquil_to_qasm(ExampleCircuits.shor_pyquil)
+        qiskit = PytketConverter.pyquil_to_qiskit(program)
         # does not support cu1 gates
-        # pyquil = PytketConverter.qasm_to_pyquil(self.shor_qasm)
+        # pyquil = PytketConverter.qasm_to_pyquil(ExampleCircuits.shor_qasm)
         # print(pyquil)
 
         # # quirk import
@@ -92,7 +31,7 @@ class TestCircuitConverter:
 
     def test_staq(self):
         staq = StaqConverter(
-            "/home/seedrix/tools/staq/build/staq", self.shor_qasm)
+            "/home/seedrix/tools/staq/build/staq", ExampleCircuits.shor_qasm)
         # quil = staq.qasm_to_quil()
         # does not work, because of undefined Dagger instruction
         # program = Program(quil)
@@ -105,21 +44,20 @@ class TestCircuitConverter:
 
     def test_pennylane(self):
         # print(PennylaneConverter.pyquil_to_qasm(self.pyquil_circuit))
-        print(PennylaneConverter.qasm_to_qasm(self.shor_qiskit))
+        print(PennylaneConverter.qasm_to_qasm(ExampleCircuits.qiskit_shor()))
 
     def test_quantastica(self):
-        # qasm = QuantasticaConverter.quil_to_qasm(self.shor_quil)
+        # qasm = QuantasticaConverter.quil_to_qasm(ExampleCircuits.shor_quil)
         # print(qasm)
         # circuit = QuantumCircuit.from_qasm_str(qasm)
         # show_figure(circuit)
-        quil = QuantasticaConverter.qasm_to_quil(self.shor_qasm)
+        quil = QuantasticaConverter.qasm_to_quil(ExampleCircuits.qasm_shor())
         print(quil)
 
     def test_pyquil_own(self):
-        PyquilConverter.import_pyquil(self.pyquil_circuit)
+        PyquilConverter.import_pyquil(ExampleCircuits.pyquil_custom())
 
 
 if __name__ == "__main__":
     test = TestCircuitConverter()
-    test.test_pyquil_own()
-    # test.test_pytket()
+    test.test_pytket()
