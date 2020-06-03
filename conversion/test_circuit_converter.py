@@ -8,19 +8,19 @@ from conversion.staq_converter import StaqConverter
 from qiskit import QuantumCircuit
 from qiskit.tools.visualization import dag_drawer
 from qiskit.aqua.algorithms import Shor
-from conversion.pennylane_converter import PennylaneConverter
+# from conversion.pennylane_converter import PennylaneConverter
 from conversion.quantastica_converter import QuantasticaConverter
 from pyquil.gates import *
 from conversion.pyquil_converter import PyquilConverter
 import numpy as np
 from examples.example_circuits import ExampleCircuits
-
+from pyquil.latex import display, to_latex
 class TestCircuitConverter:
     def test_pytket(self):
-        program = ExampleCircuits.pyquil_shor()
+        program = ExampleCircuits.pyquil_custom()
         print(program)
         # qasm = PytketConverter.pyquil_to_qasm(ExampleCircuits.shor_pyquil)
-        qiskit = PytketConverter.pyquil_to_qiskit(program)
+        tk = pyquil_to_tk(program)
         # does not support cu1 gates
         # pyquil = PytketConverter.qasm_to_pyquil(ExampleCircuits.shor_qasm)
         # print(pyquil)
@@ -42,22 +42,29 @@ class TestCircuitConverter:
         # staq.o2()
         staq.default_optimization()
 
-    def test_pennylane(self):
-        # print(PennylaneConverter.pyquil_to_qasm(self.pyquil_circuit))
-        print(PennylaneConverter.qasm_to_qasm(ExampleCircuits.qiskit_shor()))
+    # def test_pennylane(self):
+        # qiskit = PennylaneConverter.pyquil_to_qasm(ExampleCircuits.pyquil_custom())
+        # print(qiskit)
+
+        # print(PennylaneConverter.qasm_to_qasm(ExampleCircuits.qiskit_shor()))
 
     def test_quantastica(self):
         # qasm = QuantasticaConverter.quil_to_qasm(ExampleCircuits.shor_quil)
         # print(qasm)
         # circuit = QuantumCircuit.from_qasm_str(qasm)
         # show_figure(circuit)
-        quil = QuantasticaConverter.qasm_to_quil(ExampleCircuits.qasm_shor())
-        print(quil)
+        qasm = QuantasticaConverter.pyquil_to_qasm(ExampleCircuits.pyquil_shor())
+        print(qasm)
 
-    def test_pyquil_own(self):
-        PyquilConverter.import_pyquil(ExampleCircuits.pyquil_custom())
+    def test_pyquil_own_import(self):
+        qiskit = PyquilConverter.import_pyquil(ExampleCircuits.pyquil_custom())
+        show_figure(qiskit)
 
-
+    def test_pyquil_own_export(self):
+        program = PyquilConverter.export_pyquil(ExampleCircuits.qiskit_custom())
+        print(program)
+        latex = to_latex(program)
+        print(latex)
 if __name__ == "__main__":
     test = TestCircuitConverter()
-    test.test_pytket()
+    test.test_pyquil_own_export()

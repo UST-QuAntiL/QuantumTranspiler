@@ -27,7 +27,7 @@ print(circuit.draw(show_variable_names=True))
 # print(plugin_converters)
 
 import pennylane_qiskit
-pennylane_qiskit.load_qasm()
+pennylane_qiskit.load()
 
 
 import pennylane_forest

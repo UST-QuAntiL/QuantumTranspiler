@@ -40,8 +40,8 @@ gate_mapping = {
 gate_mapping_qiskit = {}
 gate_mapping_pyquil = {}
 for key, value in gate_mapping.items():
-    qiskit_gate = value["qiskit"]
+    qiskit_gate = value["qiskit"]    
     pyquil_gate = value["pyquil"]
-    gate_mapping_qiskit[qiskit_gate] = {"pyquil": pyquil_gate}
+    gate_mapping_qiskit[qiskit_gate.__name__] = {"pyquil": pyquil_gate}
     gate_mapping_pyquil[pyquil_gate.__name__] = qiskit_gate 
 

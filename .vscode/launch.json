@@ -4,12 +4,20 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
-            "name": "Python: Module",
+            "name": "Python: Module Test Circuit Wrapper",
             "type": "python",
             "request": "launch",
             "justMyCode": false,
             "module": "circuit.test_circuit_wrapper"
+        },
+        {
+            "name": "Python: Module Test Conversions",
+            "type": "python",
+            "request": "launch",
+            "justMyCode": false,
+            "module": "conversion.test_circuit_converter"
         },
         {
             "name": "Python: Current File",
