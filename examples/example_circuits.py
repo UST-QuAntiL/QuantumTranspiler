@@ -44,15 +44,21 @@ class ExampleCircuits:
         # qiskit_circuit.append(custom_gate3, qargs=[0,1])
 
         """sub circuit"""
-        sub_q = QuantumRegister(2)
-        sub_circ = QuantumCircuit(2, 2)
-        sub_circ.cz(0, 1)
-        sub_circ.h(1)
-        sub_circ.h(0)
-        sub_circ.cx(0, 1)
-        sub_circ.measure([0,1],[0,1])
-        sub_inst = sub_circ.to_instruction()
-        qiskit_circuit.append(sub_inst, [3, 4], [2,3])  
+        # sub_q = QuantumRegister(2)
+        # sub_circ = QuantumCircuit(2, 2)
+        # sub_circ.cz(0, 1)
+        # sub_circ.h(1)
+        # sub_circ.h(0)
+        # sub_circ.cx(0, 1)
+        # sub_circ.measure([0,1],[0,1])
+        # sub_inst = sub_circ.to_instruction()
+        # qiskit_circuit.append(sub_inst, [3, 4], [2,3])  
+
+        """parameterized qiskit cirucit"""
+        theta = qiskit_circuit_library.Parameter("θ")
+        qiskit_circuit.rz(theta, 1)
+        
+
         
         qiskit_circuit.rx(np.pi/2, 0)
         qiskit_circuit.measure_all()

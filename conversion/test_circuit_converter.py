@@ -67,6 +67,7 @@ class TestCircuitConverter:
         print(program)
         latex = to_latex(program)
         print(latex)
+        
 if __name__ == "__main__":
     test = TestCircuitConverter()
     test.test_pyquil_own_export()

@@ -1,34 +1,15 @@
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from pyquil import Program
+from pyquil.quilatom import Parameter, quil_sin, quil_cos
 from pyquil.quilbase import Declare, Gate, Halt, Measurement, Pragma, DefGate
 from circuit.qiskit_utility import show_figure
 from conversion.gate_mappings import gate_mapping_qiskit, gate_mapping_pyquil
 from qiskit.extensions import UnitaryGate
-from qiskit.circuit import Qubit, Clbit, Parameter
-import qiskit.circuit as qiskit_library
+from qiskit.circuit import Qubit, Clbit
 from pyquil.gates import NOP, MEASURE
 from qiskit.circuit.exceptions import CircuitError
+import qiskit.circuit as qiskit_circuit_library
 
-theta = Parameter('θ')
-
-n = 5
-
-qc = QuantumCircuit(5, 1)
-
-qc.h(0)
-for i in range(n-1):
-    qc.cx(i, i+1)
-
-qc.barrier()
-qc.rz(theta, range(5))
-qc.barrier()
-
-for i in reversed(range(n-1)):
-    qc.cx(i, i+1)
-qc.h(0)
-qc.measure(0, 0)
-
-qc.draw(output='mpl')
 
 class PyquilConverter:
     @staticmethod
@@ -99,8 +80,7 @@ class PyquilConverter:
             for gate in program.defined_gates:
                 if gate.name == instr.name:
                     gate_found = True
-                    if gate.parameters:
-                        
+                    if gate.parameters:                        
                         print(instr.params)
                         raise NotImplementedError("TODO: " + str(instr)) 
                     else:
@@ -150,19 +130,19 @@ class PyquilConverter:
             qiskit_gate = instr[0]
             qubits = [qreg_mapping[qubit] for qubit in instr[1]]
             
-            if isinstance(qiskit_gate, qiskit_library.Gate):                
+            if isinstance(qiskit_gate, qiskit_circuit_library.Gate):                
                 # usual gates
                 PyquilConverter._handle_gate_export(program, qiskit_gate, qubits)
                 
-            elif isinstance(instr[0], qiskit_library.Barrier):                
+            elif isinstance(instr[0], qiskit_circuit_library.Barrier):                
                 # no pyquil equivalent
                 continue
-            elif isinstance(instr[0], qiskit_library.Measure):
+            elif isinstance(instr[0], qiskit_circuit_library.Measure):
                 qubit = qreg_mapping[instr[1][0]]
                 cbit = creg_mapping[instr[2][0]]
                 program += MEASURE(qubit, cbit)
 
-            elif isinstance(instr[0], qiskit_library.Instruction):
+            elif isinstance(instr[0], qiskit_circuit_library.Instruction):
                 # for sub circuits: recursively build program
                 clbits = [creg_mapping[clbit] for clbit in instr[2]]
                 program += PyquilConverter.export_pyquil(instr[0].decompositions[0], qubits_subcircuit=qubits, clbits_subcircuit = clbits)
@@ -181,11 +161,15 @@ class PyquilConverter:
             if gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]:
                 gate = gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]
                 params = qiskit_gate.params 
+                # parameter is not set
+                for i, param in enumerate(params):
+                    if isinstance(param, qiskit_circuit_library.Parameter):
+                           params[i] = Parameter(param.name)
+
             else:
                 matrix = gate_mapping_qiskit[qiskit_gate_class_name]["matrix"]
                 name = qiskit_gate_class_name
-                gate = PyquilConverter._create_custom_gate(program, matrix, name)                        
-                params = []
+                gate = PyquilConverter._create_custom_gate(program, matrix, name)                                     
         # by matrix defined gates
         else:
             try:
@@ -196,7 +180,8 @@ class PyquilConverter:
             except CircuitError:
                 raise NotImplementedError("Unsupported Gate: " + str(gate)) 
 
-        
+        if not params:
+            params = []
         program += gate(*params, *qubits) 
     
     @staticmethod
