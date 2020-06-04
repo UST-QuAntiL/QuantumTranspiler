@@ -4,10 +4,31 @@ from pyquil.quilbase import Declare, Gate, Halt, Measurement, Pragma, DefGate
 from circuit.qiskit_utility import show_figure
 from conversion.gate_mappings import gate_mapping_qiskit, gate_mapping_pyquil
 from qiskit.extensions import UnitaryGate
-from qiskit.circuit import Qubit, Clbit 
+from qiskit.circuit import Qubit, Clbit, Parameter
 import qiskit.circuit as qiskit_library
 from pyquil.gates import NOP, MEASURE
 from qiskit.circuit.exceptions import CircuitError
+
+theta = Parameter('θ')
+
+n = 5
+
+qc = QuantumCircuit(5, 1)
+
+qc.h(0)
+for i in range(n-1):
+    qc.cx(i, i+1)
+
+qc.barrier()
+qc.rz(theta, range(5))
+qc.barrier()
+
+for i in reversed(range(n-1)):
+    qc.cx(i, i+1)
+qc.h(0)
+qc.measure(0, 0)
+
+qc.draw(output='mpl')
 
 class PyquilConverter:
     @staticmethod
@@ -78,7 +99,12 @@ class PyquilConverter:
             for gate in program.defined_gates:
                 if gate.name == instr.name:
                     gate_found = True
-                    instr_qiskit = UnitaryGate(gate.matrix, label=gate.name)
+                    if gate.parameters:
+                        
+                        print(instr.params)
+                        raise NotImplementedError("TODO: " + str(instr)) 
+                    else:
+                        instr_qiskit = UnitaryGate(gate.matrix, label=gate.name)
             
             if not gate_found:  
                 raise NotImplementedError("Unsupported Gate: " + str(instr))                
@@ -98,45 +124,37 @@ class PyquilConverter:
         return program.out()
 
     @staticmethod
-    def export_pyquil(circuit: QuantumCircuit) -> Program:        
+    def export_pyquil(circuit: QuantumCircuit, qubits_subcircuit = None, clbits_subcircuit = None) -> Program:        
         program = Program()
         qreg_mapping = {}
         creg_mapping = {}  
 
+        
+        # for subcircuits function is called recursively        
         for i, qubit in enumerate(circuit.qubits):
-            qreg_mapping[qubit] = i
+            if qubits_subcircuit:
+                qreg_mapping[qubit] = qubits_subcircuit[i]
+            # usual mapping
+            else:
+                qreg_mapping[qubit] = i                            
 
         for cr in circuit.cregs:
             creg_pyquil = program.declare(cr.name, 'BIT', cr.size)
             for i, clbit in enumerate(cr):
-                creg_mapping[clbit] = creg_pyquil[i]
+                if clbits_subcircuit:
+                    creg_mapping[clbit] = clbits_subcircuit[i]
+                else:
+                    creg_mapping[clbit] = creg_pyquil[i]
 
         for instr in circuit.data:
             qiskit_gate = instr[0]
             qubits = [qreg_mapping[qubit] for qubit in instr[1]]
             
-            if isinstance(qiskit_gate, qiskit_library.Gate):
+            if isinstance(qiskit_gate, qiskit_library.Gate):                
                 # usual gates
-                if qiskit_gate.__class__.__name__ in gate_mapping_qiskit:
-                    gate = gate_mapping_qiskit[qiskit_gate.__class__.__name__]["pyquil"]
-                    print(qiskit_gate.params)
+                PyquilConverter._handle_gate_export(program, qiskit_gate, qubits)
                 
-                # by matrix defined gates
-                else:
-                    try:
-                        matrix = qiskit_gate.to_matrix()     
-                        # get name (construction is the same as qiskit's in the qasm method)
-                        name = qiskit_gate.label if qiskit_gate.label else "unitary" + str(id(qiskit_gate)) 
-                        custom_gate_definition = DefGate(name, matrix)
-                        gate = custom_gate_definition.get_constructor()  
-                        program += custom_gate_definition  
-                        
-                    except CircuitError:
-                        raise NotImplementedError("Unsupported Gate: " + str(gate)) 
-
-                program += gate(*qubits) 
-                
-            elif isinstance(instr[0], qiskit_library.Barrier):
+            elif isinstance(instr[0], qiskit_library.Barrier):                
                 # no pyquil equivalent
                 continue
             elif isinstance(instr[0], qiskit_library.Measure):
@@ -144,61 +162,47 @@ class PyquilConverter:
                 cbit = creg_mapping[instr[2][0]]
                 program += MEASURE(qubit, cbit)
 
+            elif isinstance(instr[0], qiskit_library.Instruction):
+                # for sub circuits: recursively build program
+                clbits = [creg_mapping[clbit] for clbit in instr[2]]
+                program += PyquilConverter.export_pyquil(instr[0].decompositions[0], qubits_subcircuit=qubits, clbits_subcircuit = clbits)
+
+
+            else:
+                raise NotImplementedError("Unsupported Instruction: " + str(instr)) 
+
+
         return program
 
-        # creg_sizes = {}
-        # for b in tkcirc.bits:
-        #     if len(b.index) != 1:
-        #         raise NotImplementedError("PyQuil registers must use a single index")
-        #     if (b.reg_name not in creg_sizes) or (b.index[0] >= creg_sizes[b.reg_name]):
-        #         creg_sizes.update({b.reg_name: b.index[0] + 1})
-        # cregmap = {}
-        # for reg_name, size in creg_sizes.items():
-        #     name = reg_name
-        #     if name == "c":
-        #         name = "ro"
-        #     quil_reg = p.declare(name, "BIT", size)
-        #     cregmap.update({reg_name: quil_reg})
-        # if active_reset:
-        #     p.reset()
-        # measures = []
-        # measured_qubits = []
-        # used_bits = []
-        # for command in tkcirc:
-        #     op = command.op
-        #     optype = op.type
-        #     if optype == OpType.Measure:
-        #         qb = Qubit_(command.args[0].index[0])
-        #         if qb in measured_qubits:
-        #             raise NotImplementedError(
-        #                 "Cannot apply gate on qubit " + qb.__repr__() + " after measurement"
-        #             )
-        #         bit = command.args[1]
-        #         b = cregmap[bit.reg_name][bit.index[0]]
-        #         measures.append(Measurement(qb, b))
-        #         measured_qubits.append(qb)
-        #         used_bits.append(bit)
-        #         continue
-        #     elif optype == OpType.Barrier:
-        #         continue  # pyQuil cannot handle barriers
-        #     qubits = [Qubit_(qb.index[0]) for qb in command.args]
-        #     for qb in qubits:
-        #         if qb in measured_qubits:
-        #             raise NotImplementedError(
-        #                 "Cannot apply gate on qubit " + qb.__repr__() + " after measurement"
-        #             )
-        #     try:
-        #         gatetype = _known_quil_gate_rev[optype]
-        #     except KeyError as error:
-        #         raise NotImplementedError(
-        #             "Cannot convert tket Op to pyQuil gate: " + op.get_name()
-        #         ) from error
-        #     params = [float((p * pi).evalf()) for p in op.params]
-        #     g = Gate(gatetype, params, qubits)
-        #     p += g
-        # for m in measures:
-        #     p += m
-        # if return_used_bits:
-        #     return p, used_bits
-        # return p
+    @staticmethod
+    def _handle_gate_export(program, qiskit_gate, qubits) -> None:   
+        qiskit_gate_class_name = qiskit_gate.__class__.__name__
+        if qiskit_gate_class_name in gate_mapping_qiskit:
+            if gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]:
+                gate = gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]
+                params = qiskit_gate.params 
+            else:
+                matrix = gate_mapping_qiskit[qiskit_gate_class_name]["matrix"]
+                name = qiskit_gate_class_name
+                gate = PyquilConverter._create_custom_gate(program, matrix, name)                        
+                params = []
+        # by matrix defined gates
+        else:
+            try:
+                matrix = qiskit_gate.to_matrix() 
+                # get name (construction is the same as qiskit's in the qasm method)
+                name = qiskit_gate.label if qiskit_gate.label else "unitary" + str(id(qiskit_gate)) 
+                gate = PyquilConverter._create_custom_gate(program, matrix, name)  
+            except CircuitError:
+                raise NotImplementedError("Unsupported Gate: " + str(gate)) 
+
+        
+        program += gate(*params, *qubits) 
+    
+    @staticmethod
+    def _create_custom_gate(program, matrix, name):
+        custom_gate_definition = DefGate(name, matrix)
+        gate = custom_gate_definition.get_constructor()  
+        program += custom_gate_definition  
+        return gate
             

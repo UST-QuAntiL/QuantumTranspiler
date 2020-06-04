@@ -53,7 +53,7 @@ class PennylaneConverter:
         
 
     @staticmethod
-    def qasm_to_qasm(circuit: QuantumCircuit) -> str:
+    def qiskit_to_qiskit(circuit: QuantumCircuit) -> str:
         """
             test method
             does not support measure, CU1Gate, Barrier ...
@@ -61,7 +61,8 @@ class PennylaneConverter:
         def circuit_function():
             qml.from_qiskit(circuit)()
             return qml.expval(qml.PauliZ(0))
-        return PennylaneConverter._function_to_qiskit_circuit_own_device(circuit_function)    
+        return PennylaneConverter._function_to_qiskit_circuit_own_device(circuit_function)  
+  
 
         
 
