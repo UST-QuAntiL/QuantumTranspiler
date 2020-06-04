@@ -70,4 +70,4 @@ class TestCircuitConverter:
         
 if __name__ == "__main__":
     test = TestCircuitConverter()
-    test.test_pyquil_own_export()
+    test.test_pyquil_own_import()

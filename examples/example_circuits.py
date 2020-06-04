@@ -29,7 +29,7 @@ class ExampleCircuits:
         qiskit_circuit.cz(1, 2)
 
         """standard qiskit gate without direct translation in Pyquil"""
-        c3xGate = qiskit_gates.C3XGate()
+        # c3xGate = qiskit_gates.C3XGate()
         # qiskit_circuit.append(c3xGate, qargs=[0, 1, 2, 3])
 
         """custom gate"""
@@ -76,25 +76,31 @@ class ExampleCircuits:
         program += CCNOT(0, 1, 2)
         program += H(4)
         program += X(1)
-        # custom gate
+        """cstom gate"""
         sqrt_x = np.array([[0.5+0.5j,  0.5-0.5j],
                            [0.5-0.5j,  0.5+0.5j]])
         sqrt_x_definition = DefGate("SQRT-X", sqrt_x)
         SQRT_X = sqrt_x_definition.get_constructor()
         program += sqrt_x_definition
         program += SQRT_X(0)
-        # parameterized custom gate
-        theta = Parameter('theta')
-        crx = np.array([
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, quil_cos(theta / 2), -1j * quil_sin(theta / 2)],
-            [0, 0, -1j * quil_sin(theta / 2), quil_cos(theta / 2)]
-        ])
-        gate_definition = DefGate('CRX', crx, [theta])
-        CRX = gate_definition.get_constructor()        
+        """parameterized custom gate""" 
+        # theta = Parameter('theta')
+        # crx = np.array([
+        #     [1, 0, 0, 0],
+        #     [0, 1, 0, 0],
+        #     [0, 0, quil_cos(theta / 2), -1j * quil_sin(theta / 2)],
+        #     [0, 0, -1j * quil_sin(theta / 2), quil_cos(theta / 2)]
+        # ])
+        # gate_definition = DefGate('CRX', crx, [theta])
+        # CRX = gate_definition.get_constructor()        
         # program += gate_definition        
         # program += CRX(np.pi/2)(0, 1)
+
+        """parameterized pyquil circuit"""
+        theta = Parameter("θ")
+        program += RY(theta, 0)
+
+
         program += MEASURE(0, ro[0])
         program += H(0)
         program += MEASURE(0, ra[1])

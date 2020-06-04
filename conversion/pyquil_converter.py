@@ -65,13 +65,17 @@ class PyquilConverter:
         return (circuit, qreg_mapping, creg_mapping)
 
     @staticmethod
-    def _handle_gate_import(circuit, instr, program, qreg_mapping) -> None:     
-          
+    def _handle_gate_import(circuit, instr, program, qreg_mapping) -> None:           
         if instr.name in gate_mapping_pyquil:           
             # get the instruction
             instr_qiskit_class = gate_mapping_pyquil[instr.name]
             # TODO check if division by pi is necessary (pytket does this)
             params = instr.params
+            for i, param in enumerate(params):
+                # parameterized circuit --> add Qiskit Parameter Object (convert from Pyquil Parameter Object)
+                if isinstance(param, Parameter):
+                    params[i] = qiskit_circuit_library.Parameter(param.name)
+
             instr_qiskit = instr_qiskit_class(*params)
 
         # custom gates
@@ -161,8 +165,9 @@ class PyquilConverter:
             if gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]:
                 gate = gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]
                 params = qiskit_gate.params 
-                # parameter is not set
+                
                 for i, param in enumerate(params):
+                    # parameterized circuit --> add Pyquil Parameter Object (convert from Qiskit Parameter Object)
                     if isinstance(param, qiskit_circuit_library.Parameter):
                            params[i] = Parameter(param.name)
 
