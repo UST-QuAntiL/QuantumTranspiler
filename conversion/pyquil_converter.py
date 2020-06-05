@@ -161,11 +161,13 @@ class PyquilConverter:
     @staticmethod
     def _handle_gate_export(program, qiskit_gate, qubits) -> None:  
         params = None 
+        gate = None
+
         qiskit_gate_class_name = qiskit_gate.__class__.__name__
         if qiskit_gate_class_name in gate_mapping_qiskit:
             params = qiskit_gate.params 
             # check if pyquil gate/replacement program is defined (else pyquil is None and the corresponding matrix might be used)
-            if gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]:                
+            if "pyquil" in gate_mapping_qiskit[qiskit_gate_class_name] and gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]:                
                 pyquil_dict = gate_mapping_qiskit[qiskit_gate_class_name]["pyquil"]
 
                 # 1:1 gate translation
@@ -179,7 +181,7 @@ class PyquilConverter:
                     raise NameError("Neither gate nor replacement program defined for: " + str(qiskit_gate))                  
                 
 
-            else:
+            if (gate is None) and ("matrix" in gate_mapping_qiskit[qiskit_gate_class_name]):
                 matrix = gate_mapping_qiskit[qiskit_gate_class_name]["matrix"]
                 name = qiskit_gate_class_name
                 gate = PyquilConverter._create_custom_gate_pyquil(program, matrix, name)   
@@ -191,7 +193,7 @@ class PyquilConverter:
                            params[i] = pyquil_Parameter(param.name)
                                                  
         # by matrix defined gates
-        else:
+        if gate is None:
             try:
                 matrix = qiskit_gate.to_matrix() 
                 # get name (construction is the same as qiskit's in the qasm method)
