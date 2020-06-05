@@ -98,7 +98,7 @@ class ExampleCircuits:
         SQRT_X = sqrt_x_definition.get_constructor()
         program += sqrt_x_definition
         program += SQRT_X(0)
-        """parameterized custom gate"""
+        """NOT working: parameterized custom gate"""
         # theta = Parameter('theta')
         # crx = np.array([
         #     [1, 0, 0, 0],

@@ -85,10 +85,19 @@ class PyquilConverter:
             for gate in program.defined_gates:
                 if gate.name == instr.name:
                     gate_found = True
-                    if gate.parameters:                        
-                        print(instr.params)
+                    if gate.parameters:   
+                        for i, param in enumerate(instr.params):
+                            if isinstance(param, pyquil_Parameter):
+                                raise NotImplementedError("Cannot convert parameterized custom gates (with general parameter) to Qiskit: " + str(instr))  
+                            if isinstance(gate.parameters[i], pyquil_Parameter):
+                                raise NotImplementedError("Cannot convert parameterized custom gates to Qiskit: " + str(instr))                        
+                                
+                            substitution_dict = {gate.parameters[i]: param}
+                            gate.parameters[i]._substitute(substitution_dict)
+                        print(instr)
                         print(gate.matrix)
-                        raise NotImplementedError("TODO: " + str(instr)) 
+                        print(gate.parameters)
+                        
                     else:
                         instr_qiskit = UnitaryGate(gate.matrix, label=gate.name)
             

@@ -17,6 +17,7 @@ from conversion.pyquil_converter import PyquilConverter
 import numpy as np
 from examples.example_circuits import ExampleCircuits
 from pyquil.latex import display, to_latex
+
 class TestCircuitConverter:
     def test_pytket(self):
         program = ExampleCircuits.pyquil_custom()
@@ -70,4 +71,4 @@ class TestCircuitConverter:
         
 if __name__ == "__main__":
     test = TestCircuitConverter()
-    test.test_pyquil_own_export()
+    test.test_pyquil_own_import()
