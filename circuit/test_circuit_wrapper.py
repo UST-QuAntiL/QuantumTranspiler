@@ -25,4 +25,4 @@ class TestCircuitWrapper:
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_pyquil_export()
+    test.test_pyquil_import()

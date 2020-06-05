@@ -87,6 +87,7 @@ class PyquilConverter:
                     gate_found = True
                     if gate.parameters:                        
                         print(instr.params)
+                        print(gate.matrix)
                         raise NotImplementedError("TODO: " + str(instr)) 
                     else:
                         instr_qiskit = UnitaryGate(gate.matrix, label=gate.name)
@@ -105,8 +106,8 @@ class PyquilConverter:
 
     @staticmethod
     def export_quil(circuit: QuantumCircuit) -> str:
-        program = PyquilConverter.export_pyquil(circuit)
-        return program.out()
+        (program, qreg_mapping, creg_mapping) = PyquilConverter.export_pyquil(circuit)
+        return (program.out(), qreg_mapping, creg_mapping)
 
     @staticmethod
     def export_pyquil(circuit: QuantumCircuit, qubits_subcircuit = None, clbits_subcircuit = None) -> Program:        
@@ -150,13 +151,13 @@ class PyquilConverter:
             elif isinstance(instr[0], qiskit_circuit_library.Instruction):
                 # for sub circuits: recursively build program
                 clbits = [creg_mapping[clbit] for clbit in instr[2]]
-                program += PyquilConverter.export_pyquil(instr[0].decompositions[0], qubits_subcircuit=qubits, clbits_subcircuit = clbits)
+                program += PyquilConverter.export_pyquil(instr[0].decompositions[0], qubits_subcircuit=qubits, clbits_subcircuit = clbits)[0]
 
 
             else:
                 raise NotImplementedError("Unsupported Instruction: " + str(instr)) 
 
-        return program
+        return (program, qreg_mapping, creg_mapping)
 
     @staticmethod
     def _handle_gate_export(program, qiskit_gate, qubits) -> None:  

@@ -12,17 +12,21 @@ class CircuitWrapper:
             self.circuit = qiskit_circuit
         else:
             self.circuit = QuantumCircuit()
-            self.qreg_mapping = {}
-            self.creg_mapping = {}
+            self.qreg_mapping_import = {}
+            self.creg_mapping_import = {}
+            self.qreg_mapping_export = {}
+            self.creg_mapping_export = {}
 
     def import_pyquil(self, program: Program) -> None:
-        (self.circuit, self.qreg_mapping, self.creg_mapping) = PyquilConverter.import_pyquil(program)
+        (self.circuit, self.qreg_mapping_import, self.creg_mapping) = PyquilConverter.import_pyquil(program)
 
     def import_quil(self, quil: str) -> None:
-        (self.circuit, self.qreg_mapping, self.creg_mapping) = PyquilConverter.import_quil(quil)
+        (self.circuit, self.qreg_mapping_import, self.creg_mapping) = PyquilConverter.import_quil(quil)
 
     def export_pyquil(self) -> Program:
-        return PyquilConverter.export_pyquil(self)
+        (program, self.qreg_mapping_export, self.creg_mapping_export) = PyquilConverter.export_pyquil(self.circuit)
+        return program
 
     def export_quil(self) -> str:
-        return PyquilConverter.export_quil(self)
+        (quil, self.qreg_mapping_export, self.creg_mapping_export) = PyquilConverter.export_quil(self.circuit)
+        return quil
