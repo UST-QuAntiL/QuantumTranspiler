@@ -5,7 +5,7 @@ creg c0[5];
 creg meas[5];
 cx q[0],q[1];
 cz q[1],q[2];
-mcx q[0],q[1],q[2],q[3];
+rz(θ) q[1];
 rx(pi/2) q[0];
 barrier q[0],q[1],q[2],q[3],q[4];
 measure q[0] -> meas[0];
