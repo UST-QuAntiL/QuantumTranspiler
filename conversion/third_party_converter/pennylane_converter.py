@@ -5,7 +5,7 @@ from pyquil import Program
 from circuit.qiskit_utility import show_figure
 from qiskit import QuantumCircuit
 import pennylane_forest
-from conversion.pennylane_device import QASMDevice 
+from conversion.third_party_converter.pennylane_device import QASMDevice 
 import numpy as np
 
 class PennylaneConverter:

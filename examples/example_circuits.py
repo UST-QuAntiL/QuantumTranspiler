@@ -24,11 +24,16 @@ class ExampleCircuits:
         cr = ClassicalRegister(5)
         """multiple quantum register"""
         # qiskit_circuit = QuantumCircuit(qr, qr2)
-        qiskit_circuit = QuantumCircuit(5)
 
+        qiskit_circuit = QuantumCircuit(5)
         qiskit_circuit.add_register(cr)
 
-        """standard qiskit gate without direct translation in Pyquil"""
+        """standard qiskit gate """
+        gate = qiskit_gates.CXGate()
+        qiskit_circuit.append(gate, qargs=[0,1])
+
+        """standard qiskit gate without direct translation in Pyquil 
+        """
         # c3xGate = qiskit_gates.C3XGate()
         # qiskit_circuit.append(c3xGate, qargs=[0, 1, 2, 3])
 
@@ -61,7 +66,6 @@ class ExampleCircuits:
         # sub_circ.h(1)
         # sub_circ.h(0)
         # sub_circ.cx(0, 1)
-        # sub_circ.measure([0,1],[0,1])
         # sub_inst = sub_circ.to_instruction()
         # qiskit_circuit.append(sub_inst, [3, 4], [2,3])
 
@@ -74,9 +78,11 @@ class ExampleCircuits:
         # lambd = qiskit_circuit_library.Parameter("λ")
         # u2 = qiskit_gates.U2Gate(np.pi, lambd)
         # qiskit_circuit.append(u2, [1])
+        
 
-        qiskit_circuit.rx(np.pi/2, 0)
+        """measurement"""
         # qiskit_circuit.measure_all()
+
         show_figure(qiskit_circuit)
         return qiskit_circuit
 

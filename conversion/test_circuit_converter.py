@@ -1,19 +1,20 @@
 from pytket.qasm import circuit_from_qasm, circuit_to_qasm
 from pytket.pyquil import pyquil_to_tk, tk_to_pyquil
 from pytket.qiskit import qiskit_to_tk
-
+from conversion.conversion_handler import ConversionHandler
 from pyquil import Program, get_qc
 from pyquil.gates import H, CNOT, CCNOT
-from conversion.pytket_converter import PytketConverter
+from conversion.third_party_converter.pytket_converter import PytketConverter
 from circuit.qiskit_utility import show_figure
-from conversion.staq_converter import StaqConverter
+from conversion.third_party_converter.staq_converter import StaqConverter
 from qiskit import QuantumCircuit
 from qiskit.tools.visualization import dag_drawer
 from qiskit.aqua.algorithms import Shor
-from conversion.pennylane_converter import PennylaneConverter
-from conversion.quantastica_converter import QuantasticaConverter
+from conversion.third_party_converter.pennylane_converter import PennylaneConverter
+from conversion.third_party_converter.quantastica_converter import QuantasticaConverter
 from pyquil.gates import *
-from conversion.pyquil_converter import PyquilConverter
+from conversion.converter.converter_interface import ConverterInterface
+from conversion.converter.pyquil_converter import PyquilConverter
 import numpy as np
 from examples.example_circuits import ExampleCircuits
 from pyquil.latex import display, to_latex
@@ -60,15 +61,19 @@ class TestCircuitConverter:
         print(pyquil)
 
     def test_pyquil_own_import(self):
-        qiskit = PyquilConverter.import_pyquil(ExampleCircuits.pyquil_custom())
+        converter = PyquilConverter()
+        handler = ConversionHandler(converter)
+        qiskit = handler.import_circuit(ExampleCircuits.pyquil_custom())
         show_figure(qiskit[0])
 
     def test_pyquil_own_export(self):
-        program = PyquilConverter.export_pyquil(ExampleCircuits.qiskit_custom())
+        converter = PyquilConverter()
+        handler = ConversionHandler(converter)
+        program = handler.export_circuit(ExampleCircuits.qiskit_custom())[0]
         print(program)
         latex = to_latex(program)
         print(latex)
         
 if __name__ == "__main__":
     test = TestCircuitConverter()
-    test.test_pyquil_own_import()
+    test.test_pyquil_own_export()

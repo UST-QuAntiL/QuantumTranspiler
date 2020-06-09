@@ -4,7 +4,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from pyquil import Program
 from pyquil.quilatom import Parameter as pyquil_Parameter
-from conversion.pyquil_replacement_programs import u2_replacement, u3_replacement
+from conversion.mappings.replacement_pyquil import u2_replacement, u3_replacement
 
 gate_mapping = {
     # single qubits
@@ -45,7 +45,7 @@ gate_mapping = {
     # (qiskit.CU1Gate, pyquil.CPHASE10),   
 
     # TODO gates from https://qiskit.org/documentation/apidoc/circuit_library.html?highlight=circuit%20library
-    "C3XGate": {"qiskit": qiskit.C3XGate, "pyquil": None,"matrix": np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "C3X": {"qiskit": qiskit.C3XGate, "pyquil": None,"matrix": np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
