@@ -29,7 +29,7 @@ class ExampleCircuits:
         qiskit_circuit.add_register(cr)
 
         """standard qiskit gate """
-        gate = qiskit_gates.CXGate()
+        # gate = qiskit_gates.CXGate()
         # qiskit_circuit.append(gate, qargs=[0,1])
 
         """standard qiskit gate with control """
@@ -38,12 +38,7 @@ class ExampleCircuits:
 
         """standard qiskit gate that are not working yet: e.g. CRX """
         # gate = qiskit_gates.RXGate(np.pi/2).control(1)
-        # qiskit_circuit.append(gate, qargs=[0,1])
-
-        """standard qiskit gate without direct translation in Pyquil 
-        """
-        # c3xGate = qiskit_gates.C3XGate()
-        # qiskit_circuit.append(c3xGate, qargs=[0, 1, 2, 3])
+        # qiskit_circuit.append(gate, qargs=[0,1])        
 
         """custom gate"""
         # custom_matrix1 = np.array([
@@ -86,6 +81,11 @@ class ExampleCircuits:
         # lambd = qiskit_circuit_library.Parameter("λ")
         # u2 = qiskit_gates.U2Gate(np.pi, lambd)
         # qiskit_circuit.append(u2, [1])
+
+        """qiskit gate that has no 1:1 standard gate in pyquil example 2
+        """
+        # c3xGate = qiskit_gates.C3XGate()
+        # qiskit_circuit.append(c3xGate, qargs=[0, 1, 2, 3])
         
 
         """measurement"""
@@ -109,9 +109,12 @@ class ExampleCircuits:
         # program += H(4)
         # program += X(1)
 
+        """pyquil gate with no 1:1 qiskit gate"""
+        program += CPHASE00(np.pi, 1, 0)
+
         """modifier"""
-        gate = RX(np.pi/4, 1).dagger().controlled(0)
-        program += gate
+        # gate = RX(np.pi/4, 1).dagger().controlled(0)
+        # program += gate
 
         """custom gate"""
         # sqrt_x = np.array([[0.5+0.5j,  0.5-0.5j],

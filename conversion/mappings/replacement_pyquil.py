@@ -20,3 +20,8 @@ def u3_replacement(theta, phi, lam):
     p += RX(np.pi/2, 0)
     p += RZ(lam - np.pi/2, 0)
     return p
+
+def c3x_replacement():
+    p = Program()
+    p += CCNOT(1,2,3).controlled(0)
+    return p

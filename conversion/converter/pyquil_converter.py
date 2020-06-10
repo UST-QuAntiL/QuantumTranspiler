@@ -66,7 +66,13 @@ class PyquilConverter(ConverterInterface):
         modifiers = instr.modifiers   
         if instr.name in gate_mapping_pyquil:             
             # get the instruction
-            instr_qiskit_class = gate_mapping_pyquil[instr.name]
+            if "g" in gate_mapping_pyquil[instr.name]:
+                instr_qiskit_class = gate_mapping_pyquil[instr.name]["g"]
+            # replacement circuit
+            elif "r" in gate_mapping_pyquil[instr.name]:
+                instr_qiskit_class = gate_mapping_pyquil[instr.name]["r"]
+            else:
+                raise NameError("Gate defined in gate mapping but neither gate nor replacement circuit is given: " + str(instr))
             # TODO check if division by pi is necessary (pytket does this)
             params = instr.params
             for i, param in enumerate(params):

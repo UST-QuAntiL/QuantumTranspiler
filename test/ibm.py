@@ -23,7 +23,7 @@ from qiskit.quantum_info.operators import Operator
 from qiskit.quantum_info.random import random_unitary
 from qiskit.transpiler.passes import Unroll3qOrMore, Unroller, Optimize1qGates
 import qiskit.circuit.library.standard_gates as qiskit_gate
-
+import pyquil.gates as pyquil_gates
 
 my_gate = Gate(name='my_gate', num_qubits=2, params=[])
 
@@ -221,6 +221,35 @@ def check_equivalence(gate1, gate2):
     if (gate1 == gate2):
         print("eq")
 
+def phase_check():
+    phi = np.pi
+    cphase_matrix = np.array([
+        [1,0,0,0],
+        [0,1,0,0],
+        [0,0,1,0],
+        [0,0,0,np.e**(1j*phi)]
+    ], dtype=complex)
+
+    cphase00_matrix = np.array([
+        [np.e**(1j*phi),0,0,0],
+        [0,1,0,0],
+        [0,0,1,0],
+        [0,0,0,1]
+    ], dtype=complex)
+
+    cu1_matrix = np.array([
+        [1,0,0,0],
+        [0,1,0,0],
+        [0,0,1,0],
+        [0,0,0,np.e**(1j*phi)]
+    ], dtype=complex)
+
+    cu1gate_qiskit = qiskit_gate.CU1Gate(phi, ctrl_state="0")
+
+    cu1gate = UnitaryGate(cu1_matrix)
+    cphasegate = UnitaryGate(cphase_matrix)
+    cphase00gate = UnitaryGate(cphase00_matrix)
+    check_equivalence(cu1gate, cphasegate)
 
 if __name__ == "__main__":
 
@@ -232,7 +261,7 @@ if __name__ == "__main__":
     # qasm = c.qasm()
     # backend = FakeTenerife()
     # new_circuit = transpile(c, backend)
-    gate_to_matrix()
+    phase_check()
     # show_figure(new_circuit)
 
     # qiskit_gates.CRZGate(np.pi)
