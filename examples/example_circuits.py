@@ -30,7 +30,15 @@ class ExampleCircuits:
 
         """standard qiskit gate """
         gate = qiskit_gates.CXGate()
-        qiskit_circuit.append(gate, qargs=[0,1])
+        # qiskit_circuit.append(gate, qargs=[0,1])
+
+        """standard qiskit gate with control """
+        # gate = qiskit_gates.HGate().control(1)
+        # qiskit_circuit.append(gate, qargs=[0,1])
+
+        """standard qiskit gate that are not working yet: e.g. CRX """
+        # gate = qiskit_gates.RXGate(np.pi/2).control(1)
+        # qiskit_circuit.append(gate, qargs=[0,1])
 
         """standard qiskit gate without direct translation in Pyquil 
         """
@@ -89,21 +97,30 @@ class ExampleCircuits:
     @staticmethod
     def pyquil_custom() -> Program:
         program = Program()
-        ro = program.declare('ro', 'BIT', 3)
-        ra = program.declare('ra', 'BIT', 2)
-        program += H(0)
-        program += CNOT(0, 1)
-        program += RX(np.pi, 2)
-        program += CCNOT(0, 1, 2)
-        program += H(4)
-        program += X(1)
+        # ro = program.declare('ro', 'BIT', 3)
+        # ra = program.declare('ra', 'BIT', 2)
+
+
+        """pyquil gates"""
+        # program += H(0)
+        # program += CNOT(0, 1)
+        # program += RX(np.pi, 2)
+        # program += CCNOT(0, 1, 2)
+        # program += H(4)
+        # program += X(1)
+
+        """modifier"""
+        gate = RX(np.pi/4, 1).dagger().controlled(0)
+        program += gate
+
         """custom gate"""
-        sqrt_x = np.array([[0.5+0.5j,  0.5-0.5j],
-                           [0.5-0.5j,  0.5+0.5j]])
-        sqrt_x_definition = DefGate("SQRT-X", sqrt_x)
-        SQRT_X = sqrt_x_definition.get_constructor()
-        program += sqrt_x_definition
-        program += SQRT_X(0)
+        # sqrt_x = np.array([[0.5+0.5j,  0.5-0.5j],
+        #                    [0.5-0.5j,  0.5+0.5j]])
+        # sqrt_x_definition = DefGate("SQRT-X", sqrt_x)
+        # SQRT_X = sqrt_x_definition.get_constructor()
+        # program += sqrt_x_definition
+        # program += SQRT_X(0)
+
         """NOT working: parameterized custom gate"""
         # theta = Parameter('theta')
         # crx = np.array([
@@ -118,17 +135,14 @@ class ExampleCircuits:
         # program += CRX(np.pi/2)(0, 1)
 
         """parameterized pyquil circuit"""
-        theta = Parameter("θ")
-        program += RY(theta, 0)
+        # theta = Parameter("θ")
+        # program += RY(theta, 0)
 
-        program += MEASURE(0, ro[0])
-        program += H(0)
-        program += MEASURE(0, ra[1])
-        program += MEASURE(1, ra[0])
+        """meausrements"""
+        # program += MEASURE(0, ro[0])
+        # program += MEASURE(0, ra[1])
+        # program += MEASURE(1, ra[0])
 
-        subprogram = Program()
-        subprogram += H(0)
-        program += subprogram
         return program
 
     @staticmethod

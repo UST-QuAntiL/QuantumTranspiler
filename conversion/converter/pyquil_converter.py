@@ -62,8 +62,9 @@ class PyquilConverter(ConverterInterface):
 
         return (circuit, qreg_mapping, creg_mapping)
 
-    def _handle_gate_import(self, circuit, instr, program, qreg_mapping) -> None:           
-        if instr.name in gate_mapping_pyquil:           
+    def _handle_gate_import(self, circuit, instr, program, qreg_mapping) -> None:     
+        modifiers = instr.modifiers   
+        if instr.name in gate_mapping_pyquil:             
             # get the instruction
             instr_qiskit_class = gate_mapping_pyquil[instr.name]
             # TODO check if division by pi is necessary (pytket does this)
@@ -73,8 +74,10 @@ class PyquilConverter(ConverterInterface):
                 if isinstance(param, pyquil_Parameter):
                     params[i] = qiskit_Parameter(param.name)
 
-            instr_qiskit = instr_qiskit_class(*params)
+            # reverse needed, because the first operation is at the end of the list (for whatever reason)
+            # and modifier are not always commutative            
 
+            instr_qiskit = instr_qiskit_class(*params)   
         # custom gates
         else:
             gate_found = False
@@ -97,6 +100,13 @@ class PyquilConverter(ConverterInterface):
             if not gate_found:  
                 raise NotImplementedError("Unsupported Gate: " + str(instr))                
             
+        for modifier in reversed(modifiers):
+                if modifier == "CONTROLLED":
+                    instr_qiskit = instr_qiskit.control(1)
+                elif modifier == "DAGGER":
+                    instr_qiskit = instr_qiskit.inverse()
+                else:
+                    raise NotImplementedError("Unsupported Modifier: " + str(modifier))
 
         # get the qubits on which the instruction operates
         qargs = [qreg_mapping[qubit.index]
