@@ -91,14 +91,14 @@ class PyquilConverter(ConverterInterface):
                 if gate.name == instr.name:
                     gate_found = True
                     if gate.parameters:   
-                        for i, param in enumerate(instr.params):
-                            if isinstance(param, pyquil_Parameter):
-                                raise NotImplementedError("Cannot convert parameterized custom gates (with general parameter) to Qiskit: " + str(instr))  
-                            if isinstance(gate.parameters[i], pyquil_Parameter):
-                                raise NotImplementedError("Cannot convert parameterized custom gates to Qiskit: " + str(instr))    
-                        print(instr)
-                        print(gate.matrix)
-                        print(gate.parameters)
+                        # no possibility to bind pyquil parameter to value before execution on a device (like the qiskit equivalent assign_parameters)
+                        # and no possibility to define parametric custom gates in qiskit
+                        raise NotImplementedError("Cannot convert parameterized custom gates to Qiskit: " + str(instr))
+                        # for i, param in enumerate(instr.params):                            
+                            # if isinstance(param, pyquil_Parameter):
+                            #     raise NotImplementedError("Cannot convert parameterized custom gates (with general parameter) to Qiskit: " + str(instr))  
+                            # if isinstance(gate.parameters[i], pyquil_Parameter):
+                            #     raise NotImplementedError("Cannot convert parameterized custom gates to Qiskit: " + str(instr))     
                         
                     else:
                         instr_qiskit = UnitaryGate(gate.matrix, label=gate.name)
