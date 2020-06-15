@@ -4,8 +4,8 @@ import numpy as np
 from qiskit import QuantumCircuit
 from pyquil import Program
 from pyquil.quilatom import Parameter as pyquil_Parameter
-from conversion.mappings.replacement_pyquil import u2_replacement, u3_replacement, c3x_replacement
-from conversion.mappings.replacement_qiskit import cphase00_replacement, cphase01_replacement, cphase10_replacement
+import conversion.mappings.replacement_pyquil as pyquil_replacement
+import conversion.mappings.replacement_qiskit as qiskit_replacement
 
 gate_mapping = {
     # single qubits
@@ -21,8 +21,8 @@ gate_mapping = {
     "RY": {"qiskit": {"g": qiskit.RYGate}, "pyquil": {"g": pyquil.RY}},
     "RZ": {"qiskit": {"g": qiskit.RZGate}, "pyquil": {"g": pyquil.RZ}},
     "U1": {"qiskit": {"g": qiskit.U1Gate}, "pyquil": {"g": pyquil.PHASE}},
-    "U2": {"qiskit": {"g": qiskit.U2Gate}, "pyquil": {"r": u2_replacement}}, 
-    "U3": {"qiskit": {"g": qiskit.U3Gate}, "pyquil": {"r": u3_replacement}},  
+    "U2": {"qiskit": {"g": qiskit.U2Gate}, "pyquil": {"r": pyquil_replacement.u2_replacement}}, 
+    "U3": {"qiskit": {"g": qiskit.U3Gate}, "pyquil": {"r": pyquil_replacement.u3_replacement}},  
     # multi 
     "CX": {"qiskit": {"g": qiskit.CXGate}, "pyquil": {"g": pyquil.CNOT}, "matrix": qiskit.CXGate().to_matrix()},
     # CZ matrix not defined in qiskit
@@ -40,32 +40,21 @@ gate_mapping = {
     # according to https://qiskit.org/documentation/stubs/qiskit.circuit.library.CU1Gate.html the relative phase of cu1 != cphase and therefore cphase is wrong in this context
     "CU1": {"qiskit": {"g": qiskit.CU1Gate}, "pyquil": {"g": pyquil.CPHASE}},  
     
-    "CPHASE00": {"qiskit": {"r": cphase00_replacement}, "pyquil": {"g": pyquil.CPHASE00}}, 
-    "CPHASE01": {"qiskit": {"r": cphase01_replacement}, "pyquil": {"g": pyquil.CPHASE01}}, 
-    "CPHASE10": {"qiskit": {"r": cphase10_replacement}, "pyquil": {"g": pyquil.CPHASE10}},
+    "CPHASE00": {"qiskit": {"r": qiskit_replacement.cphase00_replacement}, "pyquil": {"g": pyquil.CPHASE00}}, 
+    "CPHASE01": {"qiskit": {"r": qiskit_replacement.cphase01_replacement}, "pyquil": {"g": pyquil.CPHASE01}}, 
+    "CPHASE10": {"qiskit": {"r": qiskit_replacement.cphase10_replacement}, "pyquil": {"g": pyquil.CPHASE10}},
+    
+    # unnecessary with controlled modifier
+    # "CRX": {"qiskit": {"g": qiskit.CRXGate}, "pyquil": {"r": pyquil_replacement.crx_replacement}},
 
     # TODO gates from https://qiskit.org/documentation/apidoc/circuit_library.html?highlight=circuit%20library
-    "C3X": {"qiskit": {"g": qiskit.C3XGate}, "pyquil": {"r": c3x_replacement},"matrix": np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]], dtype=complex)},
+    "C3X": {"qiskit": {"g": qiskit.C3XGate}, "pyquil": {"r": pyquil_replacement.c3x_replacement}},
     # "C4XGate": {"qiskit": qiskit.C3XGate, "pyquil": (), "matrix": []}
 }
 
 gate_mapping_qiskit = {}
 gate_mapping_pyquil = {}
+
 for key, value in gate_mapping.items():
     qiskit_dict = value["qiskit"]
     pyquil_dict = value["pyquil"]

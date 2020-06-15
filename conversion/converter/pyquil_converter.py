@@ -14,6 +14,7 @@ from conversion.converter.converter_interface import ConverterInterface
 
 class PyquilConverter(ConverterInterface):  
     name = "pyquil"
+    is_control_capable = True
 
     def import_circuit(self, circuit: Program) -> (QuantumCircuit, {int: Qubit}, {str: Clbit}):
         program = circuit
@@ -64,7 +65,7 @@ class PyquilConverter(ConverterInterface):
 
     def _handle_gate_import(self, circuit, instr, program, qreg_mapping) -> None:     
         modifiers = instr.modifiers   
-        if instr.name in gate_mapping_pyquil:             
+        if instr.name in gate_mapping_pyquil:                         
             # get the instruction
             if "g" in gate_mapping_pyquil[instr.name]:
                 instr_qiskit_class = gate_mapping_pyquil[instr.name]["g"]
@@ -134,8 +135,13 @@ class PyquilConverter(ConverterInterface):
         
         return creg_mapping
 
-    def gate(self, gate, qubits, params):
-        self.program += gate(*params, *qubits)        
+    def gate(self, gate, qubits, params, is_controlled = False, num_qubits_base_gate = None):
+        if is_controlled:
+            control_qubits = qubits[:(len(qubits) - num_qubits_base_gate)]
+            qubits = qubits[(len(qubits) - num_qubits_base_gate):]
+            self.program += gate(*params, *qubits).controlled(control_qubits) 
+        else:
+            self.program += gate(*params, *qubits)        
 
     def custom_gate(self, matrix, name, qubits, params = []):
         custom_gate_definition = pyquil_circuit_library.DefGate(name, matrix)

@@ -23,22 +23,25 @@ class ExampleCircuits:
         qr2 = QuantumRegister(2, "qq")
         cr = ClassicalRegister(5)
         """multiple quantum register"""
-        # qiskit_circuit = QuantumCircuit(qr, qr2)
-
-        qiskit_circuit = QuantumCircuit(5)
-        qiskit_circuit.add_register(cr)
+        qiskit_circuit = QuantumCircuit(qr, qr2)
+        # qiskit_circuit = QuantumCircuit(5)
+        # qiskit_circuit.add_register(cr)
 
         """standard qiskit gate """
         # gate = qiskit_gates.CXGate()
-        # qiskit_circuit.append(gate, qargs=[0,1])
+        # qiskit_circuit.append(gate, qargs=[2,3])
 
         """standard qiskit gate with control """
         # gate = qiskit_gates.HGate().control(1)
         # qiskit_circuit.append(gate, qargs=[0,1])
 
-        """standard qiskit gate that are not working yet: e.g. CRX """
-        # gate = qiskit_gates.RXGate(np.pi/2).control(1)
-        # qiskit_circuit.append(gate, qargs=[0,1])        
+        """standard qiskit gate with control ex. 2 """
+        # gate = qiskit_gates.RXGate(np.pi/2).control(2)
+        # qiskit_circuit.append(gate, qargs=[3,2,1]) 
+
+        """standard qiskit gate with control ex. 3 """
+        # gate = qiskit_gates.C3XGate()
+        # qiskit_circuit.append(gate, qargs=[0,3,2,1])        
 
         """custom gate"""
         # custom_matrix1 = np.array([
@@ -47,7 +50,7 @@ class ExampleCircuits:
         #     [0, 0, 1, 0],
         #     [0, 0, 0, np.e**(1j*np.pi/2)]
         # ], dtype=complex)
-        # # custom_matrix1 = random_unitary(8, seed=42)
+        # # custom_matrix1 = random_unitary(4, seed=42)
         # custom_gate1 = UnitaryGate(custom_matrix1)
         # qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
@@ -70,7 +73,7 @@ class ExampleCircuits:
         # sub_circ.h(0)
         # sub_circ.cx(0, 1)
         # sub_inst = sub_circ.to_instruction()
-        # qiskit_circuit.append(sub_inst, [3, 4], [2,3])
+        # qiskit_circuit.append(sub_inst, [3, 4])
 
         """parameterized qiskit cirucit"""
         # theta = qiskit_circuit_library.Parameter("θ")
@@ -102,15 +105,15 @@ class ExampleCircuits:
 
 
         """pyquil gates"""
-        # program += H(0)
-        # program += CNOT(0, 1)
-        # program += RX(np.pi, 2)
-        # program += CCNOT(0, 1, 2)
-        # program += H(4)
-        # program += X(1)
+        program += H(0)
+        program += CNOT(0, 1)
+        program += RX(np.pi, 2)
+        program += CCNOT(0, 1, 2)
+        program += H(4)
+        program += X(1)
 
         """pyquil gate with no 1:1 qiskit gate"""
-        program += CPHASE00(np.pi, 1, 0)
+        # program += CPHASE00(np.pi, 1, 0)
 
         """modifier"""
         # gate = RX(np.pi/4, 1).dagger().controlled(0)

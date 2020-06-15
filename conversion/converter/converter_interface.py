@@ -5,7 +5,12 @@ from qiskit.circuit import Qubit
 class ConverterInterface(ABC):
     @property
     @abstractmethod
-    def name(self):
+    def name(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def is_control_capable(self) -> bool:
         pass
 
     @property
@@ -30,7 +35,7 @@ class ConverterInterface(ABC):
         pass
 
     @abstractmethod
-    def gate(self):
+    def gate(self, is_controlled = False):
         pass
 
     @abstractmethod
