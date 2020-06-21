@@ -24,10 +24,14 @@ def u3_replacement(theta, phi, lam):
 def c3x_replacement():
     p = Program()
     p += CCNOT(1,2,3).controlled(0)
-    return p
- 
+    return p 
 
-def crx_replacement(theta):
+def sdg_replacement():
     p = Program()
-    p += RX(theta, 1).controlled(0)
+    p += RZ(-np.pi/2, 0)
+    return p
+
+def tdg_replacement():
+    p = Program()
+    p += RZ(-np.pi/4, 0)
     return p

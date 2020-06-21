@@ -35,11 +35,11 @@ class ExampleCircuits:
         # gate = qiskit_gates.HGate().control(1)
         # qiskit_circuit.append(gate, qargs=[0,1])
 
-        """standard qiskit gate with control ex. 2 """
+        """standard qiskit gate with control #2"""
         # gate = qiskit_gates.RXGate(np.pi/2).control(2)
         # qiskit_circuit.append(gate, qargs=[3,2,1]) 
 
-        """standard qiskit gate with control ex. 3 """
+        """standard qiskit gate with control #3 """
         # gate = qiskit_gates.C3XGate()
         # qiskit_circuit.append(gate, qargs=[0,3,2,1])        
 
@@ -79,16 +79,23 @@ class ExampleCircuits:
         # theta = qiskit_circuit_library.Parameter("θ")
         # qiskit_circuit.rz(theta, 1)
 
-        """qiskit gate that has no 1:1 standard gate in pyquil"""
+        """qiskit gate that has no 1:1 standard gate in pyquil with parameter"""
         # phi = qiskit_circuit_library.Parameter("ϕ")
         # lambd = qiskit_circuit_library.Parameter("λ")
         # u2 = qiskit_gates.U2Gate(np.pi, lambd)
         # qiskit_circuit.append(u2, [1])
 
-        """qiskit gate that has no 1:1 standard gate in pyquil example 2
-        """
+        """qiskit gate c3x"""        
         # c3xGate = qiskit_gates.C3XGate()
         # qiskit_circuit.append(c3xGate, qargs=[0, 1, 2, 3])
+
+        """qiskit gate crx"""        
+        # crxgate = qiskit_gates.CrxGate(np.pi)
+        # qiskit_circuit.append(crxgate, qargs=[0, 1])
+
+        """qiskit gate sdg"""        
+        sdggate = qiskit_gates.TdgGate()
+        qiskit_circuit.append(sdggate, qargs=[0])
         
 
         """measurement"""
@@ -116,7 +123,7 @@ class ExampleCircuits:
         # program += CPHASE00(np.pi, 1, 0)
 
         """pyquil gate with no 1:1 qiskit gate #2"""
-        program += PSWAP(np.pi, 1, 0)
+        # program += PSWAP(np.pi, 1, 0)
 
         """modifier"""
         # gate = RX(np.pi/4, 1).dagger().controlled(0)

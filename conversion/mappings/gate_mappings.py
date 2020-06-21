@@ -23,6 +23,8 @@ gate_mapping = {
     "U1": {"qiskit": {"g": qiskit.U1Gate}, "pyquil": {"g": pyquil.PHASE}},
     "U2": {"qiskit": {"g": qiskit.U2Gate}, "pyquil": {"r": pyquil_replacement.u2_replacement}}, 
     "U3": {"qiskit": {"g": qiskit.U3Gate}, "pyquil": {"r": pyquil_replacement.u3_replacement}},  
+    "Sdg": {"qiskit": {"g": qiskit.SdgGate}, "pyquil": {"r": pyquil_replacement.sdg_replacement}},
+    "Tdg": {"qiskit": {"g": qiskit.TdgGate}, "pyquil": {"r": pyquil_replacement.tdg_replacement}},
     # multi 
     "CX": {"qiskit": {"g": qiskit.CXGate}, "pyquil": {"g": pyquil.CNOT}, "matrix": qiskit.CXGate().to_matrix()},
     # CZ matrix not defined in qiskit
@@ -45,12 +47,13 @@ gate_mapping = {
     "CPHASE10": {"qiskit": {"r": qiskit_replacement.cphase10_replacement}, "pyquil": {"g": pyquil.CPHASE10}},
     "PSWAP": {"qiskit": {"r": qiskit_replacement.pswap_replacement}, "pyquil": {"g": pyquil.PSWAP}},
     
-    # unnecessary with controlled modifier
+    # unnecessary with controlled modifier (for pyquil)
     # "CRX": {"qiskit": {"g": qiskit.CRXGate}, "pyquil": {"r": pyquil_replacement.crx_replacement}},
+    # "C3X": {"qiskit": {"g": qiskit.C3XGate}, "pyquil": {"r": pyquil_replacement.c3x_replacement}},
+    # "C4XGate": {"qiskit": qiskit.C3XGate, "pyquil": (), "matrix": []}
 
     # TODO gates from https://qiskit.org/documentation/apidoc/circuit_library.html?highlight=circuit%20library
-    "C3X": {"qiskit": {"g": qiskit.C3XGate}, "pyquil": {"r": pyquil_replacement.c3x_replacement}},
-    # "C4XGate": {"qiskit": qiskit.C3XGate, "pyquil": (), "matrix": []}
+    
 }
 
 gate_mapping_qiskit = {}

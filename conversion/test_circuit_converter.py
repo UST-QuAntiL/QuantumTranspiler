@@ -3,7 +3,6 @@ from pytket.pyquil import pyquil_to_tk, tk_to_pyquil
 from pytket.qiskit import qiskit_to_tk, tk_to_qiskit
 from conversion.conversion_handler import ConversionHandler
 from pyquil import Program, get_qc
-from pyquil.gates import H, CNOT, CCNOT
 from conversion.third_party_converter.pytket_converter import PytketConverter
 from circuit.qiskit_utility import show_figure
 from conversion.third_party_converter.staq_converter import StaqConverter
@@ -18,6 +17,10 @@ from conversion.converter.pyquil_converter import PyquilConverter
 import numpy as np
 from examples.example_circuits import ExampleCircuits
 from pyquil.latex import display, to_latex
+from qiskit.extensions import UnitaryGate
+import qiskit.circuit.library.standard_gates as qiskit_gates
+import numpy as np
+
 
 class TestCircuitConverter:
     def test_pytket(self):
@@ -31,7 +34,6 @@ class TestCircuitConverter:
         tk = pyquil_to_tk(program)
         qiskit = tk_to_qiskit(tk)
         show_figure(qiskit)
-
 
     def test_staq(self):
         staq = StaqConverter(
@@ -47,19 +49,28 @@ class TestCircuitConverter:
         staq.default_optimization()
 
     def test_pennylane(self):
-        qiskit = PennylaneConverter.pyquil_to_qasm(ExampleCircuits.pyquil_custom())
+        qiskit = PennylaneConverter.pyquil_to_qasm(
+            ExampleCircuits.pyquil_custom())
         show_figure(qiskit)
 
         # qiskit = PennylaneConverter.qiskit_to_qiskit(ExampleCircuits.qiskit_custom())
         # print(qiskit)
 
     def test_quantastica(self):
-        qasm = QuantasticaConverter.quil_to_qasm(ExampleCircuits.pyquil_custom().out())
+        qasm = QuantasticaConverter.quil_to_qasm(
+            ExampleCircuits.pyquil_custom().out())
         print(qasm)
         show_figure(QuantumCircuit.from_qasm_str(qasm))
 
         # pyquil = QuantasticaConverter.qasm_to_pyquil(ExampleCircuits.qiskit_custom().qasm())
         # print(pyquil)
+
+    def check_equality(self, matrix1, matrix2) -> bool:
+        """checks equality of matrices up to global phase"""
+        gate1 = UnitaryGate(matrix1)
+        gate2 = UnitaryGate(matrix2)
+        print(gate1 == gate2)
+        return gate1 == gate2
 
     def test_pyquil_own_import(self):
         converter = PyquilConverter()
@@ -74,7 +85,8 @@ class TestCircuitConverter:
         print(program)
         latex = to_latex(program)
         print(latex)
-        
+
+
 if __name__ == "__main__":
-    test = TestCircuitConverter()
-    test.test_pyquil_own_import()
+    test= TestCircuitConverter()
+    test.test_pyquil_own_export()
