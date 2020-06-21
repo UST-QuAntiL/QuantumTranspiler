@@ -15,7 +15,7 @@ class ConversionHandler:
 
     def import_language(self, language: str) -> QuantumCircuit:
         circuit = self.converter.language_to_circuit(language)
-        return self.converter.import_language(circuit)
+        return self.converter.import_circuit(circuit)
 
     def import_circuit(self, circuit) -> (QuantumCircuit, {int: Qubit}, {str: Clbit}):
         return self.converter.import_circuit(circuit)

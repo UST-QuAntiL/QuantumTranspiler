@@ -109,11 +109,14 @@ class ExampleCircuits:
         program += CNOT(0, 1)
         program += RX(np.pi, 2)
         program += CCNOT(0, 1, 2)
-        program += H(4)
+        program += H(3)
         program += X(1)
 
         """pyquil gate with no 1:1 qiskit gate"""
         # program += CPHASE00(np.pi, 1, 0)
+
+        """pyquil gate with no 1:1 qiskit gate #2"""
+        program += PSWAP(np.pi, 1, 0)
 
         """modifier"""
         # gate = RX(np.pi/4, 1).dagger().controlled(0)
@@ -141,8 +144,8 @@ class ExampleCircuits:
         # program += CRX(np.pi/2)(0, 1)
 
         """parameterized pyquil circuit"""
-        # theta = Parameter("θ")
-        # program += RY(theta, 0)
+        theta = Parameter("θ")
+        program += RY(theta, 0)
 
         """meausrements"""
         # program += MEASURE(0, ro[0])
