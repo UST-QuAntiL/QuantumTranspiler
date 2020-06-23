@@ -21,9 +21,11 @@ def show_figure(circuit: QuantumCircuit) -> None:
     circuit.draw(output='text')
     print(circuit)        
 
-# unitary methods: need to check their behaviour
-def check_unitary_equivalence(unitary1: UnitaryGate, unitary2: UnitaryGate) -> bool:   
-    return unitary1.__eq__(unitary2)
+def check_matrix_equality(self, matrix1, matrix2) -> bool:
+    """checks equality of matrices up to global phase"""
+    gate1 = UnitaryGate(matrix1)
+    gate2 = UnitaryGate(matrix2)
+    return gate1 == gate2
 
 # TODO
 # def unitary_to_normal_form(unitary: UnitaryGate) -> UnitaryGate:
