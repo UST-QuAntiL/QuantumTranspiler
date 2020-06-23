@@ -1,5 +1,6 @@
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
-from conversion.pyquil_converter import PyquilConverter
+from conversion.converter.converter_interface import ConverterInterface
+from conversion.converter.pyquil_converter import PyquilConverter
 from pyquil import Program
 
 class CircuitWrapper:
