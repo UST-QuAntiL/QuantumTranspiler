@@ -81,7 +81,7 @@ class TestCircuitConverter:
     def test_pyquil_own_export(self):
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
-        program = handler.export_circuit(ExampleCircuits.qiskit_custom())[0]
+        program = handler.export_circuit(ExampleCircuits.qiskit_shor())[0]
         print(program)
         latex = to_latex(program)
         print(latex)

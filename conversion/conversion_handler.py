@@ -73,22 +73,22 @@ class ConversionHandler:
         return (converter.circuit, qreg_mapping, creg_mapping)
 
     def _handle_gate_export(self, converter, qiskit_gate, qubits) -> None:
+        # needed for controlled modifier
         is_controlled = False
-        # controlled gates
-        if (converter.is_control_capable and isinstance(qiskit_gate, ControlledGate) and qiskit_gate.base_gate):
-            base_gate = qiskit_gate.base_gate
-            qiskit_gate_class_name = base_gate.__class__.__name__
-            # check if base gate has gate entry in gate_mappings (otherwise controlled standard_gate construction is not possible)
-            if (converter.name in gate_mapping_qiskit[qiskit_gate_class_name] and gate_mapping_qiskit[qiskit_gate_class_name][converter.name] and "g" in gate_mapping_qiskit[qiskit_gate_class_name][converter.name]):
-                qiskit_gate_class_name = base_gate.__class__.__name__
-                is_controlled = True
+        num_qubits_base_gate = None
+
+        qiskit_gate_class_name = qiskit_gate.__class__.__name__        
+
+        if not self._gate_in_mappings(converter, qiskit_gate_class_name):
+            # check for controlled gates --> can be handled with controlled modifier/method
+            if (converter.is_control_capable and isinstance(qiskit_gate, ControlledGate) and qiskit_gate.base_gate):
+                base_gate = qiskit_gate.base_gate
                 num_qubits_base_gate = base_gate.num_qubits
-                # control_qubits = qubits[:(len(qubits) - base_gate.num_qubits)]
-                # qubits = qubits[(len(qubits) - base_gate.num_qubits):]
-
-        if is_controlled == False:
-            qiskit_gate_class_name = qiskit_gate.__class__.__name__
-
+                qiskit_gate_class_name = base_gate.__class__.__name__
+                # check if base gate has gate entry in gate_mappings (otherwise controlled standard_gate construction is not possible)
+                if (converter.name in gate_mapping_qiskit[qiskit_gate_class_name] and gate_mapping_qiskit[qiskit_gate_class_name][converter.name] and "g" in gate_mapping_qiskit[qiskit_gate_class_name][converter.name]):
+                    qiskit_gate_class_name = base_gate.__class__.__name__
+                    is_controlled = True
 
         if qiskit_gate_class_name in gate_mapping_qiskit:
             params = qiskit_gate.params
@@ -98,13 +98,14 @@ class ConversionHandler:
                 if isinstance(param, qiskit_Parameter):
                     params[i] = converter.parameter_conversion(param)
 
-            # check if gate/replacement program is defined (else pyquil is None and the corresponding matrix might be used)
+            # check if gate/replacement program is defined (else the corresponding matrix might be used)
             if converter.name in gate_mapping_qiskit[qiskit_gate_class_name] and gate_mapping_qiskit[qiskit_gate_class_name][converter.name]:
                 gate_mapping = gate_mapping_qiskit[qiskit_gate_class_name][converter.name]
                 # 1:1 gate translation
                 if "g" in gate_mapping:
                     gate = gate_mapping["g"]
-                    converter.gate(gate, qubits, params, is_controlled=is_controlled, num_qubits_base_gate=num_qubits_base_gate)
+                    converter.gate(gate, qubits, params, is_controlled=is_controlled,
+                                   num_qubits_base_gate=num_qubits_base_gate)
                     return
                 # replacement defined (no 1:1 gate available)
                 # in this case gate is a circuit generating function defined in name_replacement
@@ -132,3 +133,13 @@ class ConversionHandler:
             gate = converter.custom_gate(matrix, name, qubits)
         except CircuitError:
             raise NotImplementedError("Unsupported Gate: " + str(gate))
+
+    def _gate_in_mappings(self, converter, qiskit_gate_class_name) -> bool:
+        """returns True if a 1:1 gate mapping is defined"""
+        # check if defined in mappings
+        if qiskit_gate_class_name in gate_mapping_qiskit:
+            # check if a 1:1 gate is defined
+            if converter.name in gate_mapping_qiskit[qiskit_gate_class_name] and gate_mapping_qiskit[qiskit_gate_class_name][converter.name] and "g" in gate_mapping_qiskit[qiskit_gate_class_name][converter.name]:
+                return True
+            return False
+        return False
