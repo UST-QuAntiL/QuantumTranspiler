@@ -41,7 +41,6 @@ gate_mapping = {
     # quantastica uses crz, pytket uses cu1, they are not equal according to IBM unitarygate equ tho, cu1 == cphase, but crz != cphase, pennylane does not support CU1 at all
     # according to https://qiskit.org/documentation/stubs/qiskit.circuit.library.CU1Gate.html the relative phase of cu1 != cphase and therefore cphase is wrong in this context
     "CU1": {"qiskit": {"g": qiskit.CU1Gate}, "pyquil": {"g": pyquil.CPHASE}},  
-    
     "CPHASE00": {"qiskit": {"r": qiskit_replacement.cphase00_replacement}, "pyquil": {"g": pyquil.CPHASE00}}, 
     "CPHASE01": {"qiskit": {"r": qiskit_replacement.cphase01_replacement}, "pyquil": {"g": pyquil.CPHASE01}}, 
     "CPHASE10": {"qiskit": {"r": qiskit_replacement.cphase10_replacement}, "pyquil": {"g": pyquil.CPHASE10}},
