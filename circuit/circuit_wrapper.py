@@ -61,10 +61,11 @@ class CircuitWrapper:
         return self._export(handler, True)
 
     def decompose_to_standard_gates(self):
-        decompose = Decompose()
-        decompose._non_standard_gate_nodes(self.dag)
-        
+        decompose = Decompose()        
 
         self.dag = decompose.decompose_to_standard_gates(self.dag)
         self.circuit = dag_to_circuit(self.dag)
         show_figure(self.circuit)
+
+        print(self.dag.depth())
+

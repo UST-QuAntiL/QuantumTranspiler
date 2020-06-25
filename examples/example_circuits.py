@@ -14,6 +14,7 @@ from qiskit.circuit import Qubit, Clbit
 import qiskit.circuit as qiskit_circuit_library
 import qiskit.circuit.library.standard_gates as qiskit_gates
 from qiskit.quantum_info.operators import Operator
+from qiskit.quantum_info import Operator
 
 
 class ExampleCircuits:
@@ -197,14 +198,21 @@ class ExampleCircuits:
             [0, 0, 0, np.e**(1j*np.pi/2)]
         ], dtype=complex)
         # custom_matrix1 = random_unitary(4, seed=42)
-        custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_custom")
-        qiskit_circuit.append(custom_gate1, qargs=[0,1])
+        # custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_custom")
+        # qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
         """custom gate #2"""
-        custom_matrix1 = random_unitary(4, seed=42)
-        custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_custom")
-        qiskit_circuit.append(custom_gate1, qargs=[0,1])
+        custom_matrix1 = random_unitary(8, seed=42)
+        custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_3qubits")
+        qiskit_circuit.append(custom_gate1, qargs=[0,1,2])
 
+        """custom gate #3"""
+        # operator = Operator([[1, 0, 0, 0],
+        #           [0, 0, 0, 1],
+        #           [0, 0, 1, 0],
+        #           [0, 1, 0, 0]])
+        # custom_gate1 = UnitaryGate(custom_matrix1, label="operator")
+        # qiskit_circuit.unitary(operator, [0,1], label="operator")
         
         """parameterized qiskit cirucit"""
         # theta = qiskit_circuit_library.Parameter("θ")
