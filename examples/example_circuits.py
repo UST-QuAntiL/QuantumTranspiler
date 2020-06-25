@@ -178,3 +178,33 @@ class ExampleCircuits:
     @staticmethod
     def pyquil_shor() -> str:
         return Program(ExampleCircuits.quil_shor())
+
+    @staticmethod
+    def qiskit_unroll():
+        qr = QuantumRegister(5)
+        cr = ClassicalRegister(5)
+        qiskit_circuit = QuantumCircuit(qr, cr)
+
+        """standard qiskit gate """
+        gate = qiskit_gates.CXGate()
+        qiskit_circuit.append(gate, qargs=[2,3])         
+
+        """custom gate"""
+        custom_matrix1 = np.array([
+            [np.e**(1j*np.pi/2), 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, np.e**(1j*np.pi/2)]
+        ], dtype=complex)
+        # custom_matrix1 = random_unitary(4, seed=42)
+        custom_gate1 = UnitaryGate(custom_matrix1)
+        qiskit_circuit.append(custom_gate1, qargs=[0,1])
+
+        
+        """parameterized qiskit cirucit"""
+        # theta = qiskit_circuit_library.Parameter("θ")
+        # qiskit_circuit.rz(theta, 1)        
+
+
+        show_figure(qiskit_circuit)
+        return qiskit_circuit

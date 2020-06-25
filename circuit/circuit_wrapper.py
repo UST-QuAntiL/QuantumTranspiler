@@ -2,6 +2,8 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from conversion.conversion_handler import ConversionHandler
 from conversion.converter.pyquil_converter import PyquilConverter
 from pyquil import Program
+from qiskit.converters import circuit_to_dag
+from transpilation.decompose import Decompose
 
 class CircuitWrapper:
     def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None):
@@ -10,9 +12,9 @@ class CircuitWrapper:
         elif quil_str:
             self.import_quil(quil_str)
         elif qiskit_circuit:
-            self.circuit = qiskit_circuit
+            self._set_circuit(qiskit_circuit)
         else:
-            self.circuit = QuantumCircuit()
+            self._set_circuit(QuantumCircuit())
             self.qreg_mapping_import = {}
             self.creg_mapping_import = {}
             self.qreg_mapping_export = {}
@@ -21,9 +23,14 @@ class CircuitWrapper:
 
     def _import(self, handler: ConversionHandler, circuit, is_language):
         if is_language:
-            (self.circuit, self.qreg_mapping_import, self.creg_mapping) = handler.import_language(circuit)
+            (circuit, self.qreg_mapping_import, self.creg_mapping) = handler.import_language(circuit)
         else:
-            (self.circuit, self.qreg_mapping_import, self.creg_mapping) = handler.import_circuit(circuit)
+            (circuit, self.qreg_mapping_import, self.creg_mapping) = handler.import_circuit(circuit)
+        self._set_circuit(circuit)
+
+    def _set_circuit(self, circuit: QuantumCircuit):
+        self.circuit = circuit
+        self.dag = circuit_to_dag(circuit)
 
     def import_pyquil(self, program: Program) -> None:
         converter = PyquilConverter()
@@ -51,3 +58,7 @@ class CircuitWrapper:
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
         return self._export(handler, True)
+
+    def decompose_to_standard_gates(self):
+        decompose = Decompose()
+        decompose.decompose_to_standard_gates(self.dag)
