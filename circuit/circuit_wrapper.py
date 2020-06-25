@@ -2,7 +2,8 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from conversion.conversion_handler import ConversionHandler
 from conversion.converter.pyquil_converter import PyquilConverter
 from pyquil import Program
-from qiskit.converters import circuit_to_dag
+from qiskit.converters import circuit_to_dag, dag_to_circuit
+from circuit.qiskit_utility import show_figure
 from transpilation.decompose import Decompose
 
 class CircuitWrapper:
@@ -61,4 +62,9 @@ class CircuitWrapper:
 
     def decompose_to_standard_gates(self):
         decompose = Decompose()
-        decompose.decompose_to_standard_gates(self.dag)
+        decompose._non_standard_gate_nodes(self.dag)
+        
+
+        self.dag = decompose.decompose_to_standard_gates(self.dag)
+        self.circuit = dag_to_circuit(self.dag)
+        show_figure(self.circuit)

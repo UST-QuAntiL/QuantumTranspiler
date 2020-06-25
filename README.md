@@ -13,6 +13,10 @@ pip install pyquil
 pip install pydot
 ```
 
+### Optional dependencies:
+For the usage of pydot (used for drawing of dags) [Graphviz](http://www.graphviz.org/download/) need to be installed on the system.
+
+
 ## Usage
 
 The library is executed as a module.
