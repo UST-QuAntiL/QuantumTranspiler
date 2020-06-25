@@ -10,6 +10,7 @@ It is recommended to install them with [Pip](https://pip.pypa.io/en/stable/).
 ```bash
 pip install qiskit
 pip install pyquil
+pip install pydot
 ```
 
 ## Usage
