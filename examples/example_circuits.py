@@ -219,5 +219,5 @@ class ExampleCircuits:
         # qiskit_circuit.rz(theta, 1)        
 
 
-        show_figure(qiskit_circuit)
+        # show_figure(qiskit_circuit)
         return qiskit_circuit
