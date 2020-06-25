@@ -65,6 +65,6 @@ class CircuitWrapper:
 
         self.dag = decompose.decompose_to_standard_gates(self.dag)
         self.circuit = dag_to_circuit(self.dag)
-        # show_figure(self.circuit)
+        show_figure(self.circuit)
 
 
