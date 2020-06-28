@@ -22,8 +22,12 @@ class TestCircuitWrapper:
 
     def test_decompose(self):
         wrapper = CircuitWrapper(qiskit_circuit=ExampleCircuits.qiskit_unroll())
-        wrapper.decompose_to_standard_gates()
+        wrapper.decompose_to_standard_gates()#
+        
+    def test_unroll(self):
+        wrapper = CircuitWrapper(qiskit_circuit=ExampleCircuits.qiskit_unroll())
+        wrapper.unroll(["cx", "u3"])
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_decompose()
+    test.test_unroll()

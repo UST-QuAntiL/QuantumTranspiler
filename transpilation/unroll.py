@@ -1,9 +1,16 @@
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.exceptions import QiskitError
 from qiskit.circuit import Gate
+import qiskit.transpiler.passes as Passes
 
 
 class Unroller():
+    def unroll(self, dag, gates: [str]):
+        unroll_pass = Passes.Unroller(gates)
+        dag = unroll_pass.run(dag)
+
+        return dag
+
     def unroll_node(self, dag):
         for node in dag.op_nodes(op=Gate, include_directives=False):
             print(node.name)
