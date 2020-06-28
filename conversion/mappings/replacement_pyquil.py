@@ -12,11 +12,12 @@ def u2_replacement(phi, lam):
     p += RZ(lam - np.pi/2, 0)
     return p
 
-# TODO formula wrong
 def u3_replacement(theta, phi, lam):
-    """implemented with X90 pulse: https://qiskit.org/documentation/stubs/qiskit.circuit.library.U2Gate.html"""
+    """implemented with two X90 pulse: https://qiskit.org/documentation/stubs/qiskit.circuit.library.U3Gate.html"""
     p = Program()
-    p += RZ(phi + np.pi/2, 0)
+    p += RZ(phi - np.pi/2, 0)
+    p += RX(np.pi/2, 0)
+    p += RZ(np.pi - theta, 0)
     p += RX(np.pi/2, 0)
     p += RZ(lam - np.pi/2, 0)
     return p

@@ -72,7 +72,7 @@ class CircuitWrapper:
     def unroll(self, gates: [str]):
         unroller = Unroller()    
 
-        # self.dag = unroller.unroll(self.dag, gates)
+        self.dag = unroller.unroll(self.dag, gates)
 
         self.circuit = dag_to_circuit(self.dag)
         show_figure(self.circuit)
