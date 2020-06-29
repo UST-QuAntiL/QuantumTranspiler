@@ -2,10 +2,24 @@ from qiskit.dagcircuit import DAGCircuit
 from qiskit.exceptions import QiskitError
 from qiskit.circuit import Gate
 import qiskit.transpiler.passes as Passes
+from circuit.qiskit_utility import show_figure
+
+# 
+from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
+from qiskit.circuit.library.standard_gates import CHGate, U2Gate, CXGate, HGate, XGate, CCXGate, CZGate
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, execute, Aer, IBMQ
 
 
 class Unroller():
     def unroll(self, dag, gates: [str]):
+        tmp_circuit = QuantumCircuit(2)
+        tmp_circuit.cz(0, 1)
+        
+        # CXGate().add_decomposition(tmp_circuit)
+        decompositions = sel.get_entry(CZGate())
+        for decomposition in decompositions:
+            show_figure(decomposition)
+
         unroll_pass = Passes.Unroller(gates)
         dag = unroll_pass.run(dag)
 

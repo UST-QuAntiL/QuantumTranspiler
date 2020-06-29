@@ -26,7 +26,7 @@ class TestCircuitWrapper:
         
     def test_unroll(self):
         wrapper = CircuitWrapper(qiskit_circuit=ExampleCircuits.qiskit_unroll())
-        wrapper.unroll(["cx", "u1", "rx"])
+        wrapper.unroll(["u3", "cz"])
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()

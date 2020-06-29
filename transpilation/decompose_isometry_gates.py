@@ -21,11 +21,10 @@ from qiskit.dagcircuit import DAGCircuit
 from qiskit.exceptions import QiskitError
 from transpilation.Utility import isometry_gates
 
-class UnrollIsometryGates():
+class DecomposeIsometryGates():
 
     def run(self, dag):
-        """Run the Unroll3qOrMore pass on `dag`.
-
+        """
         Args:
             dag(DAGCircuit): input dag
         Returns:

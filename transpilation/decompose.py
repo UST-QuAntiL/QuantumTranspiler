@@ -1,14 +1,14 @@
 from qiskit.dagcircuit import DAGCircuit
 import qiskit.transpiler.passes as Qiskit_Passes
 from qiskit.tools.visualization import dag_drawer
-from transpilation.unroll_isometry_gates import UnrollIsometryGates
+from transpilation.decompose_isometry_gates import DecomposeIsometryGates
 from qiskit.extensions import UnitaryGate
 from transpilation.Utility import non_standard_gate_nodes
 class Decomposer():
 
     def _decompose_isometry_gates(self, dag: DAGCircuit):
-        unroll_pass = UnrollIsometryGates()
-        unroll_pass.run(dag)
+        decompose_pass = DecomposeIsometryGates()
+        decompose_pass.run(dag)
         return dag
 
     def _decompose(self, dag):
