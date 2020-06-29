@@ -16,6 +16,20 @@ class Unroller(TransformationPass):
         super().__init__()
         self.basis = basis
 
+    def _get_rule(self, gate):
+        try:
+            rule = gate.definition
+           
+            if rule is None:
+                # TODO possibly more than one entry --> choose the best one
+                rule = sel.get_entry(gate)[0]
+            return rule
+
+        except TypeError as err:
+            raise QiskitError('Error decomposing node {}: {}'.format(gate.name, err))
+
+
+
     def run(self, dag):
         """Run an adjusted Qiskit Unroller pass on `dag`.
 
@@ -40,26 +54,20 @@ class Unroller(TransformationPass):
             if node.name in self.basis:  # If already a base, ignore.
                 continue
 
-            try:
-                rule = node.op.definition
-                # start: own code
-                if rule is None:
-                    # TODO possibly more than one entry --> choose the best one
-                    rule = sel.get_entry(node.op)[0]
-                # end
-            except TypeError as err:
-                raise QiskitError('Error decomposing node {}: {}'.format(node.name, err))
+            rule = self._get_rule(node.op)
 
             # Isometry gates definitions can have widths smaller than that of the
             # original gate, in which case substitute_node will raise. Fall back
             # to substitute_node_with_dag if an the width of the definition is
             # different that the width of the node.
-            while rule and len(rule) == 1 and len(node.qargs) == len(rule[0][1]):
-                if rule[0][0].name in self.basis:
+            while rule and len(rule) == 1 and len(node.qargs) == len(rule[0][1]): 
+                gate = rule[0][0]
+                print(gate.name)
+                if gate.name in self.basis:
                     dag.substitute_node(node, rule[0][0], inplace=True)
                     break
-                try:
-                    rule = rule[0][0].definition
+                try:                    
+                    self._get_rule(gate)
                 except TypeError as err:
                     raise QiskitError('Error decomposing node {}: {}'.format(node.name, err))
 

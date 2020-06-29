@@ -187,12 +187,12 @@ class ExampleCircuits:
         qiskit_circuit = QuantumCircuit(qr, cr)
 
         """standard qiskit gates """
-        gate = qiskit_gates.CXGate()
-        qiskit_circuit.append(gate, qargs=[3,2])    
+        # gate = qiskit_gates.CXGate()
+        # qiskit_circuit.append(gate, qargs=[3,2])    
         # gate = qiskit_gates.CZGate()
         # qiskit_circuit.append(gate, qargs=[1,2])     
-        # gate = qiskit_gates.HGate()
-        # qiskit_circuit.append(gate, qargs=[1])         
+        gate = qiskit_gates.HGate()
+        qiskit_circuit.append(gate, qargs=[1])         
 
         """custom gate"""
         # custom_matrix1 = np.array([

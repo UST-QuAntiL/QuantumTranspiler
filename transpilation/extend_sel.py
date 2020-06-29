@@ -1,18 +1,34 @@
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
-from qiskit.circuit.library.standard_gates import CHGate, U2Gate, CXGate, HGate, XGate, CCXGate, CZGate
-from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, execute, Aer, IBMQ
+import qiskit.circuit.library.standard_gates as Gates
+from qiskit import QuantumCircuit
+import numpy as np
+
 
 class ExtendSel():
     def __init__(self):
-        self.add_all()
+        self._add_all()
 
-    def add_all(self):
-        self.cx()
+    def _add_all(self):
+        self._cx()
+        self._h()
+        self._u2()
 
-    def cx(self):
+    def _cx(self):
         """transformation see https://arxiv.org/pdf/1110.2998.pdf"""
         circuit = QuantumCircuit(2)
         circuit.h(1)
         circuit.cz(0, 1)
         circuit.h(1)
-        sel.add_equivalence(CXGate(), circuit)        
+        sel.add_equivalence(Gates.CXGate(), circuit)
+
+    def _h(self):
+        """TODO"""
+        circuit = QuantumCircuit(1)
+        circuit.rx(np.pi, 0)
+        sel.add_equivalence(Gates.HGate(), circuit)
+
+    def _u2(self):
+        """TODO"""
+        circuit = QuantumCircuit(1)
+        circuit.rx(np.pi, 0)
+        sel.add_equivalence(Gates.HGate(), circuit)
