@@ -17,28 +17,30 @@ class Unroller(TransformationPass):
         self.basis = basis
   
 
-    def _check_node_basis(self, node) -> bool:
+    def _check_rule_basis(self, rule) -> bool:
+        if len(rule) == 1:
+            node = rule[0][0]
+            if node is None:
+                return False
+            if node.name in self.basis:
+                return True  
+            else:
+                return False 
+        return False
 
-        if node is None:
-            return False
-
-        if node.name in self.basis:
-            return True         
-
-        else:
-            return False 
-
-    
+      
 
     def _get_rules(self, gate):
         try:
             rules = []
             rule = gate.definition
-            rules.append(rule)
+            if rule is not None:
+                rules.append(rule)
             
             circuits = sel.get_entry(gate)
             for rule in circuits:
-                rules.append(rule)   
+                if rule is not None:
+                    rules.append(rule)   
 
             return rules       
 
@@ -55,12 +57,30 @@ class Unroller(TransformationPass):
             if first_rule is None:
                 first_rule = rule
 
-            is_basis = self._check_node_basis(rule[0][0])
+            is_basis = self._check_rule_basis(rule)
             if is_basis:
                 return rule
 
+        # TODO pick best rule instead of first rule
+        # TODO avoid infinite loops   
+        # rule  = self._bfs( [], rules)
+
         return first_rule
 
+    def _bfs(self, queue, rules):
+        # visited.append(node)
+        # queue contains tuples (first_step, rule) 
+        for rule in rules:
+            queue.append((rule, rule))
+        while queue:
+            (first_step, rule) = queue.pop(0) 
+            if self._check_rule_basis(rule):
+                return first_step
+
+            print(rule)
+            rules = self._get_rules(rule)
+            for rule in rules:
+                queue.append((first_step, rule))
 
 
 
