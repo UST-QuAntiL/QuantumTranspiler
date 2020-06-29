@@ -19,11 +19,21 @@ class Unroller(TransformationPass):
     def _get_rule(self, gate):
         try:
             rule = gate.definition
+            
            
             if rule is None:
                 # TODO possibly more than one entry --> choose the best one
-                rule = sel.get_entry(gate)[0]
+                # TODO avoid while true loop
+                circuits = sel.get_entry(gate)
+                print(gate)
+                print(rule)
+                if len(circuits) == 0:
+                    rule = None
+                else:
+                    rule = circuits[0]
+
             return rule
+            # print(rule)
 
         except TypeError as err:
             raise QiskitError('Error decomposing node {}: {}'.format(gate.name, err))
@@ -62,12 +72,11 @@ class Unroller(TransformationPass):
             # different that the width of the node.
             while rule and len(rule) == 1 and len(node.qargs) == len(rule[0][1]): 
                 gate = rule[0][0]
-                print(gate.name)
                 if gate.name in self.basis:
                     dag.substitute_node(node, rule[0][0], inplace=True)
                     break
                 try:                    
-                    self._get_rule(gate)
+                    rule = self._get_rule(gate)
                 except TypeError as err:
                     raise QiskitError('Error decomposing node {}: {}'.format(node.name, err))
 
