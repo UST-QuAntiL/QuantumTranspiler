@@ -188,11 +188,11 @@ class ExampleCircuits:
 
         """standard qiskit gates """
         gate = qiskit_gates.CXGate()
-        qiskit_circuit.append(gate, qargs=[2,3])    
-        gate = qiskit_gates.CZGate()
-        qiskit_circuit.append(gate, qargs=[1,2])     
-        gate = qiskit_gates.HGate()
-        qiskit_circuit.append(gate, qargs=[1])         
+        qiskit_circuit.append(gate, qargs=[3,2])    
+        # gate = qiskit_gates.CZGate()
+        # qiskit_circuit.append(gate, qargs=[1,2])     
+        # gate = qiskit_gates.HGate()
+        # qiskit_circuit.append(gate, qargs=[1])         
 
         """custom gate"""
         # custom_matrix1 = np.array([

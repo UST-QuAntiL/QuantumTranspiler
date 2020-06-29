@@ -6,6 +6,7 @@ from qiskit.converters import circuit_to_dag, dag_to_circuit
 from circuit.qiskit_utility import show_figure
 from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
+from transpilation.extend_sel import ExtendSel
 
 class CircuitWrapper:
     def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None):
@@ -21,6 +22,8 @@ class CircuitWrapper:
             self.creg_mapping_import = {}
             self.qreg_mapping_export = {}
             self.creg_mapping_export = {}
+
+        self.extend_sel = ExtendSel()
 
 
     def _import(self, handler: ConversionHandler, circuit, is_language):
@@ -70,9 +73,8 @@ class CircuitWrapper:
         # show_figure(self.circuit)
 
     def unroll(self, gates: [str]):
-        unroller = Unroller()    
-
-        self.dag = unroller.unroll(self.dag, gates)
+        unroll_pass = Unroller(gates)    
+        self.dag = unroll_pass.run(self.dag)
 
         self.circuit = dag_to_circuit(self.dag)
         show_figure(self.circuit)
