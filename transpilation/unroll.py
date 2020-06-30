@@ -10,11 +10,29 @@ class Unroller(TransformationPass):
         """Unroller initializer.
 
         Args:
-            basis (list[str] or None): Target basis names to unroll to, e.g. `['u3', 'cx']` . If
+            basis (list[str|Gate] or None): Target basis names to unroll to, e.g. `['u3', 'cx']` . If
                 None, does not unroll any gate.
         """
         super().__init__()
-        self.basis = basis
+        # basis contains the names of all specified gates
+        self.basis = []
+        # basis_names and basis_gates ditinction needed for postprocessing 
+        # basis_names contains gates specified by name
+        # basis_gates contains gates specified by gate
+        self.basis_names = []
+        self.basis_gates = []
+        self.do_postprocessing = False
+        for gate in basis:
+            if isinstance(gate, str):
+                self.basis_names.append(gate)
+                self.basis.append(gate)
+            else:
+                # allows specifying gates that only support specific angles like rigetti QPUs http://docs.rigetti.com/en/v2.19.0/apidocs/gates.html
+                self.basis.append(gate.name)
+                self.basis_gates.append(gate)
+                self.do_postprocessing = True
+        
+        
   
 
     def _check_rule_basis(self, rule) -> bool:
@@ -67,20 +85,20 @@ class Unroller(TransformationPass):
 
         return first_rule
 
-    def _bfs(self, queue, rules):
-        # visited.append(node)
-        # queue contains tuples (first_step, rule) 
-        for rule in rules:
-            queue.append((rule, rule))
-        while queue:
-            (first_step, rule) = queue.pop(0) 
-            if self._check_rule_basis(rule):
-                return first_step
+    # def _bfs(self, queue, rules):
+    #     # visited.append(node)
+    #     # queue contains tuples (first_step, rule) 
+    #     for rule in rules:
+    #         queue.append((rule, rule))
+    #     while queue:
+    #         (first_step, rule) = queue.pop(0) 
+    #         if self._check_rule_basis(rule):
+    #             return first_step
 
-            print(rule)
-            rules = self._get_rules(rule)
-            for rule in rules:
-                queue.append((first_step, rule))
+    #         print(rule)
+    #         rules = self._get_rules(rule)
+    #         for rule in rules:
+    #             queue.append((first_step, rule))
 
 
 
@@ -97,6 +115,13 @@ class Unroller(TransformationPass):
         Returns:
             DAGCircuit: output unrolled dag
         """
+        dag = self.unroll_to_basis(dag)
+        # if self.do_postprocessing:
+        #     dag = self._postprocess(dag)
+        return dag
+        
+
+    def unroll_to_basis(self, dag):
         if self.basis is None:
             return dag
 
@@ -136,7 +161,7 @@ class Unroller(TransformationPass):
 
                 
                 decomposition = self._rule_to_dag(rule)
-                unrolled_dag = self.run(decomposition)  # recursively unroll ops
+                unrolled_dag = self.unroll_to_basis(decomposition)  # recursively unroll ops
                 dag.substitute_node_with_dag(node, unrolled_dag)
 
         return dag
@@ -153,3 +178,18 @@ class Unroller(TransformationPass):
         for inst in rule:
             decomposition.apply_operation_back(*inst)        
         return decomposition
+
+    # TODO delete
+    # def _postprocess(self, dag):
+    #     for node in dag.gate_nodes():
+    #         # nodes in basis_names do not need postprocessing
+    #         if node.name in self.basis_names:
+    #             continue
+            
+    #         for gate in self.basis_gates:
+    #             if node.name == gate.name:
+
+    #                 print(node.name)           
+
+    #     return dag
+

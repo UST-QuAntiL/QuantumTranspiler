@@ -9,6 +9,8 @@ import numpy as np
 from circuit.circuit_wrapper import CircuitWrapper
 from pyquil.quilbase import Declare, Gate, Halt, Measurement, Pragma, DefGate
 from examples.example_circuits import ExampleCircuits
+import qiskit.circuit.library.standard_gates as Gates
+from qiskit.circuit import Parameter
 
 class TestCircuitWrapper:
     def test_pyquil_import(self):
@@ -26,9 +28,13 @@ class TestCircuitWrapper:
         
     def test_unroll(self):
         wrapper = CircuitWrapper(qiskit_circuit=ExampleCircuits.qiskit_unroll())
-        wrapper.unroll(["u3", "u2", "cz"])
-        # wrapper.unroll(["rz", "rx", "cx"])
-        # wrapper.unroll(["rx", "rz"])
+        # wrapper.unroll(["u3", "u2", "cz"])
+        # wrapper.unroll(["rz", "rx", "cz"])
+        rx = Gates.RXGate(np.pi)
+        rx2 = Gates.RXGate(-np.pi)
+        rx3 = Gates.RXGate(np.pi/2)
+        rx4 = Gates.RXGate(-np.pi/2)
+        wrapper.unroll([rx, rx2, rx3, rx4, "rz", "cz"])
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
