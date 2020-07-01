@@ -191,12 +191,12 @@ class ExampleCircuits:
         # qiskit_circuit.append(gate, qargs=[3,2])    
         gate = qiskit_gates.CZGate()
         qiskit_circuit.append(gate, qargs=[1,2])     
-        # gate = qiskit_gates.HGate()
-        # qiskit_circuit.append(gate, qargs=[1])  
+        gate = qiskit_gates.HGate()
+        qiskit_circuit.append(gate, qargs=[1])  
         # gate = qiskit_gates.CCXGate()
         # qiskit_circuit.append(gate, qargs=[0,1,2])         
-        gate = qiskit_gates.RXGate(np.pi/4)
-        qiskit_circuit.append(gate, qargs=[0]) 
+        # gate = qiskit_gates.RXGate(np.pi/4)
+        # qiskit_circuit.append(gate, qargs=[0]) 
 
         """custom gate"""
         # custom_matrix1 = np.array([
