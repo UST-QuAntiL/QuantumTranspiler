@@ -28,14 +28,10 @@ class TestCircuitWrapper:
         
     def test_unroll(self):
         wrapper = CircuitWrapper(qiskit_circuit=ExampleCircuits.qiskit_unroll())
-        wrapper.unroll(["u3", "u2", "cz", "u1"])
+        wrapper.unroll_rigetti()
+        # wrapper.unroll(["u3", "u2", "cz", "u1"])
         # wrapper.unroll(["rz", "rx", "cz"])
         # wrapper.unroll(["rx", "cz"])
-        # rx = Gates.RXGate(np.pi)
-        # rx2 = Gates.RXGate(-np.pi)
-        # rx3 = Gates.RXGate(np.pi/2)
-        # rx4 = Gates.RXGate(-np.pi/2)
-        # wrapper.unroll([rx, rx2, rx3, rx4, "rz", "cz"])
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()

@@ -72,6 +72,11 @@ class CircuitWrapper:
         # self.circuit = dag_to_circuit(self.dag)
         # show_figure(self.circuit)
 
+    def unroll_ibm(self):
+        self.unroll(["u1", "u2", "u3", "cx"])
+    def unroll_rigetti(self):
+        self.unroll(["rx", "rz", "cz"])
+
     def unroll(self, gates: [str]):
         unroll_pass = Unroller(gates)    
         self.dag = unroll_pass.run(self.dag)
