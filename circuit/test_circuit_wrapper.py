@@ -22,6 +22,11 @@ class TestCircuitWrapper:
         pyquil = wrapper.export_pyquil()
         print(pyquil)
 
+    def test_qasm_export(self):
+        wrapper = CircuitWrapper(qiskit_circuit=ExampleCircuits.qiskit_unroll())
+        qasm = wrapper.export_qasm()
+        print(qasm)
+
     def test_decompose(self):
         wrapper = CircuitWrapper(qiskit_circuit=ExampleCircuits.qiskit_unroll())
         wrapper.decompose_to_standard_gates()
@@ -35,4 +40,4 @@ class TestCircuitWrapper:
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_unroll()
+    test.test_qasm_export()
