@@ -4,7 +4,7 @@ import qiskit.transpiler.passes as Qiskit_Passes
 from qiskit.tools.visualization import dag_drawer
 from transpilation.decompose_isometry_gates import DecomposeIsometryGates
 from qiskit.extensions import UnitaryGate
-from transpilation.Utility import isometry_gates, non_standard_gate_nodes, custom_3qubit_gates
+from transpilation.Utility import isometry_gates, non_standard_gate_nodes, custom_3qubit_gates, quantum_initializer_gates
 
 class Decomposer():
 
@@ -23,12 +23,12 @@ class Decomposer():
             dag = decompose_pass.run(dag)
         return dag
 
-    def decompose_3qubit_custom_gates(self, dag: DAGCircuit):
-        # 3+ qubit gates to isometry gates
-        dag = self._decompose(dag, custom_3qubit_gates)    
-        dag = self._decompose_isometry_gates(dag)
-        dag = self._decompose(dag, non_standard_gate_nodes)  
-        return dag  
+    # def decompose_3qubit_custom_gates(self, dag: DAGCircuit):
+    #     # 3+ qubit gates to isometry gates
+    #     dag = self._decompose(dag, custom_3qubit_gates)    
+    #     dag = self._decompose_isometry_gates(dag)
+    #     dag = self._decompose(dag, quantum_initializer_gates)  
+    #     return dag  
 
     def _decompose_isometry_gates(self, dag: DAGCircuit):
         decompose_pass = DecomposeIsometryGates()

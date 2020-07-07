@@ -66,14 +66,9 @@ class CircuitWrapper:
         return self.circuit
 
     def export_qasm(self) -> str:
-        self._decompose_custom_3qubit_gates()
+        self.decompose_to_standard_gates()
         qasm = self.circuit.qasm()
         return qasm
-
-    def _decompose_custom_3qubit_gates(self):
-        decomposer = Decomposer()
-        self.dag = decomposer.decompose_3qubit_custom_gates(self.dag)
-        self.circuit = dag_to_circuit(self.dag)
 
     def decompose_to_standard_gates(self):
         decomposer = Decomposer()    
