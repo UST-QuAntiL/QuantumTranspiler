@@ -1,16 +1,24 @@
-from qiskit.dagcircuit import DAGCircuit
+from qiskit.dagcircuit import DAGCircuit, DAGNode
 import qiskit.transpiler.passes as Qiskit_Passes
 from qiskit.tools.visualization import dag_drawer
 from transpilation.unroll import Unroller
 from qiskit.extensions import UnitaryGate
 from qiskit.extensions.quantum_initializer.isometry import Isometry
 from qiskit.circuit.instruction import Instruction
+from typing import Callable
 
 standard_gates = ["barrier", "c3x", "c4x", "ccx", "dcx", "h", "ch", "crx", "cry", "crz", "cswap", "cu1", "cu3", "cx", "cy", "cz",
                   "i", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzz", "rzx", "s", "sdg", "t", "tdg", "u1", "u2", "u3", "x", "y", "z"]
 
+def standard_gate_nodes(dag: DAGCircuit):
+    all_nodes = dag.gate_nodes()
+    nodes = []
+    for node in all_nodes:
+        if not isinstance(node.op, UnitaryGate):
+            nodes.append(node)
+    return nodes
 
-def non_standard_gate_nodes(dag):
+def non_standard_gate_nodes(dag: DAGCircuit):
     all_nodes = dag.gate_nodes()
     nodes = []
     for node in all_nodes:
@@ -21,8 +29,21 @@ def non_standard_gate_nodes(dag):
             nodes.append(node)
     return nodes
 
+def custom_3qubit_gates(dag: DAGCircuit):
+    check_node = lambda node: True if (node.op.num_qubits >= 3) else False    
+    return _get_nodes(dag, check_node)
 
-def isometry_gates(dag):
+def _get_nodes(dag: DAGCircuit, check_node: Callable[[DAGNode], bool]):
+    all_nodes = non_standard_gate_nodes(dag)
+    nodes = []
+    for node in all_nodes:
+        if check_node(node):
+            nodes.append(node)
+
+    return nodes
+
+
+def isometry_gates(dag: DAGCircuit):
     all_nodes = dag.multi_qubit_ops()
     nodes = []
     for node in all_nodes:
@@ -31,10 +52,4 @@ def isometry_gates(dag):
     return nodes
 
 
-def standard_gate_nodes(dag):
-    all_nodes = dag.gate_nodes()
-    nodes = []
-    for node in all_nodes:
-        if not isinstance(node.op, UnitaryGate):
-            nodes.append(node)
-    return nodes
+

@@ -6,6 +6,7 @@ from qiskit.converters import circuit_to_dag, dag_to_circuit
 from circuit.qiskit_utility import show_figure
 from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
+from typing import List
 
 class CircuitWrapper:
     def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None):
@@ -65,9 +66,14 @@ class CircuitWrapper:
         return self.circuit
 
     def export_qasm(self) -> str:
-        self.decompose_to_standard_gates()
+        self._decompose_custom_3qubit_gates()
         qasm = self.circuit.qasm()
         return qasm
+
+    def _decompose_custom_3qubit_gates(self):
+        decomposer = Decomposer()
+        self.dag = decomposer.decompose_3qubit_custom_gates(self.dag)
+        self.circuit = dag_to_circuit(self.dag)
 
     def decompose_to_standard_gates(self):
         decomposer = Decomposer()    
@@ -75,12 +81,14 @@ class CircuitWrapper:
         self.circuit = dag_to_circuit(self.dag)
         # show_figure(self.circuit)
 
+    
+
     def unroll_ibm(self):
         self.unroll(["u1", "u2", "u3", "cx"])
     def unroll_rigetti(self):
         self.unroll(["rx", "rz", "cz"])
 
-    def unroll(self, gates: [str]):
+    def unroll(self, gates: List[str]):
         unroll_pass = Unroller(gates)    
         self.dag = unroll_pass.run(self.dag)
         self.circuit = dag_to_circuit(self.dag)

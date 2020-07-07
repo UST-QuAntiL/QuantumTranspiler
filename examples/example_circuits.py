@@ -199,15 +199,15 @@ class ExampleCircuits:
         # qiskit_circuit.append(gate, qargs=[0]) 
 
         """custom gate"""
-        custom_matrix1 = np.array([
-            [np.e**(1j*np.pi/2), 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, np.e**(1j*np.pi/2)]
-        ], dtype=complex)
-        custom_matrix1 = random_unitary(4, seed=42)
-        custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_custom")
-        qiskit_circuit.append(custom_gate1, qargs=[0,1])
+        # custom_matrix1 = np.array([
+        #     [np.e**(1j*np.pi/2), 0, 0, 0],
+        #     [0, 1, 0, 0],
+        #     [0, 0, 1, 0],
+        #     [0, 0, 0, np.e**(1j*np.pi/2)]
+        # ], dtype=complex)
+        # custom_matrix1 = random_unitary(4, seed=42)
+        # custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_custom")
+        # qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
         """custom gate #2"""
         custom_matrix1 = random_unitary(8, seed=42)
