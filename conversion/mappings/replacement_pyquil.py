@@ -4,7 +4,7 @@ from pyquil import Program
 from pyquil.quilatom import Parameter
 
 
-def u2_replacement(phi, lam):
+def u2_replacement(phi: float, lam: float):
     """implemented with X90 pulse: https://qiskit.org/documentation/stubs/qiskit.circuit.library.U2Gate.html"""
     p = Program()
     p += RZ(phi + np.pi/2, 0)
@@ -12,7 +12,7 @@ def u2_replacement(phi, lam):
     p += RZ(lam - np.pi/2, 0)
     return p
 
-def u3_replacement(theta, phi, lam):
+def u3_replacement(theta: float, phi: float, lam: float):
     """implemented with two X90 pulse: https://qiskit.org/documentation/stubs/qiskit.circuit.library.U3Gate.html"""
     p = Program()
     p += RZ(phi - np.pi/2, 0)

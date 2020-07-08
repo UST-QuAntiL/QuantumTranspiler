@@ -7,7 +7,7 @@ from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit import Parameter as qiskit_Parameter
 import qiskit.circuit as qiskit_circuit_library
 from conversion.converter.converter_interface import ConverterInterface
-
+from typing import Tuple
 
 class ConversionHandler:
     def __init__(self, converter: ConverterInterface.__class__):
@@ -17,7 +17,7 @@ class ConversionHandler:
         circuit = self.converter.language_to_circuit(language)
         return self.converter.import_circuit(circuit)
 
-    def import_circuit(self, circuit) -> (QuantumCircuit, {int: Qubit}, {str: Clbit}):
+    def import_circuit(self, circuit) -> Tuple(QuantumCircuit, {int: Qubit}, {str: Clbit}):
         return self.converter.import_circuit(circuit)
 
     def export_language(self, circuit: QuantumCircuit) -> str:

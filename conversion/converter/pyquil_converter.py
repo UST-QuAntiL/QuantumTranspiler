@@ -11,12 +11,13 @@ from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit import Parameter as qiskit_Parameter
 import qiskit.circuit as qiskit_circuit_library
 from conversion.converter.converter_interface import ConverterInterface
+from typing import Tuple
 
 class PyquilConverter(ConverterInterface):  
     name = "pyquil"
     is_control_capable = True
 
-    def import_circuit(self, circuit: Program) -> (QuantumCircuit, {int: Qubit}, {str: Clbit}):
+    def import_circuit(self, circuit: Program) -> Tuple(QuantumCircuit, {int: Qubit}, {str: Clbit}):
         program = circuit
         qubit_set = program.get_qubits()
         qreg_mapping = {}

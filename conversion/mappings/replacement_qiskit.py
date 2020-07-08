@@ -5,7 +5,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit import Instruction
 
 
-def cphase00_replacement(phi) -> QuantumCircuit:
+def cphase00_replacement(phi: float) -> QuantumCircuit:
     matrix = np.array([
         [np.e**(1j*phi), 0, 0, 0],
         [0, 1, 0, 0],
@@ -17,7 +17,7 @@ def cphase00_replacement(phi) -> QuantumCircuit:
     return gate
 
 
-def cphase01_replacement(phi) -> QuantumCircuit:
+def cphase01_replacement(phi: float) -> QuantumCircuit:
     matrix = np.array([
         [1, 0, 0, 0],
         [0, np.e**(1j*phi), 0, 0],
@@ -29,7 +29,7 @@ def cphase01_replacement(phi) -> QuantumCircuit:
     return gate
 
 
-def cphase10_replacement(phi) -> QuantumCircuit:
+def cphase10_replacement(phi: float) -> QuantumCircuit:
     matrix = np.array([
         [1, 0, 0, 0],
         [0, 1, 0, 0],
@@ -41,7 +41,7 @@ def cphase10_replacement(phi) -> QuantumCircuit:
     return gate
 
 
-def pswap_replacement(phi) -> QuantumCircuit:
+def pswap_replacement(phi: float) -> QuantumCircuit:
     matrix = np.array([
         [1, 0, 0, 0],
         [0, 0, np.e**(1j * phi), 0],

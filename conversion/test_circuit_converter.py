@@ -65,13 +65,6 @@ class TestCircuitConverter:
         # pyquil = QuantasticaConverter.qasm_to_pyquil(ExampleCircuits.qiskit_custom().qasm())
         # print(pyquil)
 
-    def check_equality(self, matrix1, matrix2) -> bool:
-        """checks equality of matrices up to global phase"""
-        gate1 = UnitaryGate(matrix1)
-        gate2 = UnitaryGate(matrix2)
-        print(gate1 == gate2)
-        return gate1 == gate2
-
     def test_pyquil_own_import(self):
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
