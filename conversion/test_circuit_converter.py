@@ -15,7 +15,7 @@ from pyquil.gates import *
 from conversion.converter.converter_interface import ConverterInterface
 from conversion.converter.pyquil_converter import PyquilConverter
 import numpy as np
-from examples.example_circuits import ExampleCircuits
+from examples import *
 from pyquil.latex import display, to_latex
 from qiskit.extensions import UnitaryGate
 import qiskit.circuit.library.standard_gates as qiskit_gates
@@ -24,8 +24,8 @@ import numpy as np
 
 class TestCircuitConverter:
     def test_pytket(self):
-        program = ExampleCircuits.pyquil_custom()
-        circuit = ExampleCircuits.qiskit_custom()
+        program = pyquil_custom()
+        circuit = qiskit_custom()
 
         # tk = qiskit_to_tk(circuit)
         # pyquil = tk_to_pyquil(tk)
@@ -37,7 +37,7 @@ class TestCircuitConverter:
 
     def test_staq(self):
         staq = StaqConverter(
-            "/home/seedrix/tools/staq/build/staq", ExampleCircuits.shor_qasm)
+            "/home/seedrix/tools/staq/build/staq", shor_qasm())
         # quil = staq.qasm_to_quil()
         # does not work, because of undefined Dagger instruction
         # program = Program(quil)
@@ -50,7 +50,7 @@ class TestCircuitConverter:
 
     def test_pennylane(self):
         qiskit = PennylaneConverter.pyquil_to_qasm(
-            ExampleCircuits.pyquil_custom())
+            pyquil_custom())
         show_figure(qiskit)
 
         # qiskit = PennylaneConverter.qiskit_to_qiskit(ExampleCircuits.qiskit_custom())
@@ -58,7 +58,7 @@ class TestCircuitConverter:
 
     def test_quantastica(self):
         qasm = QuantasticaConverter.quil_to_qasm(
-            ExampleCircuits.pyquil_custom().out())
+            pyquil_custom().out())
         print(qasm)
         show_figure(QuantumCircuit.from_qasm_str(qasm))
 
@@ -75,13 +75,13 @@ class TestCircuitConverter:
     def test_pyquil_own_import(self):
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
-        qiskit = handler.import_circuit(ExampleCircuits.pyquil_shor())
+        qiskit = handler.import_circuit(pyquil_custom())
         show_figure(qiskit[0])
 
     def test_pyquil_own_export(self):
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
-        program = handler.export_circuit(ExampleCircuits.qiskit_shor())[0]
+        program = handler.export_circuit(shor_15())[0]
         print(program)
         latex = to_latex(program)
         print(latex)
@@ -89,13 +89,11 @@ class TestCircuitConverter:
     def test_pyquil(self):
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
-        program = handler.export_circuit(ExampleCircuits.qiskit_shor())[0]
+        program = handler.export_circuit(shor_15())[0]
         print(program)
-        program = handler.export_circuit(ExampleCircuits.qiskit_custom())[0]
+        program = handler.export_circuit(qiskit_custom())[0]
         print(program)
-        qiskit = handler.import_circuit(ExampleCircuits.pyquil_shor())
-        show_figure(qiskit[0])
-        qiskit = handler.import_circuit(ExampleCircuits.pyquil_custom())
+        qiskit = handler.import_circuit(pyquil_custom())
         show_figure(qiskit[0])
         
 

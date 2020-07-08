@@ -24,7 +24,7 @@ class CircuitWrapper:
             self.creg_mapping_export = {}
 
 
-    def _import(self, handler: ConversionHandler, circuit, is_language):
+    def _import(self, handler: ConversionHandler, circuit, is_language: bool):
         if is_language:
             (circuit, self.qreg_mapping_import, self.creg_mapping) = handler.import_language(circuit)
         else:
@@ -45,7 +45,7 @@ class CircuitWrapper:
         handler = ConversionHandler(converter)
         self._import(handler, quil, True)
 
-    def _export(self, handler, is_language):
+    def _export(self, handler: ConversionHandler, is_language: bool):
         if is_language:
             (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_language(self.circuit)
         else:
