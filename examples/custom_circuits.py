@@ -1,9 +1,6 @@
-from pytket.qasm import circuit_from_qasm, circuit_to_qasm
-from pyquil import Program, get_qc
+from pyquil import Program
 from circuit.qiskit_utility import show_figure
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
-from qiskit.tools.visualization import dag_drawer
-from qiskit.aqua.algorithms import Shor
 from pyquil.gates import *
 import numpy as np
 from pyquil.quilbase import Declare, Gate, Halt, Measurement, Pragma, DefGate
