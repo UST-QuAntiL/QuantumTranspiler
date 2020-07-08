@@ -99,7 +99,6 @@ class Unroller(TransformationPass):
                         return
                     try:                    
                         rules = self._get_rules(gate)
-                        print(rules)
                         self._apply_rules(dag, node, rules)
                         return
                     except TypeError as err:

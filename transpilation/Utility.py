@@ -18,7 +18,6 @@ def _get_nodes(dag: DAGCircuit, check_node: Callable[[DAGNode], bool]):
     for node in all_nodes:
         if check_node(node):
             nodes.append(node)
-    print(nodes)
     return nodes
 
 def standard_gate_nodes(dag: DAGCircuit):

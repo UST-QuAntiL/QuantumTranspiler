@@ -74,9 +74,7 @@ class CircuitWrapper:
         decomposer = Decomposer()    
         self.dag = decomposer.decompose_to_standard_gates(self.dag)
         self.circuit = dag_to_circuit(self.dag)
-        # show_figure(self.circuit)
-
-    
+        # show_figure(self.circuit)    
 
     def unroll_ibm(self):
         self.unroll(["u1", "u2", "u3", "cx"])
@@ -87,6 +85,6 @@ class CircuitWrapper:
         unroll_pass = Unroller(gates)    
         self.dag = unroll_pass.run(self.dag)
         self.circuit = dag_to_circuit(self.dag)
-        # show_figure(self.circuit)
+        show_figure(self.circuit)
 
 
