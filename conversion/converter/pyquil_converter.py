@@ -9,9 +9,11 @@ from qiskit.circuit import Qubit, Clbit
 from pyquil.gates import NOP, MEASURE
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit import Parameter as qiskit_Parameter
+from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
 import qiskit.circuit as qiskit_circuit_library
 from conversion.converter.converter_interface import ConverterInterface
 from typing import Tuple, Dict
+import numpy as np
 
 class PyquilConverter(ConverterInterface):  
     name = "pyquil"
@@ -153,9 +155,12 @@ class PyquilConverter(ConverterInterface):
     def parameter_conversion(self, parameter: qiskit_Parameter):
         return pyquil_Parameter(parameter.name)
 
-    def parameter_expression_conversion(self, parameter: qiskit_Parameter):
-        print("parameter expression")
-        return pyquil_Parameter(parameter.name)
+    def parameter_expression_conversion(self, parameter: qiskit_Parameter_expression):
+        if len(parameter.parameters) == 0:  
+            return float(parameter._symbol_expr)
+        else:
+            raise NotImplementedError("Parameter Expressions with unbound parameters are not supported: " + str(parameter))     
+
 
     def barrier(self):
         # no pyquil equivalent

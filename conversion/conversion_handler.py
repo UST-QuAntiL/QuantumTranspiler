@@ -95,14 +95,11 @@ class ConversionHandler:
 
         if qiskit_gate_class_name in gate_mapping_qiskit:
             params = qiskit_gate.params
-            print(params)
             # parameter conversion
             for i, param in enumerate(params):
-                print(param)
                 # parameterized circuit --> add Pyquil Parameter Object (convert from Qiskit Parameter Object)
                 if isinstance(param, qiskit_Parameter_expression):
-                    print("asdsafas")
-                    params[i] = converter.parameter_conversion(param)
+                    params[i] = converter.parameter_expression_conversion(param)
                 if isinstance(param, qiskit_Parameter):
                     params[i] = converter.parameter_conversion(param)
 
