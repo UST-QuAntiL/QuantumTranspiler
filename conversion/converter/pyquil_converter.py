@@ -139,7 +139,7 @@ class PyquilConverter(ConverterInterface):
     def gate(self, gate, qubits, params, is_controlled = False, num_qubits_base_gate = None):
         if is_controlled:
             control_qubits = qubits[:(len(qubits) - num_qubits_base_gate)]
-            qubits = qubits[(len(qubits) - num_qubits_base_gate):]
+            qubits = qubits[(len(qubits) - num_qubits_base_gate):]            
             self.program += gate(*params, *qubits).controlled(control_qubits) 
         else:
             self.program += gate(*params, *qubits)        
@@ -151,6 +151,10 @@ class PyquilConverter(ConverterInterface):
         self.program += gate(*params, *qubits) 
 
     def parameter_conversion(self, parameter: qiskit_Parameter):
+        return pyquil_Parameter(parameter.name)
+
+    def parameter_expression_conversion(self, parameter: qiskit_Parameter):
+        print("parameter expression")
         return pyquil_Parameter(parameter.name)
 
     def barrier(self):

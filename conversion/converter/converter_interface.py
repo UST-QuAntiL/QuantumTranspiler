@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.circuit import Qubit
+from qiskit.circuit import Parameter as qiskit_Parameter
+from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
+from qiskit.circuit import parameter
 
 class ConverterInterface(ABC):
     @property
@@ -43,8 +46,12 @@ class ConverterInterface(ABC):
         pass
 
     @abstractmethod
-    def parameter_conversion(self):
+    def parameter_conversion(self, parameter: qiskit_Parameter):
         pass
+
+    @abstractmethod
+    def parameter_expression_conversion(self, parameter: qiskit_Parameter_expression):
+        pass    
 
     @abstractmethod
     def barrier(self):

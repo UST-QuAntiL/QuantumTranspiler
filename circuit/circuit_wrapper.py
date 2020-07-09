@@ -54,7 +54,7 @@ class CircuitWrapper:
 
     def export_pyquil(self) -> Program:
         converter = PyquilConverter()
-        handler = ConversionHandler(converter)
+        handler = ConversionHandler(converter)        
         return self._export(handler, False)
 
     def export_quil(self) -> str:
@@ -82,8 +82,10 @@ class CircuitWrapper:
 
     def unroll(self, gates: List[str]) -> QuantumCircuit:
         unroll_pass = Unroller(gates)    
+        print(self.circuit)
         self.dag = unroll_pass.run(self.dag)
         self.circuit = dag_to_circuit(self.dag)
+        print(self.circuit)
         return self.circuit
 
 

@@ -3,6 +3,7 @@ import qiskit.circuit.library.standard_gates as Gates
 from qiskit import QuantumCircuit
 import numpy as np
 from qiskit.circuit import Parameter
+from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 
 class EquivalenceLibraryBasis(EquivalenceLibrary):
     """

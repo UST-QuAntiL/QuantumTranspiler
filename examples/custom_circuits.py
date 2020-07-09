@@ -24,9 +24,17 @@ def qiskit_custom():
     # qiskit_circuit = QuantumCircuit(5)
     # qiskit_circuit.add_register(cr)
 
-    """standard qiskit gate """
-    gate = qiskit_gates.CXGate()
-    qiskit_circuit.append(gate, qargs=[2,3])
+    """standard qiskit gates """
+    # gate = qiskit_gates.CXGate()
+    # qiskit_circuit.append(gate, qargs=[2,3])
+    gate = qiskit_gates.U2Gate(np.pi, np.pi)
+    qiskit_circuit.append(gate, qargs=[2])
+    # gate = qiskit_gates.RZGate(np.pi*3/2)
+    # qiskit_circuit.append(gate, qargs=[2])
+    # gate = qiskit_gates.RXGate(np.pi/2)
+    # qiskit_circuit.append(gate, qargs=[2])
+    # gate = qiskit_gates.RZGate(np.pi/2)
+    # qiskit_circuit.append(gate, qargs=[2])
 
     """standard qiskit gate with control """
     # gate = qiskit_gates.HGate().control(1)

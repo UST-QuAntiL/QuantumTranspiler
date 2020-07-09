@@ -4,6 +4,7 @@ from qiskit.extensions import UnitaryGate
 from qiskit.circuit import Qubit, Clbit, ControlledGate
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit import Parameter as qiskit_Parameter
+from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
 import qiskit.circuit as qiskit_circuit_library
 from conversion.converter.converter_interface import ConverterInterface
 from typing import Tuple, Dict
@@ -43,7 +44,7 @@ class ConversionHandler:
         for cr in circuit.cregs:
             creg_mapping = converter.create_creg_mapping(creg_mapping, cr)
 
-        for instr in circuit.data:
+        for instr in circuit.data:            
             qiskit_gate = instr[0]
             qubits = [qreg_mapping[qubit] for qubit in instr[1]]
 
@@ -94,9 +95,14 @@ class ConversionHandler:
 
         if qiskit_gate_class_name in gate_mapping_qiskit:
             params = qiskit_gate.params
+            print(params)
             # parameter conversion
             for i, param in enumerate(params):
+                print(param)
                 # parameterized circuit --> add Pyquil Parameter Object (convert from Qiskit Parameter Object)
+                if isinstance(param, qiskit_Parameter_expression):
+                    print("asdsafas")
+                    params[i] = converter.parameter_conversion(param)
                 if isinstance(param, qiskit_Parameter):
                     params[i] = converter.parameter_conversion(param)
 

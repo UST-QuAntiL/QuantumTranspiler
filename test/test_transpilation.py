@@ -60,4 +60,4 @@ if __name__ == "__main__":
     circuit = shor_15()
     circuit = qiskit_custom()
     test = TestTranspilation()
-    test.simulate(shor_15())
+    test.simulate(circuit)

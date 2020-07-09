@@ -73,10 +73,10 @@ class TestCircuitConverter:
         handler = ConversionHandler(converter)
         program = handler.export_circuit(qiskit_custom())[0]
         print(program)
-        program = handler.export_circuit(qiskit_custom())[0]
-        print(program)
-        qiskit = handler.import_circuit(pyquil_custom())
-        show_figure(qiskit[0])
+        # program = handler.export_circuit(qiskit_custom())[0]
+        # print(program)
+        # qiskit = handler.import_circuit(pyquil_custom())
+        # show_figure(qiskit[0])
         
 
 
