@@ -104,7 +104,7 @@ def qiskit_custom():
     
 
     """measurement"""
-    # qiskit_circuit.measure_all()
+    qiskit_circuit.measure_all()
 
     show_figure(qiskit_circuit)
     return qiskit_circuit
