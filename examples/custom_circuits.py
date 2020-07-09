@@ -25,8 +25,8 @@ def qiskit_custom():
     # qiskit_circuit.add_register(cr)
 
     """standard qiskit gate """
-    # gate = qiskit_gates.CXGate()
-    # qiskit_circuit.append(gate, qargs=[2,3])
+    gate = qiskit_gates.CXGate()
+    qiskit_circuit.append(gate, qargs=[2,3])
 
     """standard qiskit gate with control """
     # gate = qiskit_gates.HGate().control(1)
@@ -91,8 +91,8 @@ def qiskit_custom():
     # qiskit_circuit.append(crxgate, qargs=[0, 1])
 
     """qiskit gate sdg"""        
-    sdggate = qiskit_gates.TdgGate()
-    qiskit_circuit.append(sdggate, qargs=[0])
+    # sdggate = qiskit_gates.TdgGate()
+    # qiskit_circuit.append(sdggate, qargs=[0])
     
 
     """measurement"""

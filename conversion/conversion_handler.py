@@ -1,5 +1,4 @@
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
-from circuit.qiskit_utility import show_figure
 from conversion.mappings.gate_mappings import gate_mapping_qiskit, gate_mapping_pyquil
 from qiskit.extensions import UnitaryGate
 from qiskit.circuit import Qubit, Clbit, ControlledGate

@@ -1,24 +1,14 @@
-from pytket.qasm import circuit_from_qasm, circuit_to_qasm
-from pytket.pyquil import pyquil_to_tk, tk_to_pyquil
-from pytket.qiskit import qiskit_to_tk, tk_to_qiskit
 from conversion.conversion_handler import ConversionHandler
-from pyquil import Program, get_qc
-from conversion.third_party_converter.pytket_converter import PytketConverter
 from circuit.qiskit_utility import show_figure
 from conversion.third_party_converter.staq_converter import StaqConverter
 from qiskit import QuantumCircuit
-from qiskit.tools.visualization import dag_drawer
-from qiskit.aqua.algorithms import Shor
-from conversion.third_party_converter.pennylane_converter import PennylaneConverter
-from conversion.third_party_converter.quantastica_converter import QuantasticaConverter
+# from conversion.third_party_converter.pennylane_converter import PennylaneConverter
+# from conversion.third_party_converter.quantastica_converter import QuantasticaConverter
 from pyquil.gates import *
-from conversion.converter.converter_interface import ConverterInterface
 from conversion.converter.pyquil_converter import PyquilConverter
 import numpy as np
 from examples import *
-from pyquil.latex import display, to_latex
-from qiskit.extensions import UnitaryGate
-import qiskit.circuit.library.standard_gates as qiskit_gates
+from pyquil.latex import to_latex
 import numpy as np
 
 
@@ -30,10 +20,9 @@ class TestCircuitConverter:
         # tk = qiskit_to_tk(circuit)
         # pyquil = tk_to_pyquil(tk)
         # print(pyquil)
-
-        tk = pyquil_to_tk(program)
-        qiskit = tk_to_qiskit(tk)
-        show_figure(qiskit)
+        # tk = pyquil_to_tk(program)
+        # qiskit = tk_to_qiskit(tk)
+        # show_figure(qiskit)
 
     def test_staq(self):
         staq = StaqConverter(
@@ -82,7 +71,7 @@ class TestCircuitConverter:
     def test_pyquil(self):
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
-        program = handler.export_circuit(shor_15())[0]
+        program = handler.export_circuit(qiskit_custom())[0]
         print(program)
         program = handler.export_circuit(qiskit_custom())[0]
         print(program)
