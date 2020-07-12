@@ -7,38 +7,36 @@ from circuit import CircuitWrapper
 import matplotlib.pyplot as plt
 from pyquil import Program, get_qc
 from pyquil.api import local_forest_runtime
-
-from pyquil.gates import X, MEASURE
-
+from typing import List
 class TestTranspilation():
-    def simulate_qiskit(self, circuit: QuantumCircuit, title: str):
+    def simulate_qiskit(self, circuit: QuantumCircuit, title: str, shots = 1000):
         simulator = QasmSimulator()
-        result = execute(circuit, simulator).result()
+        result = execute(circuit, simulator, shots=shots).result()
         counts = result.get_counts(circuit)
         plot_histogram(counts, title=title)
         return counts
 
-    def simulate_pyquil(self, program: Program, title: str):
+    def simulate_pyquil(self, program: Program, title: str, shots = 1000):
         """ qvm -S and quilc -S must be executed to run the pyquil compiler and simulator servers
         http://docs.rigetti.com/en/stable/start.html
         """
-        # p = Program()
-        # ro = p.declare('ro', 'BIT', 2)
-        # p += X(0)
-        # p += MEASURE(0, ro[0])
-        # p += MEASURE(1, ro[1])
-        # p.wrap_in_numshots_loop(5)
-        # program = p
-        program.wrap_in_numshots_loop(10)
-        print(program)
-        with local_forest_runtime():      
-
+        program.wrap_in_numshots_loop(shots)
+        with local_forest_runtime():  
             qvm = get_qc('9q-square-qvm')
             executable = qvm.compile(program)
-            print("exec")
-            print(executable.program)
             bitstrings = qvm.run(executable) 
-            print(bitstrings)
+            counts = self._bitstrings_to_counts(bitstrings)
+            plot_histogram(counts, title=title)
+
+    def _bitstrings_to_counts(self, bitstrings: List[List[int]]):
+        counts =  {}
+        for bitstring in bitstrings:
+            bits = ""
+            for bit in bitstring:
+                # r[0] is the first qubit in the list --> revert the array to have the same behaviour as qiskit
+                bits = str(bit) + bits
+            counts[bits] = counts.get(bits, 0) + 1
+        return counts
 
 
     def transpile_qiskit(self, circuit: QuantumCircuit) -> QuantumCircuit:
@@ -58,9 +56,9 @@ class TestTranspilation():
         return circuit_pyquil
     
     def simulate(self, circuit: QuantumCircuit):     
-        # self.call_simulate_qiskit(circuit)
+        self.call_simulate_qiskit(circuit)
         self.call_simulate_rigetti(circuit)
-        # plt.show()
+        plt.show()
     
     def call_simulate_qiskit(self, circuit: QuantumCircuit):        
         counts_qiskit_raw = self.simulate_qiskit(circuit, "Qiskit - Not transpiled")
@@ -78,6 +76,6 @@ class TestTranspilation():
 
 if __name__ == "__main__":
     circuit = shor_15()
-    circuit = qiskit_custom()
+    # circuit = qiskit_custom()
     test = TestTranspilation()
     test.simulate(circuit)
