@@ -12,7 +12,7 @@ from qiskit.circuit import Parameter as qiskit_Parameter
 from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
 import qiskit.circuit as qiskit_circuit_library
 from conversion.converter.converter_interface import ConverterInterface
-from typing import Tuple, Dict
+from typing import Tuple, Dict, List
 import numpy as np
 
 class PyquilConverter(ConverterInterface):  
@@ -131,12 +131,19 @@ class PyquilConverter(ConverterInterface):
         qreg_mapping[qubit] = index
         return qreg_mapping
 
-    def create_creg_mapping(self, creg_mapping, cr: ClassicalRegister):
-        creg_pyquil = self.program.declare(cr.name, 'BIT', cr.size)
-        for i, clbit in enumerate(cr):                
-            creg_mapping[clbit] = creg_pyquil[i]
+    def create_creg_mapping(self, cregs: List[ClassicalRegister]):
+        total_size = 0
+        creg_mapping = {}
+        for cr in cregs:
+            total_size += cr.size
+
+        creg_pyquil = self.program.declare("ro", 'BIT', total_size)
+        for cr in cregs:
+            for i, clbit in enumerate(cr):                
+                creg_mapping[clbit] = creg_pyquil[i]
         
         return creg_mapping
+        
 
     def gate(self, gate, qubits, params, is_controlled = False, num_qubits_base_gate = None):
         if is_controlled:

@@ -19,10 +19,12 @@ def qiskit_custom():
     qr = QuantumRegister(3, "q")
     qr2 = QuantumRegister(2, "qq")
     cr = ClassicalRegister(5)
+    # cr2 = ClassicalRegister(5)
     """multiple quantum register"""
     qiskit_circuit = QuantumCircuit(qr, qr2)
     # qiskit_circuit = QuantumCircuit(5)
     # qiskit_circuit.add_register(cr)
+    # qiskit_circuit.add_register(cr2)
 
     """standard qiskit gates """
     # gate = qiskit_gates.CXGate()

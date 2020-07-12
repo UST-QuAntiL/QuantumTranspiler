@@ -40,9 +40,8 @@ class ConversionHandler:
         for i, qubit in enumerate(circuit.qubits):
             qreg_mapping = converter.create_qreg_mapping(
                 qreg_mapping, qubit, i)
-
-        for cr in circuit.cregs:
-            creg_mapping = converter.create_creg_mapping(creg_mapping, cr)
+        
+        creg_mapping = converter.create_creg_mapping(circuit.cregs)
 
         for instr in circuit.data:            
             qiskit_gate = instr[0]

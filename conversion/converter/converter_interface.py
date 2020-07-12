@@ -4,6 +4,7 @@ from qiskit.circuit import Qubit
 from qiskit.circuit import Parameter as qiskit_Parameter
 from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
 from qiskit.circuit import parameter
+from typing import List
 
 class ConverterInterface(ABC):
     @property
@@ -34,7 +35,7 @@ class ConverterInterface(ABC):
         pass
 
     @abstractmethod
-    def create_creg_mapping(self, creg_mapping, cr: ClassicalRegister):
+    def create_creg_mapping(self, cregs: List[ClassicalRegister]):
         pass
 
     @abstractmethod
