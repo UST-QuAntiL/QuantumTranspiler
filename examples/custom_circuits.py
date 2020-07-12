@@ -29,8 +29,8 @@ def qiskit_custom():
     """standard qiskit gates """
     # gate = qiskit_gates.CXGate()
     # qiskit_circuit.append(gate, qargs=[2,3])
-    gate = qiskit_gates.U2Gate(np.pi, np.pi)
-    qiskit_circuit.append(gate, qargs=[2])
+    # gate = qiskit_gates.U2Gate(np.pi, np.pi)
+    # qiskit_circuit.append(gate, qargs=[2])
     # gate = qiskit_gates.RZGate(np.pi*3/2)
     # qiskit_circuit.append(gate, qargs=[2])
     # gate = qiskit_gates.RXGate(np.pi/2)
@@ -43,8 +43,8 @@ def qiskit_custom():
     # qiskit_circuit.append(gate, qargs=[0,1])
 
     """standard qiskit gate with control #2"""
-    # gate = qiskit_gates.RXGate(np.pi/2).control(2)
-    # qiskit_circuit.append(gate, qargs=[3,2,1]) 
+    gate = qiskit_gates.RXGate(np.pi/2).control(2)
+    qiskit_circuit.append(gate, qargs=[3,2,1]) 
 
     """standard qiskit gate with control #3 """
     # gate = qiskit_gates.C3XGate()
