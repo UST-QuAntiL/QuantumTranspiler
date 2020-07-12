@@ -132,7 +132,7 @@ class PyquilConverter(ConverterInterface):
         return qreg_mapping
 
     def create_creg_mapping(self, creg_mapping, cr: ClassicalRegister):
-        creg_pyquil = self.program.declare("cr.name", 'BIT', cr.size)
+        creg_pyquil = self.program.declare(cr.name, 'BIT', cr.size)
         for i, clbit in enumerate(cr):                
             creg_mapping[clbit] = creg_pyquil[i]
         
