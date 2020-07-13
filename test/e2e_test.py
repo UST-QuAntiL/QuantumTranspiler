@@ -29,7 +29,6 @@ class TestTranspilation():
             bitstrings = qvm.run(executable)
             counts = self._bitstrings_to_counts(bitstrings)
             plot_histogram(counts, title=title)
-            # print(executable.program)
             return counts
 
     def _bitstrings_to_counts(self, bitstrings: List[List[int]]):
@@ -50,9 +49,7 @@ class TestTranspilation():
     def transpile_pyquil(self, circuit: QuantumCircuit) -> Program:
         wrapper = CircuitWrapper(qiskit_circuit=circuit)
         wrapper.unroll_rigetti()
-        print(wrapper.export_qasm())
         transpiled_circuit_pyquil = wrapper.export_pyquil()
-        print(wrapper.export_pyquil())
         return transpiled_circuit_pyquil
 
     def convert_to_pyquil(self, circuit: QuantumCircuit) -> Program:
@@ -87,56 +84,13 @@ class TestTranspilation():
         return [counts_rigetti_raw, counts_rigetti_transpiled]
 
     def test_data(self, decomposition = True):
-        from qiskit import QuantumRegister, ClassicalRegister
-        from qiskit import QuantumCircuit, execute, Aer
-        import numpy as np
-        qc = QuantumCircuit()
-        q = QuantumRegister(5, 'q')
-        ro = ClassicalRegister(5, 'ro')
-        qc.add_register(q)
-        qc.add_register(ro)
-        qc.u1(np.pi / 2, q[2])
-        qc.cx(q[3], q[2])
-
-        # two decompositions of U3(-np.pi / 2, 0, 0, q[2]) leading to different results
-        if decomposition:
-            # qc.rz(-np.pi / 2, q[2])
-            # qc.rx(np.pi / 2, q[2])
-            # qc.rz(3 * np.pi / 2, q[2])
-            # qc.rx(np.pi / 2, q[2])
-            # qc.rz(-np.pi / 2, q[2])
-
-            qc.rz(3*np.pi, q[2])
-            qc.rx(np.pi / 2, q[2])
-            qc.rz(3 * np.pi / 2, q[2])
-            qc.rx(np.pi / 2, q[2])
-            qc.rz(0, q[2])
-        else:
-            qc.ry(-np.pi / 2, q[2])
-
-        qc.cx(q[3], q[2])
-        qc.rz(-np.pi, q[2])
-        qc.rx(np.pi / 2, q[2])
-        qc.rz(np.pi / 2, q[2])
-        qc.rx(np.pi / 2, q[2])
-        qc.rz(-np.pi / 2, q[2])
-
-        qc.measure(q[0], ro[0])
-        qc.measure(q[1], ro[1])
-        qc.measure(q[2], ro[2])
-        qc.measure(q[3], ro[3])
-        qc.measure(q[4], ro[4])
-
-        backend = Aer.get_backend('qasm_simulator')
-        job = execute(qc, backend=backend)
-        job_result = job.result()
-        print(job_result.get_counts(qc))
+        
 
 
 if __name__ == "__main__":
     # TODO Controlled RXGate differences between rigetti transpiled and everything else    
     circuit = shor_15()
-    circuit = qiskit_custom()
+    # circuit = qiskit_custom()
     test = TestTranspilation()
     # test.test_data(decomposition = True)
     test.simulate(circuit)
