@@ -16,13 +16,13 @@ from qiskit.quantum_info import Operator
 
 
 def qiskit_custom():
-    qr = QuantumRegister(3, "q")
-    qr2 = QuantumRegister(2, "qq")
-    cr = ClassicalRegister(5)
-    # cr2 = ClassicalRegister(5)
+    qiskit_circuit = QuantumCircuit(5, 5)
     """multiple quantum register"""
-    qiskit_circuit = QuantumCircuit(qr, qr2)
-    # qiskit_circuit = QuantumCircuit(5)
+    # qr = QuantumRegister(5, "q")
+    # qr2 = QuantumRegister(2, "qq")
+    # cr = ClassicalRegister(5)
+    # cr2 = ClassicalRegister(5)
+    # qiskit_circuit = QuantumCircuit(qr, qr2)    
     # qiskit_circuit.add_register(cr)
     # qiskit_circuit.add_register(cr2)
 
@@ -43,8 +43,10 @@ def qiskit_custom():
     # qiskit_circuit.append(gate, qargs=[0,1])
 
     """standard qiskit gate with control #2"""
-    gate = qiskit_gates.RXGate(np.pi/2).control(2)
-    qiskit_circuit.append(gate, qargs=[3,2,1]) 
+    # gate = qiskit_gates.RXGate(np.pi/2).control(2)
+    # qiskit_circuit.append(gate, qargs=[3,2,1]) 
+    gate = qiskit_gates.RXGate(np.pi).control(1)
+    qiskit_circuit.append(gate, qargs=[3,2]) 
 
     """standard qiskit gate with control #3 """
     # gate = qiskit_gates.C3XGate()
