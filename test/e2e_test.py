@@ -85,7 +85,6 @@ class TestTranspilation():
 
 
 if __name__ == "__main__":
-    # TODO Controlled RXGate differences between rigetti transpiled and everything else    
     circuit = shor_15()
     # circuit = qiskit_custom()
     test = TestTranspilation()

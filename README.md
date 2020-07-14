@@ -24,4 +24,5 @@ Examples:
 ```bash
 python3 -m conversion.test_circuit_converter   
 python3 -m circuit.test_circuit_wrapper   
+python3 -m test.2.2_test
 ```
