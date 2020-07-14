@@ -81,10 +81,7 @@ class TestTranspilation():
         transpiled_circuit_pyquil = self.transpile_pyquil(circuit)
         counts_rigetti_transpiled = self.simulate_pyquil(
             transpiled_circuit_pyquil, "Rigetti - Transpiled")
-        return [counts_rigetti_raw, counts_rigetti_transpiled]
-
-    def test_data(self, decomposition = True):
-        
+        return [counts_rigetti_raw, counts_rigetti_transpiled]        
 
 
 if __name__ == "__main__":
@@ -92,5 +89,4 @@ if __name__ == "__main__":
     circuit = shor_15()
     # circuit = qiskit_custom()
     test = TestTranspilation()
-    # test.test_data(decomposition = True)
     test.simulate(circuit)
