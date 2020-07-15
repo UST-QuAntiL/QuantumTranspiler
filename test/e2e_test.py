@@ -2,7 +2,7 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.tools.visualization import plot_histogram, plot_state_city
 from qiskit.providers.aer import QasmSimulator
 from qiskit import Aer, execute
-from examples import shor_15, qiskit_custom
+from examples import *
 from circuit import CircuitWrapper
 import matplotlib.pyplot as plt
 from pyquil import Program, get_qc
@@ -22,9 +22,12 @@ class TestTranspilation():
         """ qvm -S and quilc -S must be executed to run the pyquil compiler and simulator servers
         http://docs.rigetti.com/en/stable/start.html
         """
+        qubits = program.get_qubits()
+        qubit_size = len(qubits)
         program.wrap_in_numshots_loop(shots)
         with local_forest_runtime():
-            qvm = get_qc('9q-square-qvm')
+            # create a simulator for the given qubit size that is fully sonnected
+            qvm = get_qc(str(qubit_size) + 'q-qvm')
             executable = qvm.compile(program)
             bitstrings = qvm.run(executable)
             counts = self._bitstrings_to_counts(bitstrings)
@@ -58,10 +61,10 @@ class TestTranspilation():
         return circuit_pyquil
 
     def simulate(self, circuit: QuantumCircuit, plot=False):
-        counts_qiskit = self.call_simulate_qiskit(circuit)
-        print("Counts Qiskit: " + str(counts_qiskit))
-        counts_rigetti = self.call_simulate_rigetti(circuit)   
-        print("Counts Rigetti: " + str(counts_rigetti))
+        counts_qiskit = self.call_simulate_qiskit(circuit)        
+        counts_rigetti = self.call_simulate_rigetti(circuit) 
+        # print("Counts Qiskit: " + str(counts_qiskit))  
+        # print("Counts Rigetti: " + str(counts_rigetti))
 
         if plot:            
             plt.show()
@@ -69,23 +72,46 @@ class TestTranspilation():
     def call_simulate_qiskit(self, circuit: QuantumCircuit):
         counts_qiskit_raw = self.simulate_qiskit(
             circuit, "Qiskit - Not transpiled")
+        print("Counts Qiskit (raw): " + str(counts_qiskit_raw))          
         transpiled_circuit_qiskit = self.transpile_qiskit(circuit)
+        print("he")
         counts_qiskit_transpiled = self.simulate_qiskit(
             transpiled_circuit_qiskit, "Qiskit - Transpiled")
+        print("Counts Qiskit (transpiled): " + str(counts_qiskit_transpiled))  
         return [counts_qiskit_raw, counts_qiskit_transpiled]
 
     def call_simulate_rigetti(self, circuit: QuantumCircuit):
         program = self.convert_to_pyquil(circuit)
+        # print(program)
         counts_rigetti_raw = self.simulate_pyquil(
             program, "Rigetti - Not transpiled")
+        print("Counts Rigetti (raw): " + str(counts_rigetti_raw))
         transpiled_circuit_pyquil = self.transpile_pyquil(circuit)
         counts_rigetti_transpiled = self.simulate_pyquil(
             transpiled_circuit_pyquil, "Rigetti - Transpiled")
+        print("Counts Rigetti (transpiled): " + str(counts_rigetti_transpiled))
         return [counts_rigetti_raw, counts_rigetti_transpiled]        
 
 
 if __name__ == "__main__":
-    circuit = shor_15()
+    # working:
+    # circuit = shor_15()
     # circuit = qiskit_custom()
+    # circuit = grover_fix_qiskit()
+    # circuit = grover_fix_SAT_qiskit()
+    circuit = bernstein_vazirani_general_qiskit_integer(9, 4)  
+
+    # errors:
+    # error in quil compiler: native quil code
+    # circuit = shor_general(3)
+
+    # for both grover general implementations: rigetti raw different results --> probably because of mcvxchain https://github.com/Qiskit/qiskit-terra/issues/4524
+    # circuit = grover_general_truthtable_qiskit("10100000")
+    # wrapper = CircuitWrapper(qiskit_circuit=circuit)
+    # qasm = wrapper.export_qasm()
+    # print(qasm)
+    # circuit = grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)")
+    
+    print(circuit)
     test = TestTranspilation()
     test.simulate(circuit)

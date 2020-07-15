@@ -14,7 +14,6 @@ from qiskit.transpiler import PassManager
 from qiskit.transpiler.passes import Decompose, Unroller
 from quantastica.qiskit_forest import ForestBackend
 import numpy as np
-from custom_unroller import Unroller as CustomUnroller
 import logging
 from qiskit.test.mock import FakeTenerife
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel

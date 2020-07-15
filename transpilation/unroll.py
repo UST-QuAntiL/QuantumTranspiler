@@ -3,7 +3,6 @@ from qiskit.exceptions import QiskitError
 from qiskit.circuit import Gate
 from circuit.qiskit_utility import show_figure
 from qiskit.transpiler.basepasses import TransformationPass
-from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
 from transpilation.equivalence_library import EquivalenceLibraryBasis
 class Unroller(TransformationPass):
     def __init__(self, basis):
@@ -118,7 +117,6 @@ class Unroller(TransformationPass):
                     decomposition = self._rule_to_dag(rule)
                     unrolled_dag = self.unroll_to_basis(decomposition)  # recursively unroll ops
                     dag.substitute_node_with_dag(node, unrolled_dag)
-                    dag.draw(filename="dag.png")
                     return
 
             except QiskitError as err:

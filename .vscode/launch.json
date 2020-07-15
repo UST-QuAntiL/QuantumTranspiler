@@ -13,6 +13,13 @@
             "module": "circuit.test_circuit_wrapper"
         },
         {
+            "name": "Python: Module Test E2E test",
+            "type": "python",
+            "request": "launch",
+            "justMyCode": false,
+            "module": "test.e2e_test"
+        },
+        {
             "name": "Python: Module Test Conversions",
             "type": "python",
             "request": "launch",

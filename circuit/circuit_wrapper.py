@@ -1,4 +1,5 @@
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.transpiler.passes.basis import decompose
 from conversion.conversion_handler import ConversionHandler
 from conversion.converter.pyquil_converter import PyquilConverter
 from pyquil import Program
@@ -46,6 +47,10 @@ class CircuitWrapper:
         self._import(handler, quil, True)
 
     def _export(self, handler: ConversionHandler, is_language: bool):
+        # from qiskit.circuit.library.standard_gates import MCXVChain
+
+        # self.dag = decompose(MCXVChain())
+        # self.circuit = dag_to_circuit(self.dag)
         if is_language:
             (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_language(self.circuit)
         else:
@@ -76,9 +81,9 @@ class CircuitWrapper:
         self.circuit = dag_to_circuit(self.dag)
 
     def unroll_ibm(self) -> QuantumCircuit:
-        return self.unroll(["u1", "u2", "u3", "cx"])
+        return self.unroll(["u1", "u2", "u3", "cx", "id"])
     def unroll_rigetti(self) -> QuantumCircuit:
-        return self.unroll(["rx", "rz", "cz"])
+        return self.unroll(["rx", "rz", "cz", "id"])
 
     def unroll(self, gates: List[str]) -> QuantumCircuit:
         unroll_pass = Unroller(gates)    
