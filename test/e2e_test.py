@@ -99,7 +99,8 @@ if __name__ == "__main__":
     # circuit = qiskit_custom()
     # circuit = grover_fix_qiskit()
     # circuit = grover_fix_SAT_qiskit()
-    circuit = bernstein_vazirani_general_qiskit_integer(9, 4)  
+    circuit = bernstein_vazirani_general_qiskit_integer(12, 20) 
+    # circuit = bernstein_vazirani_general_qiskit_binary_string(9, "010000110") 
 
     # errors:
     # error in quil compiler: native quil code
