@@ -33,7 +33,10 @@ def custom_3qubit_gates(dag: DAGCircuit):
     return _get_nodes(dag, check_node)
 
 def quantum_initializer_gates(dag: DAGCircuit):
-    check_node = lambda node: True if ((not (isinstance(node.op, UnitaryGate)) and (not (node.name) in standard_gate_nodes))) else False   
+    # check_node = lambda node: True if ((not (isinstance(node.op, UnitaryGate)) and (not (node.name) in standard_gate_nodes))) else False  
+
+    check_node = lambda node: True if (not (isinstance(node.op, UnitaryGate)) and (not (node.name) in standard_gates)) else False   
+
     return _get_nodes(dag, check_node) 
 
 def isometry_gates(dag: DAGCircuit):
@@ -43,6 +46,9 @@ def isometry_gates(dag: DAGCircuit):
         if isinstance(node.op, Isometry) or isinstance(node.op, Instruction):
             nodes.append(node)
     return nodes
+
+
+
 
 
 

@@ -80,9 +80,15 @@ class CircuitWrapper:
         self.dag = decomposer.decompose_to_standard_gates(self.dag)
         self.circuit = dag_to_circuit(self.dag)
 
+    def decompose_quantum_initializer_gates(self):
+        decomposer = Decomposer()    
+        self.dag = decomposer.decompose_quantum_initializer_gates(self.dag)
+        self.circuit = dag_to_circuit(self.dag)
+
     def unroll_ibm(self) -> QuantumCircuit:
         return self.unroll(["u1", "u2", "u3", "cx", "id"])
     def unroll_rigetti(self) -> QuantumCircuit:
+        self.decompose_quantum_initializer_gates()
         return self.unroll(["rx", "rz", "cz", "id"])
 
     def unroll(self, gates: List[str]) -> QuantumCircuit:
