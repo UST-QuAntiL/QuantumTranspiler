@@ -7,7 +7,7 @@ from circuit import CircuitWrapper
 import matplotlib.pyplot as plt
 from pyquil import Program, get_qc
 from pyquil.api import local_forest_runtime
-from typing import List
+from typing import List, Dict
 
 
 class TestTranspilation():
@@ -28,6 +28,8 @@ class TestTranspilation():
         with local_forest_runtime():
             # create a simulator for the given qubit size that is fully sonnected
             qvm = get_qc(str(qubit_size) + 'q-qvm')
+            # default timeout is not enough for some circuits like shor_general(3) --> https://github.com/rigetti/pyquil/issues/935
+            qvm.compiler.client.timeout = 60
             # print(program)
             executable = qvm.compile(program)
             # print(executable.program)
@@ -63,58 +65,65 @@ class TestTranspilation():
         return circuit_pyquil
 
     def simulate(self, circuit: QuantumCircuit, plot=False):
-        counts_qiskit = self.call_simulate_qiskit(circuit)        
-        counts_rigetti = self.call_simulate_rigetti(circuit) 
-        print("Counts Qiskit: " + str(counts_qiskit))  
-        print("Counts Rigetti: " + str(counts_rigetti))
+        counts = []
+        counts.append(self.call_simulate_qiskit(circuit))  
+        counts.append(self.call_simulate_rigetti(circuit)) 
+        counts_general = self._counts_postprocessing(counts)
+        print("Counts General: " + str(counts_general))  
 
         if plot:            
             plt.show()
 
-    def call_simulate_qiskit(self, circuit: QuantumCircuit):
-        counts_qiskit_raw = self.simulate_qiskit(
-            circuit, "Qiskit - Not transpiled")
-        # print("Counts Qiskit (raw): " + str(counts_qiskit_raw))          
-        transpiled_circuit_qiskit = self.transpile_qiskit(circuit)
-        counts_qiskit_transpiled = self.simulate_qiskit(
-            transpiled_circuit_qiskit, "Qiskit - Transpiled")
-        # print("Counts Qiskit (transpiled): " + str(counts_qiskit_transpiled))  
-        return [counts_qiskit_raw, counts_qiskit_transpiled]
+    def _counts_postprocessing(self, counts_all: List[List[Dict[str, Dict[int, int]]]]) -> Dict[int, Dict[str, int]]:
+        counts_general = {}
+        for counts_language in counts_all:
+            for (name, counts_inner) in counts_language.items():
+                for (bitstring, count) in counts_inner.items():
+                    if not(bitstring in counts_general):
+                        counts_general[bitstring] = {}
+                    counts_general[bitstring][name] = count
+        
+        return counts_general
 
-    def call_simulate_rigetti(self, circuit: QuantumCircuit):
+            
+          
+    def call_simulate_qiskit(self, circuit: QuantumCircuit) -> List[Dict[str, Dict[int, int]]]:
+        counts = {}
+        count = self.simulate_qiskit(
+            circuit, "Qiskit - Not transpiled")
+        counts["Q-n"] = count
+        transpiled_circuit_qiskit = self.transpile_qiskit(circuit)
+        count = self.simulate_qiskit(
+            transpiled_circuit_qiskit, "Qiskit - Transpiled")
+        counts["Q-t"] = count
+        return counts
+
+    def call_simulate_rigetti(self, circuit: QuantumCircuit)  -> List[Dict[str, Dict[int, int]]]:
+        counts = {}
         program = self.convert_to_pyquil(circuit)
         # print(program)
-        counts_rigetti_raw = self.simulate_pyquil(
+        count = self.simulate_pyquil(
             program, "Rigetti - Not transpiled")
-        # print("Counts Rigetti (raw): " + str(counts_rigetti_raw))
+        counts["R-n"] = count
         transpiled_circuit_pyquil = self.transpile_pyquil(circuit)
-        counts_rigetti_transpiled = self.simulate_pyquil(
+        count = self.simulate_pyquil(
             transpiled_circuit_pyquil, "Rigetti - Transpiled")
-        # print("Counts Rigetti (transpiled): " + str(counts_rigetti_transpiled))
-        return [counts_rigetti_raw, counts_rigetti_transpiled]        
+        counts["R-t"] = count
+        return counts  
 
 
 if __name__ == "__main__":
     # working:
     # circuit = shor_15()
     # circuit = qiskit_custom()
-    # circuit = grover_fix_qiskit()
+    circuit = grover_fix_qiskit()
     # circuit = grover_fix_SAT_qiskit()
     # circuit = bernstein_vazirani_general_qiskit_integer(12, 20) 
     # circuit = bernstein_vazirani_general_qiskit_binary_string(9, "010000110") 
-    circuit = grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)")
-    # circuit = grover_general_truthtable_qiskit("10100000")   
-
-    # errors:
-    # error in quil compiler: native quil code
-    # circuit = shor_general(3)
-
-     
+    # circuit = grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)")
+    # circuit = grover_general_truthtable_qiskit("10100000")     
+    # circuit = shor_general(3)    
     
-    # wrapper = CircuitWrapper(qiskit_circuit=circuit)
-    # qasm = wrapper.export_qasm()
-    # print(qasm)
-    
-    print(circuit)
+    # print(circuit)
     test = TestTranspilation()
     test.simulate(circuit)
