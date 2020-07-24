@@ -59,7 +59,6 @@ class CircuitWrapper:
 
     def export_pyquil(self) -> Program:
         self.decompose_isometry_gates()
-        print(self.circuit)
         converter = PyquilConverter()
         handler = ConversionHandler(converter)        
         return self._export(handler, False)

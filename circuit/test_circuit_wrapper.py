@@ -1,5 +1,3 @@
-from pytket.qasm import circuit_from_qasm, circuit_to_qasm
-from pytket.pyquil import pyquil_to_tk
 from pyquil import Program, get_qc
 from pyquil.gates import H, CNOT, CCNOT
 from circuit.qiskit_utility import show_figure
@@ -28,8 +26,10 @@ class TestCircuitWrapper:
         print(qasm)
 
     def test_decompose(self):
+        print(qiskit_custom_unroll())
         wrapper = CircuitWrapper(qiskit_circuit=qiskit_custom_unroll())
         wrapper.decompose_to_standard_gates()
+        print(wrapper.circuit)
         
     def test_unroll(self):
         wrapper = CircuitWrapper(qiskit_circuit=qiskit_custom_unroll())
@@ -40,4 +40,4 @@ class TestCircuitWrapper:
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_qasm_export()
+    test.test_decompose()
