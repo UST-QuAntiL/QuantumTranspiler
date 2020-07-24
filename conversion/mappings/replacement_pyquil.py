@@ -1,8 +1,8 @@
 from pyquil.gates import *
 import numpy as np
 from pyquil import Program
-from pyquil.quilatom import Parameter
 from pyquil.quilbase import DefGate
+from pyquil.quilatom import Parameter, quil_sin, quil_cos, quil_exp
 
 
 def u2_replacement(phi: float, lam: float):
@@ -35,9 +35,9 @@ def u2_replacement(phi: float, lam: float):
     return p
 
 def u3_replacement(theta: float, phi: float, lam: float):
-    """ implemented with a custom gate 
+    """ implemented with a custom gate """
 
-    # implemented with two X90 pulse: https://arxiv.org/pdf/1707.03429.pdf """
+    # implemented with two X90 pulse: https://arxiv.org/pdf/1707.03429.pdf 
     # p = Program()
     # p += RZ(phi + 3*np.pi, 0)
     # p += RX(np.pi/2, 0)
@@ -52,25 +52,45 @@ def u3_replacement(theta: float, phi: float, lam: float):
     # p += RX(np.pi/2, 0)
     # p += RZ(lam - np.pi/2, 0)
 
+    theta_param = Parameter('theta')
+    phi_param = Parameter('phi')
+    lam_param = Parameter('lam')
     matrix = np.array([
             [
-                np.cos(theta / 2),
-                -np.exp(1j * lam) * np.sin(theta / 2)
+                quil_cos(theta_param / 2),
+                -quil_exp(1j * lam_param) * quil_sin(theta_param / 2)
             ],
             [
-                np.exp(1j * phi) * np.sin(theta / 2),
-                np.exp(1j * (phi + lam)) * np.cos(theta / 2)
+                quil_exp(1j * phi_param) * quil_sin(theta_param / 2),
+                quil_exp(1j * (phi_param + lam_param)) * quil_cos(theta_param / 2)
             ]
-        ], dtype=complex)
-
-    param_str = str(theta) + str(phi) + str(lam)
-    param_hash = hash(param_str)
-    # unique name for each U3 with different params
-    definition = DefGate("U3" + str(param_hash), matrix)
+        ])
+    definition = DefGate('U3', matrix, [theta_param, phi_param, lam_param])    
     U3 = definition.get_constructor()
     p = Program()
     p += definition
-    p += U3(0)
+    p += U3(theta, phi, lam)(0)
+
+    # matrix = np.array([
+    #         [
+    #             np.cos(theta / 2),
+    #             -np.exp(1j * lam) * np.sin(theta / 2)
+    #         ],
+    #         [
+    #             np.exp(1j * phi) * np.sin(theta / 2),
+    #             np.exp(1j * (phi + lam)) * np.cos(theta / 2)
+    #         ]
+    #     ], dtype=complex)
+
+    # param_str = str(theta) + str(phi) + str(lam)
+    # param_hash = hash(param_str)
+    # # unique name for each U3 with different params
+    # definition = DefGate("U3" + str(param_hash), matrix)
+    # U3 = definition.get_constructor()
+    # p = Program()
+    # p += definition
+    # p += U3(0)
+
     return p
 
 def c3x_replacement():
