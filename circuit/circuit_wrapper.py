@@ -58,11 +58,14 @@ class CircuitWrapper:
         return circuit
 
     def export_pyquil(self) -> Program:
+        self.decompose_isometry_gates()
+        print(self.circuit)
         converter = PyquilConverter()
         handler = ConversionHandler(converter)        
         return self._export(handler, False)
 
     def export_quil(self) -> str:
+        self.decompose_isometry_gates()
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
         return self._export(handler, True)
@@ -80,15 +83,14 @@ class CircuitWrapper:
         self.dag = decomposer.decompose_to_standard_gates(self.dag)
         self.circuit = dag_to_circuit(self.dag)
 
-    def decompose_quantum_initializer_gates(self):
+    def decompose_isometry_gates(self):
         decomposer = Decomposer()    
-        self.dag = decomposer.decompose_quantum_initializer_gates(self.dag)
+        self.dag = decomposer.decompose_isometry_gates(self.dag)
         self.circuit = dag_to_circuit(self.dag)
 
     def unroll_ibm(self) -> QuantumCircuit:
         return self.unroll(["u1", "u2", "u3", "cx", "id"])
-    def unroll_rigetti(self) -> QuantumCircuit:
-        self.decompose_quantum_initializer_gates()
+    def unroll_rigetti(self) -> QuantumCircuit:        
         return self.unroll(["rx", "rz", "cz", "id"])
 
     def unroll(self, gates: List[str]) -> QuantumCircuit:

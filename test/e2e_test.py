@@ -29,6 +29,7 @@ class TestTranspilation():
             # create a simulator for the given qubit size that is fully sonnected
             qvm = get_qc(str(qubit_size) + 'q-qvm')
             executable = qvm.compile(program)
+            # print(executable.program)
             bitstrings = qvm.run(executable)
             counts = self._bitstrings_to_counts(bitstrings)
             plot_histogram(counts, title=title)
@@ -109,9 +110,9 @@ if __name__ == "__main__":
     # for both grover general implementations: rigetti raw different results --> probably because of mcvxchain https://github.com/Qiskit/qiskit-terra/issues/4524
     # circuit = grover_general_truthtable_qiskit("10100000")    
     circuit = grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)")
-    wrapper = CircuitWrapper(qiskit_circuit=circuit)
-    qasm = wrapper.export_qasm()
-    print(qasm)
+    # wrapper = CircuitWrapper(qiskit_circuit=circuit)
+    # qasm = wrapper.export_qasm()
+    # print(qasm)
     
     print(circuit)
     test = TestTranspilation()
