@@ -179,18 +179,26 @@ class PyquilConverter(ConverterInterface):
     def subcircuit(self, subcircuit: Program, qubits, clbits = None):
         qreg_mapping = {}
 
+        # inits the qreg_mapping that maps a qubit in the subcircuit to the in qubits specified target qubit
         for i, qubit in enumerate(subcircuit.get_qubits()):
             qreg_mapping[qubit] = qubits[i]
 
-        for instr in subcircuit.instructions:            
-            if isinstance(instr, pyquil_circuit_library.Gate):
+        # add custom gate definition if the definition does not exist yet
+        for def_gate in subcircuit.defined_gates:
+            if  not(def_gate in self.program.defined_gates):
+                self.program += def_gate
+                
+        for instr in subcircuit.instructions:     
+            if isinstance(instr, pyquil_circuit_library.Gate):    
+                # sets the correct qubit index for the gate in the program (defined by qreg_mapping) 
                 for qubit in instr.qubits:
                     qubit.index = qreg_mapping[qubit.index]
+                self.program += instr
 
             elif isinstance(instr, pyquil_circuit_library.Measurement):
-                raise NotImplementedError("Measurement in subcircuits not supported: " + str(instr))                
-
-        self.program += subcircuit
+                raise NotImplementedError("Measurement in subcircuits not supported (pyquil_converter): " + str(instr))  
+            else:
+                 raise NotImplementedError("Operation that is not supported in subcircuits (pyquil_converter): " + str(instr))              
 
     def language_to_circuit(self, language: str):
         return Program(language)
