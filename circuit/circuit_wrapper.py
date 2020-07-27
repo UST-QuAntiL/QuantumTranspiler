@@ -47,10 +47,6 @@ class CircuitWrapper:
         self._import(handler, quil, True)
 
     def _export(self, handler: ConversionHandler, is_language: bool):
-        # from qiskit.circuit.library.standard_gates import MCXVChain
-
-        # self.dag = decompose(MCXVChain())
-        # self.circuit = dag_to_circuit(self.dag)
         if is_language:
             (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_language(self.circuit)
         else:
