@@ -10,9 +10,7 @@ class Decomposer():
 
     def decompose_to_standard_gates(self, dag: DAGCircuit):
         dag = self._decompose(dag, non_standard_gate_nodes)  
-        dag = self.decompose_isometry_gates(dag)    
-        # must be run again after decomposing isometry gates if special gates like multiplexer should be decomposed (multiplexer can be introduced by the decomposition of the isometry gates) 
-        dag = self._decompose(dag, quantum_initializer_gates)    
+        dag = self.decompose_isometry_gates(dag)            
         return dag
     
   
@@ -25,24 +23,16 @@ class Decomposer():
             dag = decompose_pass.run(dag)
         return dag
 
-    # def decompose_3qubit_custom_gates(self, dag: DAGCircuit):
-    #     # 3+ qubit gates to isometry gates
-    #     dag = self._decompose(dag, custom_3qubit_gates)    
-    #     dag = self._decompose_isometry_gates(dag)
-    #     dag = self._decompose(dag, quantum_initializer_gates)  
-    #     return dag  
-
-      # def decompose_quantum_initializer_gates(self, dag: DAGCircuit):
-    #     """decomposes special qiskit gates like the MCXVChain that are not defined by a unitary gate"""
-    #     # dag = self._decompose(dag, quantum_initializer_gates)      
-    #     dag = self._decompose_isometry_gates(dag)
-    #     # dag = self._decompose(dag, quantum_initializer_gates) 
-    #     return dag
-
     def decompose_isometry_gates(self, dag: DAGCircuit):
-        decompose_pass = DecomposeIsometryGates()
-        decompose_pass.run(dag)        
+        dag = self._decompose(dag, isometry_gates)  
+        # must be run again after decomposing isometry gates if special gates like multiplexer should be decomposed (multiplexer can be introduced by the decomposition of the isometry gates) 
+        dag = self._decompose(dag, quantum_initializer_gates)    
         return dag
+
+        # TODO delete
+        # decompose_pass = DecomposeIsometryGates()
+        # decompose_pass.run(dag)        
+        # return dag
 
     
 

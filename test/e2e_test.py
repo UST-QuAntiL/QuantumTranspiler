@@ -114,9 +114,9 @@ class TestTranspilation():
 
 if __name__ == "__main__":
     # working:
-    # circuit = shor_15()
+    circuit = shor_15()
     # circuit = qiskit_custom()
-    circuit = grover_fix_qiskit()
+    # circuit = grover_fix_qiskit()
     # circuit = grover_fix_SAT_qiskit()
     # circuit = bernstein_vazirani_general_qiskit_integer(12, 20) 
     # circuit = bernstein_vazirani_general_qiskit_binary_string(9, "010000110") 
@@ -126,4 +126,4 @@ if __name__ == "__main__":
     
     # print(circuit)
     test = TestTranspilation()
-    test.simulate(circuit)
+    test.simulate(circuit, plot=False)

@@ -45,8 +45,8 @@ def qiskit_custom():
     """standard qiskit gate with control #2"""
     # gate = qiskit_gates.RXGate(np.pi/2).control(2)
     # qiskit_circuit.append(gate, qargs=[3,2,1]) 
-    gate = qiskit_gates.RXGate(np.pi).control(1)
-    qiskit_circuit.append(gate, qargs=[3,2]) 
+    # gate = qiskit_gates.RXGate(np.pi).control(1)
+    # qiskit_circuit.append(gate, qargs=[3,2]) 
     # gate = qiskit_gates.U3Gate(np.pi/12, np.pi/14, 10*np.pi)
     # qiskit_circuit.append(gate, qargs=[0]) 
 
@@ -55,15 +55,15 @@ def qiskit_custom():
     # qiskit_circuit.append(gate, qargs=[0,3,2,1])        
 
     """custom gate"""
-    # custom_matrix1 = np.array([
-    #     [np.e**(1j*np.pi/2), 0, 0, 0],
-    #     [0, 1, 0, 0],
-    #     [0, 0, 1, 0],
-    #     [0, 0, 0, np.e**(1j*np.pi/2)]
-    # ], dtype=complex)
-    # # custom_matrix1 = random_unitary(4, seed=42)
-    # custom_gate1 = UnitaryGate(custom_matrix1)
-    # qiskit_circuit.append(custom_gate1, qargs=[0,1])
+    custom_matrix1 = np.array([
+        [np.e**(1j*np.pi/2), 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, np.e**(1j*np.pi/2)]
+    ], dtype=complex)
+    # custom_matrix1 = random_unitary(4, seed=42)
+    custom_gate1 = UnitaryGate(custom_matrix1)
+    qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
     """NOT possible: parameterized custom gate"""
     # theta = qiskit_circuit_library.Parameter("θ")
