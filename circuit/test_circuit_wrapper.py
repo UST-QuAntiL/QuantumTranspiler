@@ -40,4 +40,4 @@ class TestCircuitWrapper:
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_decompose()
+    test.test_unroll()

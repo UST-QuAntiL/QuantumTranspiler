@@ -65,6 +65,11 @@ def qiskit_custom():
     custom_gate1 = UnitaryGate(custom_matrix1)
     qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
+    """custom gate #2"""
+    custom_matrix1 = random_unitary(4, seed=42)
+    custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_2qubits")
+    qiskit_circuit.append(custom_gate1, qargs=[0,1])
+
     """NOT possible: parameterized custom gate"""
     # theta = qiskit_circuit_library.Parameter("θ")
     # custom_matrix2 = np.array([
@@ -177,16 +182,16 @@ def qiskit_custom_unroll():
     qiskit_circuit = QuantumCircuit(qr, cr)
 
     """standard qiskit gates """
-    # gate = qiskit_gates.CXGate()
-    # qiskit_circuit.append(gate, qargs=[3,2])    
-    # gate = qiskit_gates.CZGate()
-    # qiskit_circuit.append(gate, qargs=[1,2])     
-    # gate = qiskit_gates.HGate()
-    # qiskit_circuit.append(gate, qargs=[1])  
-    # gate = qiskit_gates.CCXGate()
-    # qiskit_circuit.append(gate, qargs=[0,1,2])         
-    # gate = qiskit_gates.RXGate(np.pi/4)
-    # qiskit_circuit.append(gate, qargs=[0]) 
+    gate = qiskit_gates.CXGate()
+    qiskit_circuit.append(gate, qargs=[3,2])    
+    gate = qiskit_gates.CZGate()
+    qiskit_circuit.append(gate, qargs=[1,2])     
+    gate = qiskit_gates.HGate()
+    qiskit_circuit.append(gate, qargs=[1])  
+    gate = qiskit_gates.CCXGate()
+    qiskit_circuit.append(gate, qargs=[0,1,2])         
+    gate = qiskit_gates.RXGate(np.pi/4)
+    qiskit_circuit.append(gate, qargs=[0]) 
 
     """custom gate"""
     # custom_matrix1 = np.array([
@@ -200,11 +205,17 @@ def qiskit_custom_unroll():
     # qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
     """custom gate #2"""
-    custom_matrix1 = random_unitary(8, seed=42)
-    custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_3qubits")
-    qiskit_circuit.append(custom_gate1, qargs=[0,1,2])
+    custom_matrix1 = random_unitary(4, seed=42)
+    custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_2qubits")
+    qiskit_circuit.append(custom_gate1, qargs=[0,1])
+
 
     """custom gate #3"""
+    # custom_matrix1 = random_unitary(8, seed=42)
+    # custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_3qubits")
+    # qiskit_circuit.append(custom_gate1, qargs=[0,1,2])
+
+    """custom gate #4"""
     # operator = Operator([[1, 0, 0, 0],
     #           [0, 0, 0, 1],
     #           [0, 0, 1, 0],

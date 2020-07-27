@@ -1,9 +1,15 @@
+from numpy.core.arrayprint import DatetimeFormat
 from qiskit.dagcircuit import DAGCircuit
+from qiskit.dagcircuit.dagnode import DAGNode
 from qiskit.exceptions import QiskitError
 from qiskit.circuit import Gate
+from qiskit.extensions.unitary import UnitaryGate
 from circuit.qiskit_utility import show_figure
 from qiskit.transpiler.basepasses import TransformationPass
 from transpilation.equivalence_library import EquivalenceLibraryBasis
+import numpy as np
+from qiskit.quantum_info.synthesis.two_qubit_decompose import TwoQubitBasisDecomposer
+
 class Unroller(TransformationPass):
     def __init__(self, basis):
         """Unroller initializer.
@@ -16,22 +22,7 @@ class Unroller(TransformationPass):
         self._el = EquivalenceLibraryBasis(basis)
         # basis contains the names of all specified gates
         self.basis = basis
-        # basis_names and basis_gates ditinction needed for postprocessing 
-        # basis_names contains gates specified by name
-        # basis_gates contains gates specified by gate
-        # self.basis_names = []
-        # self.basis_gates = []
-        # self.do_postprocessing = False
-        # for gate in basis:
-        #     if isinstance(gate, str):
-        #         self.basis_names.append(gate)
-        #         self.basis.append(gate)
-        #     else:
-        #         # allows specifying gates that only support specific angles like rigetti QPUs http://docs.rigetti.com/en/v2.19.0/apidocs/gates.html
-        #         self.basis.append(gate.name)
-        #         self.basis_gates.append(gate)
-        #         self.do_postprocessing = True
-    
+
 
     def _get_rules(self, gate):
         rules = self._el.get_entry(gate)
@@ -61,13 +52,30 @@ class Unroller(TransformationPass):
         Returns:
             DAGCircuit: output unrolled dag
         """
+        if "cz" in self.basis:
+            self.replace_definition_cz(dag)
+            
         dag = self.unroll_to_basis(dag)
-        # if self.do_postprocessing:
-        #     dag = self._postprocess(dag)
         return dag
+
+    def replace_definition_cz(self, dag: DAGCircuit) -> None:
+        """by default custom two qubit gates are defined by CX and 1Qubit Gates
+        this method replaces the definition by a definition consisting of CZ and 1Qubit Gates
+        """
+        cz_matrix = np.array([[1, 0, 0, 0],
+                           [0, 1, 0, 0],
+                           [0, 0, 1, 0],
+                           [0, 0, 0, -1]], dtype=complex)
+        cz_gate = UnitaryGate(cz_matrix)
+        two_qubit_cz_decompose = TwoQubitBasisDecomposer(cz_gate)
+
+        for node in dag.op_nodes():
+            gate = node.op
+            if isinstance(gate, UnitaryGate) and gate.num_qubits == 2:  
+                gate.definition = two_qubit_cz_decompose(gate.to_matrix()).data
         
 
-    def unroll_to_basis(self, dag):
+    def unroll_to_basis(self, dag: DAGCircuit) -> DAGCircuit:
         if self.basis is None:
             return dag
 
@@ -84,7 +92,7 @@ class Unroller(TransformationPass):
 
         return dag
 
-    def _apply_rules(self, dag, node, rules):
+    def _apply_rules(self, dag: DAGCircuit, node: DAGNode, rules) -> None:
         for rule in rules:
             try:
                 # Isometry gates definitions can have widths smaller than that of the
@@ -139,18 +147,4 @@ class Unroller(TransformationPass):
         for inst in rule:
             decomposition.apply_operation_back(*inst)        
         return decomposition
-
-    # TODO delete
-    # def _postprocess(self, dag):
-    #     for node in dag.gate_nodes():
-    #         # nodes in basis_names do not need postprocessing
-    #         if node.name in self.basis_names:
-    #             continue
-            
-    #         for gate in self.basis_gates:
-    #             if node.name == gate.name:
-
-    #                 print(node.name)           
-
-    #     return dag
 

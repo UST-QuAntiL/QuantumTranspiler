@@ -12,7 +12,6 @@ from qiskit.transpiler import passes
 from qiskit.compiler import transpile
 from qiskit.transpiler import PassManager
 from qiskit.transpiler.passes import Decompose, Unroller
-from quantastica.qiskit_forest import ForestBackend
 import numpy as np
 import logging
 from qiskit.test.mock import FakeTenerife
@@ -23,28 +22,8 @@ from qiskit.quantum_info.random import random_unitary
 from qiskit.transpiler.passes import Unroll3qOrMore, Unroller, Optimize1qGates
 import qiskit.circuit.library.standard_gates as qiskit_gate
 import pyquil.gates as pyquil_gates
-
-my_gate = Gate(name='my_gate', num_qubits=2, params=[])
-
-
-def show_and_save_figure(circuit, filename='circuit.png'):
-    circuit.draw(output='mpl', filename=filename)
-    print(circuit)
-
-
-def show_figure(circuit):
-    circuit.draw(output='text')
-    print(circuit)
-
-
-def gate_library():
-    tmp_circuit = QuantumCircuit(2)
-    tmp_circuit.cz(0, 1)
-
-    CXGate().add_decomposition(tmp_circuit)
-    decompositions = sel.get_entry(CXGate())
-    for decomposition in decompositions:
-        show_figure(decomposition)
+from examples import *
+from qiskit.quantum_info.synthesis.two_qubit_decompose import TwoQubitBasisDecomposer
 
 
 def circuit():
@@ -55,135 +34,6 @@ def circuit():
     circ.u3(np.pi, np.pi, np.pi, 0)
     show_figure(circ)
     return circ
-
-
-def dag_operation(circ):
-    dag = circuit_to_dag(circ)
-    dag_drawer(dag, filename="dag.png")
-
-    basis = ['u1', 'u2', 'u3', 'cz']
-    dag = unroll(dag, basis)
-
-    dag_drawer(dag, filename="dag.png")
-
-    circ = dag_to_circuit(dag)
-    show_figure(circ)
-
-
-def unroll(dag, basis):
-    for node in dag.op_nodes():
-        basic_insts = ['measure', 'reset', 'barrier', 'snapshot']
-        if node.name in basic_insts:
-            # TODO: this is legacy behavior.Basis_insts should be removed that these
-            #  instructions should be part of the device-reported basis. Currently, no
-            #  backend reports "measure", for example.
-            continue
-        if node.name in basis:  # If already a base, ignore.
-            continue
-
-        # TODO: allow choosing other possible decompositions
-        try:
-            rule = node.op.definition
-            # print(rule[0][0])
-        except TypeError as err:
-            print("error")
-            print(node.name)
-
-        if not rule:
-            if rule == []:  # empty node
-                dag.remove_op_node(node)
-                continue
-
-            rule = sel.get_entry(node.op)
-            if not rule:
-                print("error")
-                print("No rule to expand instruction %s." %
-                      (node.op.name))
-
-        print(node.op)
-        print(rule)
-
-        # Isometry gates definitions can have widths smaller than that of the
-        # original gate, in which case substitute_node will raise. Fall back
-        # to substitute_node_with_dag if an the width of the definition is
-        # different that the width of the node.
-        while rule and len(rule) == 1 and len(node.qargs) == len(rule[0][1]):
-            if rule[0][0].name in basis:
-                dag.substitute_node(node, rule[0][0], inplace=True)
-                break
-
-            try:
-                rule = rule[0][0].definition
-            except TypeError as err:
-                print("error")
-                print(node.name)
-
-        else:
-
-            decomposition = DAGCircuit()
-            qregs = {qb.register for inst in rule for qb in inst[1]}
-            cregs = {cb.register for inst in rule for cb in inst[2]}
-            for qreg in qregs:
-                decomposition.add_qreg(qreg)
-            for creg in cregs:
-                decomposition.add_creg(creg)
-            for inst in rule:
-                decomposition.apply_operation_back(*inst)
-
-            # recursively unroll ops
-            unrolled_dag = unroll(decomposition, basis)
-            dag.substitute_node_with_dag(node, unrolled_dag)
-    return dag
-
-
-def gates():
-    # h = HGate()
-    # ccx = CCXGate()
-    # my_unitary = UnitaryGate([
-    #     [0.70710678, 0, 0.70710678, 0],
-    #     [0, 0.70710678, 0, 0.70710678],
-    #     [0, 0.70710678, 0, -0.70710678],
-    #     [0.70710678, 0, -0.70710678, 0]
-    # ])
-
-    matrix = 1/2 * np.array([
-        [1, 0, 1, 0, 0, 1, 0, -1],
-        [0, 1, 0, 1, 1, 0, -1, 0],
-        [0, 1, 0, -1, 1, 0, 1, 0],
-        [1, 0, -1, 0, 0, 1, 0, 1],
-        [1, 0, 1, 0, 0, -1, 0, 1],
-        [0, 1, 0, 1, -1, 0, 1, 0],
-        [0, 1, 0, -1, -1, 0, -1, 0],
-        [1, 0, -1, 0, 0, -1, 0, -1]
-    ])
-    my_unitary = UnitaryGate(matrix)
-
-    phi = np.pi
-    cu1 = np.array([
-        [1,0,0,0],
-        [0,1,0,0],
-        [0,0,1,0],
-        [0,0,0,np.e**(1j*phi)]
-    ], dtype=complex)
-
-    crz = np.array([
-        [1,0,0,0],
-        [0,np.e**(-1j*(phi/2)),0,0],
-        [0,0,1,0],
-        [0,0,0,np.e**(1j*(phi/2))]
-    ], dtype=complex)
-
-    cphase = np.array([
-        [1,0,0,0],
-        [0,1,0,0],
-        [0,0,1,0],
-        [0,0,0,np.e**(1j*phi)]
-    ], dtype=complex)
-
-    cu1gate = UnitaryGate(cphase)
-    crzgate = UnitaryGate(crz)
-    cphase = UnitaryGate(cphase)
-    check_equivalence(cu1gate, cphase)
 
 
 def unroll3q():
@@ -212,55 +62,29 @@ def dag_default(circ):
     c = dag_to_circuit(dag)
     show_figure(c)
 
-def gate_to_matrix():
-    gate = qiskit_gate.CZGate()
-    print(gate.to_matrix())
-
-def check_equivalence(gate1, gate2):
-    if (gate1 == gate2):
-        print("eq")
-
-def phase_check():
-    phi = np.pi
-    cphase_matrix = np.array([
-        [1,0,0,0],
-        [0,1,0,0],
-        [0,0,1,0],
-        [0,0,0,np.e**(1j*phi)]
-    ], dtype=complex)
-
-    cphase00_matrix = np.array([
-        [np.e**(1j*phi),0,0,0],
-        [0,1,0,0],
-        [0,0,1,0],
-        [0,0,0,1]
-    ], dtype=complex)
-
-    cu1_matrix = np.array([
-        [1,0,0,0],
-        [0,1,0,0],
-        [0,0,1,0],
-        [0,0,0,np.e**(1j*phi)]
-    ], dtype=complex)
-
-    cu1gate_qiskit = qiskit_gate.CU1Gate(phi, ctrl_state="0")
-
-    cu1gate = UnitaryGate(cu1_matrix)
-    cphasegate = UnitaryGate(cphase_matrix)
-    cphase00gate = UnitaryGate(cphase00_matrix)
-    check_equivalence(cu1gate, cphasegate)
 
 if __name__ == "__main__":
 
     # logging.basicConfig(level='DEBUG')
     # logging.getLogger('qiskit.transpiler').setLevel('INFO')
 
-    # gate_library()
-    # c = circuit()
-    # qasm = c.qasm()
-    # backend = FakeTenerife()
-    # new_circuit = transpile(c, backend)
-    phase_check()
-    # show_figure(new_circuit)
+    cz_matrix = np.array([[1, 0, 0, 0],
+                   [0, 1, 0, 0],
+                   [0, 0, 1, 0],
+                   [0, 0, 0, -1]], dtype=complex)
+    cz_gate = UnitaryGate(cz_matrix)
 
-    # qiskit_gates.CRZGate(np.pi)
+    custom_matrix1 = np.array([
+        [np.e**(1j*np.pi/2), 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, np.e**(1j*np.pi/2)]
+    ], dtype=complex)
+    # custom_matrix1 = random_unitary(4, seed=42)
+    custom_gate1 = UnitaryGate(custom_matrix1)
+    print(custom_gate1.definition)
+    two_qubit_cz_decompose = TwoQubitBasisDecomposer(cz_gate)
+    custom_gate1.definition = two_qubit_cz_decompose(
+        custom_gate1.to_matrix()).data
+    print(custom_gate1.definition)
+    # gate =

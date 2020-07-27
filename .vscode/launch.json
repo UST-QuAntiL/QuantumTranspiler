@@ -5,12 +5,20 @@
     "version": "0.2.0",
     "configurations": [
 
+
         {
             "name": "Python: Module Test Circuit Wrapper",
             "type": "python",
             "request": "launch",
             "justMyCode": false,
             "module": "circuit.test_circuit_wrapper"
+        },
+        {
+            "name": "Python: Module IBM Test",
+            "type": "python",
+            "request": "launch",
+            "justMyCode": false,
+            "module": "other_frameworks.ibm"
         },
         {
             "name": "Python: Module Test E2E test",

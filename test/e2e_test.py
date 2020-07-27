@@ -114,8 +114,8 @@ class TestTranspilation():
 
 if __name__ == "__main__":
     # working:
-    circuit = shor_15()
-    # circuit = qiskit_custom()
+    # circuit = shor_15()
+    circuit = qiskit_custom()
     # circuit = grover_fix_qiskit()
     # circuit = grover_fix_SAT_qiskit()
     # circuit = bernstein_vazirani_general_qiskit_integer(12, 20) 
