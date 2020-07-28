@@ -157,6 +157,8 @@ class PyquilConverter(ConverterInterface):
         custom_gate_definition = pyquil_circuit_library.DefGate(name, matrix)
         gate = custom_gate_definition.get_constructor()  
         self.program += custom_gate_definition 
+        # qubits reverse is necessary, because qiskit interpretes qubit order for custom gates reversed
+        qubits.reverse()
         self.program += gate(*params, *qubits) 
 
     def parameter_conversion(self, parameter: qiskit_Parameter):
