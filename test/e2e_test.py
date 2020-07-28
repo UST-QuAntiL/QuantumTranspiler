@@ -61,7 +61,6 @@ class TestTranspilation():
 
     def convert_to_pyquil(self, circuit: QuantumCircuit) -> Program:
         wrapper = CircuitWrapper(qiskit_circuit=circuit)
-        print(wrapper.export_qasm())
         circuit_pyquil = wrapper.export_pyquil()
         return circuit_pyquil
 
@@ -102,7 +101,7 @@ class TestTranspilation():
     def call_simulate_rigetti(self, circuit: QuantumCircuit)  -> List[Dict[str, Dict[int, int]]]:
         counts = {}
         program = self.convert_to_pyquil(circuit)
-        print(program)
+        # print(program)
         count = self.simulate_pyquil(
             program, "Rigetti - Not transpiled")
         counts["R-n"] = count
@@ -125,6 +124,6 @@ if __name__ == "__main__":
     # circuit = grover_general_truthtable_qiskit("10100000")     
     # circuit = shor_general(3)    
     
-    print(circuit)
+    # print(circuit)
     test = TestTranspilation()
     test.simulate(circuit, plot=False)

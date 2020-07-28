@@ -55,13 +55,13 @@ class CircuitWrapper:
         return circuit
 
     def export_pyquil(self) -> Program:
-        self.decompose_isometry_gates()
+        self.decompose_non_standard_non_unitary_gates()
         converter = PyquilConverter()
         handler = ConversionHandler(converter)        
         return self._export(handler, False)
 
     def export_quil(self) -> str:
-        self.decompose_isometry_gates()
+        self.decompose_non_standard_non_unitary_gates()
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
         return self._export(handler, True)
@@ -83,12 +83,13 @@ class CircuitWrapper:
         circuit = dag_to_circuit(dag)
         return (circuit, dag)
 
-    def decompose_isometry_gates(self):
-        (self.circuit, self.dag) = self.decompose_isometry_gates_return()
+    def decompose_non_standard_non_unitary_gates(self) -> None:
+        (self.circuit, self.dag) = self.decompose_non_standard_non_unitary_gates_return()
+        
 
-    def decompose_isometry_gates_return(self) -> Tuple[QuantumCircuit, DAGCircuit]:
+    def decompose_non_standard_non_unitary_gates(self) -> Tuple[QuantumCircuit, DAGCircuit]:
         decomposer = Decomposer()    
-        dag = decomposer.decompose_isometry_gates(self.dag)
+        dag = decomposer.decompose_non_standard_non_unitary_gates(self.dag)
         circuit = dag_to_circuit(dag)
         return (circuit, dag)
 
