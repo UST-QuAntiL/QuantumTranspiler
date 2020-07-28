@@ -101,12 +101,11 @@ class TestTranspilation():
     def call_simulate_rigetti(self, circuit: QuantumCircuit)  -> List[Dict[str, Dict[int, int]]]:
         counts = {}
         program = self.convert_to_pyquil(circuit)
-        print(program)
+        # print(program)
         count = self.simulate_pyquil(
             program, "Rigetti - Not transpiled")
         counts["R-n"] = count
         transpiled_circuit_pyquil = self.transpile_pyquil(circuit)
-        print(transpiled_circuit_pyquil)
         count = self.simulate_pyquil(
             transpiled_circuit_pyquil, "Rigetti - Transpiled")
         counts["R-t"] = count
@@ -116,10 +115,10 @@ class TestTranspilation():
 if __name__ == "__main__":
     # working:
     # circuit = shor_15()
-    circuit = qiskit_custom()
+    # circuit = qiskit_custom()
     # circuit = grover_fix_qiskit()
     # circuit = grover_fix_SAT_qiskit()
-    # circuit = bernstein_vazirani_general_qiskit_integer(12, 20) 
+    circuit = bernstein_vazirani_general_qiskit_integer(12, 20) 
     # circuit = bernstein_vazirani_general_qiskit_binary_string(9, "010000110") 
     # circuit = grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)")
     # circuit = grover_general_truthtable_qiskit("10100000")     

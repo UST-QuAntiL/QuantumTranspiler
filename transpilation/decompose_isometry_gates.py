@@ -33,8 +33,6 @@ class DecomposeIsometryGates():
             QiskitError: if a 3q+ gate is not decomposable
         """
         for node in isometry_gates(dag):
-            print("in isometry: ")
-            print(node.name)
             # TODO: allow choosing other possible decompositions
             rule = node.op.definition
             if not rule:

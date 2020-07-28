@@ -25,7 +25,7 @@ class ConversionHandler:
         (converted_circuit, qreg_mapping, creg_mapping) = self.export_circuit(circuit)
         return (self.converter.circuit_to_language(converted_circuit), qreg_mapping, creg_mapping)
 
-    def export_circuit(self, circuit: QuantumCircuit, recursive=False):
+    def export_circuit(self, circuit: QuantumCircuit, recursive: bool = False):
         # method can be executed recursively for subcircuits
         # new converter object for each recursion step is required
         if recursive:

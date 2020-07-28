@@ -1,4 +1,3 @@
-from numpy.core.arrayprint import DatetimeFormat
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.dagcircuit.dagnode import DAGNode
 from qiskit.exceptions import QiskitError
