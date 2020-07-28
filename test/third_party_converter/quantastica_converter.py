@@ -17,7 +17,7 @@ class QuantasticaConverter:
 
     @staticmethod
     def qasm_to_pyquil(qasm: str) -> str:
-        return QuantasticaConverter.wrap_input_output(qasm, "qasm", "pyquil")   
+        return QuantasticaConverter.wrap_input_output(qasm, "qasm", "pyquil")  
 
     
     @staticmethod
