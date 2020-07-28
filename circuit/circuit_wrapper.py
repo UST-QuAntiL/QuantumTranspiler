@@ -47,24 +47,24 @@ class CircuitWrapper:
         handler = ConversionHandler(converter)
         self._import(handler, quil, True)
 
-    def _export(self, handler: ConversionHandler, is_language: bool):
+    def _export(self, handler: ConversionHandler, circuit: DAGCircuit, is_language: bool):
         if is_language:
-            (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_language(self.circuit)
+            (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_language(circuit)
         else:
-            (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_circuit(self.circuit)
+            (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_circuit(circuit)
         return circuit
 
     def export_pyquil(self) -> Program:
-        self.decompose_non_standard_non_unitary_gates()
+        (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
         converter = PyquilConverter()
         handler = ConversionHandler(converter)        
-        return self._export(handler, False)
+        return self._export(handler, circuit, False)
 
     def export_quil(self) -> str:
-        self.decompose_non_standard_non_unitary_gates()
+        (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
-        return self._export(handler, True)
+        return self._export(handler, circuit, True)
 
     def export_qiskit(self) -> QuantumCircuit:        
         return self.circuit
@@ -84,10 +84,9 @@ class CircuitWrapper:
         return (circuit, dag)
 
     def decompose_non_standard_non_unitary_gates(self) -> None:
-        (self.circuit, self.dag) = self.decompose_non_standard_non_unitary_gates_return()
-        
+        (self.circuit, self.dag) = self.decompose_non_standard_non_unitary_gates_return()        
 
-    def decompose_non_standard_non_unitary_gates(self) -> Tuple[QuantumCircuit, DAGCircuit]:
+    def decompose_non_standard_non_unitary_gates_return(self) -> Tuple[QuantumCircuit, DAGCircuit]:
         decomposer = Decomposer()    
         dag = decomposer.decompose_non_standard_non_unitary_gates(self.dag)
         circuit = dag_to_circuit(dag)

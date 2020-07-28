@@ -114,16 +114,20 @@ class TestTranspilation():
 
 if __name__ == "__main__":
     # working:
-    # circuit = shor_15()
+    circuit = shor_15()
     # circuit = qiskit_custom()
     # circuit = grover_fix_qiskit()
     # circuit = grover_fix_SAT_qiskit()
-    circuit = bernstein_vazirani_general_qiskit_integer(12, 20) 
+    # circuit = bernstein_vazirani_general_qiskit_integer(12, 20) 
     # circuit = bernstein_vazirani_general_qiskit_binary_string(9, "010000110") 
     # circuit = grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)")
     # circuit = grover_general_truthtable_qiskit("10100000")     
     # circuit = shor_general(3)    
     
+    # R-n has different results --> probably because of non standard gate:
+    
+    
+
     # print(circuit)
     test = TestTranspilation()
     test.simulate(circuit, plot=False)
