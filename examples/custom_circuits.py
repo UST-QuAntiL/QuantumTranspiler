@@ -55,20 +55,28 @@ def qiskit_custom():
     # qiskit_circuit.append(gate, qargs=[0,3,2,1])        
 
     """custom gate"""
-    custom_matrix1 = np.array([
-        [np.e**(1j*np.pi/2), 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, np.e**(1j*np.pi/2)]
-    ], dtype=complex)
-    # custom_matrix1 = random_unitary(4, seed=42)
-    custom_gate1 = UnitaryGate(custom_matrix1)
-    qiskit_circuit.append(custom_gate1, qargs=[0,1])
+    # custom_matrix1 = np.array([
+    #     [np.e**(1j*np.pi/2), 0, 0, 0],
+    #     [0, 1, 0, 0],
+    #     [0, 0, 1, 0],
+    #     [0, 0, 0, np.e**(1j*np.pi/2)]
+    # ], dtype=complex)
+    # # custom_matrix1 = random_unitary(4, seed=42)
+    # custom_gate1 = UnitaryGate(custom_matrix1)
+    # qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
     """custom gate #2"""
-    custom_matrix1 = random_unitary(4, seed=42)
-    custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_2qubits")
-    qiskit_circuit.append(custom_gate1, qargs=[0,1])
+    """wrong results on rigetti non transpiled"""
+    # custom_matrix1 = random_unitary(4, seed=42)
+    # custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_2qubits")
+    # qiskit_circuit.append(custom_gate1, qargs=[0,1])
+    # print(custom_gate1.to_matrix())
+
+
+    """custom gate #3"""
+    custom_matrix1 = random_unitary(8, seed=42)
+    custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_3qubits")
+    qiskit_circuit.append(custom_gate1, qargs=[0,1,2])
 
     """NOT possible: parameterized custom gate"""
     # theta = qiskit_circuit_library.Parameter("θ")
@@ -116,8 +124,6 @@ def qiskit_custom():
 
     """measurement"""
     qiskit_circuit.measure_all()
-
-    show_figure(qiskit_circuit)
     return qiskit_circuit
 
 def pyquil_custom() -> Program:

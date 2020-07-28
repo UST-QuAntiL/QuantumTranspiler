@@ -1,4 +1,5 @@
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.dagcircuit.dagcircuit import DAGCircuit
 from qiskit.transpiler.passes.basis import decompose
 from conversion.conversion_handler import ConversionHandler
 from conversion.converter.pyquil_converter import PyquilConverter
@@ -7,7 +8,7 @@ from qiskit.converters import circuit_to_dag, dag_to_circuit
 from circuit.qiskit_utility import show_figure
 from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
-from typing import List
+from typing import List, Tuple
 
 class CircuitWrapper:
     def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None):
@@ -69,19 +70,28 @@ class CircuitWrapper:
         return self.circuit
 
     def export_qasm(self) -> str:
-        self.decompose_to_standard_gates()
-        qasm = self.circuit.qasm()
+        (circuit, dag) = self.decompose_to_standard_gates_return()
+        qasm = circuit.qasm()
         return qasm
 
-    def decompose_to_standard_gates(self):
+    def decompose_to_standard_gates(self) -> None:
+        (self.circuit, self.dag) = self.decompose_to_standard_gates_return()
+
+    def decompose_to_standard_gates_return(self) -> Tuple[QuantumCircuit, DAGCircuit]:
         decomposer = Decomposer()    
-        self.dag = decomposer.decompose_to_standard_gates(self.dag)
-        self.circuit = dag_to_circuit(self.dag)
+        dag = decomposer.decompose_to_standard_gates(self.dag)
+        circuit = dag_to_circuit(dag)
+        return (circuit, dag)
 
     def decompose_isometry_gates(self):
+        (self.circuit, self.dag) = self.decompose_isometry_gates_return()
+
+    def decompose_isometry_gates_return(self) -> Tuple[QuantumCircuit, DAGCircuit]:
         decomposer = Decomposer()    
-        self.dag = decomposer.decompose_isometry_gates(self.dag)
-        self.circuit = dag_to_circuit(self.dag)
+        dag = decomposer.decompose_isometry_gates(self.dag)
+        circuit = dag_to_circuit(dag)
+        return (circuit, dag)
+
 
     def unroll_ibm(self) -> QuantumCircuit:
         return self.unroll(["u1", "u2", "u3", "cx", "id"])
