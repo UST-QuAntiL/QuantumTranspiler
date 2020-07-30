@@ -61,13 +61,7 @@ class TestTranspilation():
     def convert_to_pyquil(self, circuit: QuantumCircuit) -> Program:
         wrapper = CircuitWrapper(qiskit_circuit=circuit)
         circuit_pyquil = wrapper.export_pyquil()
-        return circuit_pyquil
-
-    def convert_to_pyquil_third_party(self, circuit: QuantumCircuit) -> Program:
-        from test.third_party_converter.pytket_converter import PytketConverter
-
-        circuit_pyquil = PytketConverter.qiskit_to_pyquil(circuit)
-        return circuit_pyquil
+        return circuit_pyquil    
 
     def simulate(self, circuit: QuantumCircuit, plot=False):
         counts = []
@@ -105,9 +99,8 @@ class TestTranspilation():
 
     def call_simulate_rigetti(self, circuit: QuantumCircuit)  -> List[Dict[str, Dict[int, int]]]:
         counts = {}
-        # program = self.convert_to_pyquil(circuit)
-        program = self.convert_to_pyquil_third_party(circuit)
-        print(program)
+        program = self.convert_to_pyquil(circuit)
+        # print(program)
         count = self.simulate_pyquil(
             program, "Rigetti - Not transpiled")
         counts["R-n"] = count
