@@ -1,0 +1,53 @@
+<div class="container pt-4">
+    <div class="row ">
+        <!-- <div class="col-6"> -->
+            <mat-form-field>
+                <mat-label> Choose Input Language/Framework</mat-label>
+                <mat-select (selectionChange)="changed($event)">
+                    <p class="pl-2 pt-2 subtitle">Languages</p>
+                    <mat-option value="OpenQASM">
+                        OpenQASM
+                    </mat-option>
+                    <mat-option value="Quil">
+                        Quil
+                    </mat-option>
+                    <mat-divider></mat-divider>
+                    <p class="pl-2 pt-2 subtitle">Frameworks</p>
+                    <mat-option value="Qiskit">
+                        Qiskit
+                    </mat-option>
+                    <mat-option value="Pyquil">
+                        Pyquil
+                    </mat-option>
+    
+                </mat-select>
+            </mat-form-field>
+    
+
+        <!-- </div>
+
+        <div class="col-6">
+            
+    
+
+        </div> -->
+        
+
+        
+
+    </div>
+
+    <div class="row">
+
+        <mat-form-field class="w-100 " appearance="outline">
+            <mat-label>Input</mat-label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="20"></textarea>
+        </mat-form-field>
+    </div>
+
+    <input id="fileInput" type="file" />
+    <button (click)="inputFile()" mat-mini-fab class="float-right mb-2" matTooltip="Import File." matTooltipClass="tooltip-large" color="primary" ><mat-icon>publish</mat-icon></button>    
+    
+    
+
+</div>
