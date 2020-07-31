@@ -15,13 +15,31 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { CodeComponent } from './code/code.component';
+import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
+import { FormsModule } from '@angular/forms';
+import { ImportComponent } from './import/import.component';
+import { ExportComponent } from './export/export.component';
+import { CircuitComponent } from './circuit/circuit.component';
+import { ConvertComponent } from './convert/convert.component';
+
+const monacoConfig: NgxMonacoEditorConfig = {
+  baseUrl: 'assets',
+  defaultOptions: { scrollBeyondLastLine: false }
+};
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    InputComponent
+    InputComponent,
+    CodeComponent,
+    ImportComponent,
+    ExportComponent,
+    CircuitComponent,
+    ConvertComponent
   ],
-  imports: [
+  imports: [    
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -34,7 +52,10 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatToolbarModule,
     MatTabsModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    FormsModule,
+    MonacoEditorModule.forRoot(),
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

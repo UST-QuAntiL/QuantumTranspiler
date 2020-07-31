@@ -1,0 +1,28 @@
+$dark: #3F51B5;
+// $light: #6ec6ff;
+// $dark: #0069c0;
+
+// $very_light: #f6f9fe;
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.spacer-large {
+    flex: 2 1 auto;
+}
+
+a  {
+    color: white;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+}
+
+a:hover {
+    opacity: 80%;
+}
+
+mat-icon {
+    vertical-align: middle;
+    display: inline;
+}
