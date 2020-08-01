@@ -10,7 +10,9 @@ It is recommended to install them with [Pip](https://pip.pypa.io/en/stable/).
 ```bash
 pip install qiskit
 pip install pyquil
+pip install flask
 pip install pydot
+
 ```
 
 ### Optional dependencies:
@@ -18,6 +20,10 @@ For the usage of pydot (used for drawing of dags) [Graphviz](http://www.graphviz
 
 
 ## Usage
+To start the server run:
+```bash
+python -m frontend_service.circuit_wrapper_service
+```
 
 The library is executed as a module.
 Test Examples:
