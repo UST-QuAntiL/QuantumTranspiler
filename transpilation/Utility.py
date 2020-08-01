@@ -1,3 +1,4 @@
+from circuit.qiskit_utility import standard_gates
 from numpy.lib.arraysetops import isin
 from qiskit.dagcircuit import DAGCircuit, DAGNode
 import qiskit.transpiler.passes as Qiskit_Passes
@@ -7,10 +8,6 @@ from qiskit.extensions import UnitaryGate
 from qiskit.extensions.quantum_initializer.isometry import Isometry
 from qiskit.circuit.instruction import Instruction
 from typing import Callable
-
-# unitary gate just works for user defined gates but not for the gates defined in qiskit.extensions.quantum_initializer        
-standard_gates = ["barrier", "c3x", "c4x", "ccx", "dcx", "h", "ch", "crx", "cry", "crz", "cswap", "cu1", "cu3", "cx", "cy", "cz",
-                  "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzz", "rzx", "s", "sdg", "t", "tdg", "u1", "u2", "u3", "x", "y", "z"]
 
 def _get_nodes(dag: DAGCircuit, check_node: Callable[[DAGNode], bool]):
     all_nodes = dag.gate_nodes()

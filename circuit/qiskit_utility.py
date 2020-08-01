@@ -5,6 +5,12 @@ from qiskit.extensions import UnitaryGate
 import numpy as np
 from qiskit.quantum_info.operators.predicates import matrix_equal
 
+# unitary gate just works for user defined gates but not for the gates defined in qiskit.extensions.quantum_initializer  
+standard_gates = ["barrier", "c3x", "c4x", "ccx", "dcx", "h", "ch", "crx", "cry", "crz", "cswap", "cu1", "cu3", "cx", "cy", "cz",
+                  "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzz", "rzx", "s", "sdg", "t", "tdg", "u1", "u2", "u3", "x", "y", "z"]
+
+standard_instructions = standard_gates + ["measure"]
+
 def qasm_to_dag(qasm: str) -> DAGCircuit:
     circuit = QuantumCircuit.from_qasm_str(qasm)
     dag = circuit_to_dag(circuit)
