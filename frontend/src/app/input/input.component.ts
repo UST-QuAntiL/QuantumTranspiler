@@ -50,4 +50,8 @@ export class InputComponent implements OnInit {
     reader.readAsText(file);
   }
 
+  computeInternal() {
+    
+  }
+
 }

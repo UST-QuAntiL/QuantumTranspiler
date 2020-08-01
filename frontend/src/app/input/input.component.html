@@ -1,6 +1,6 @@
 <div class="container pt-4">
     <div class="row ">
-        <div class="col">
+        <div class="col-6">
             <mat-form-field class="w-100">
                 <mat-label> Choose Input Language/Framework</mat-label>
                 <mat-select (selectionChange)="changed($event)">
@@ -23,11 +23,18 @@
                 </mat-select>
             </mat-form-field>
         </div>
-        <div class="col">
+        <div class="col-3">
             <input id="fileInput" type="file" />
-            <button (click)="inputFile()" mat-mini-fab class="float-right mb-2" matTooltip="Import File."
+            <button (click)="inputFile()" mat-mini-fab class="" matTooltip="Import File."
                 matTooltipClass="tooltip-large" color="primary">
                 <mat-icon>publish</mat-icon>
+            </button>
+        </div>
+
+        <div class="col-3">
+            <button (click)="computeInternal()" mat-mini-fab class="float-right" matTooltip="Compute internal representation (Qiskit Circuit)."
+                matTooltipClass="tooltip-large" color="primary">
+                <mat-icon>forward</mat-icon>
             </button>
         </div>
 

@@ -22,6 +22,7 @@ import { ImportComponent } from './import/import.component';
 import { ExportComponent } from './export/export.component';
 import { CircuitComponent } from './circuit/circuit.component';
 import { ConvertComponent } from './convert/convert.component';
+import { GraphicalComponent } from './graphical/graphical.component';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -37,7 +38,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     ImportComponent,
     ExportComponent,
     CircuitComponent,
-    ConvertComponent
+    ConvertComponent,
+    GraphicalComponent
   ],
   imports: [    
     BrowserModule,
