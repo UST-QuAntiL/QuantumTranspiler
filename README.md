@@ -20,7 +20,7 @@ For the usage of pydot (used for drawing of dags) [Graphviz](http://www.graphviz
 ## Usage
 
 The library is executed as a module.
-Examples:
+Test Examples:
 ```bash
 python3 -m conversion.test_circuit_converter   
 python3 -m circuit.test_circuit_wrapper   
