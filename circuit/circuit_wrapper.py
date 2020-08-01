@@ -1,3 +1,4 @@
+from circuit.qiskit_commands import circuit_to_commands
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.dagcircuit.dagcircuit import DAGCircuit
 from qiskit.transpiler.passes.basis import decompose
@@ -5,13 +6,12 @@ from conversion.conversion_handler import ConversionHandler
 from conversion.converter.pyquil_converter import PyquilConverter
 from pyquil import Program
 from qiskit.converters import circuit_to_dag, dag_to_circuit
-from circuit.qiskit_utility import show_figure
 from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
 from typing import List, Tuple
 
 class CircuitWrapper:
-    def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None, qasm: str = None):
+    def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None, qasm: str = None, pyquil_instructions: str = None, qiskit_instructions: str = None):
         if pyquil_program:
             self.import_pyquil(pyquil_program)
         elif quil_str:
@@ -20,6 +20,11 @@ class CircuitWrapper:
             self._set_circuit(qiskit_circuit)
         elif qasm:
             self.import_qasm(qasm)
+        # elif pyquil_instructions:
+        #     circuit 
+        #     self.import_qasm(qasm)
+        # elif qiskit_instructions:
+        #     self.import_qasm(qasm)
         else:
             self._set_circuit(QuantumCircuit())
             self.qreg_mapping_import = {}
@@ -27,12 +32,13 @@ class CircuitWrapper:
             self.qreg_mapping_export = {}
             self.creg_mapping_export = {}
 
-
     def _import(self, handler: ConversionHandler, circuit, is_language: bool):
         if is_language:
-            (circuit, self.qreg_mapping_import, self.creg_mapping) = handler.import_language(circuit)
+            (circuit, self.qreg_mapping_import,
+             self.creg_mapping) = handler.import_language(circuit)
         else:
-            (circuit, self.qreg_mapping_import, self.creg_mapping) = handler.import_circuit(circuit)
+            (circuit, self.qreg_mapping_import,
+             self.creg_mapping) = handler.import_circuit(circuit)
         self._set_circuit(circuit)
 
     def _set_circuit(self, circuit: QuantumCircuit):
@@ -55,15 +61,17 @@ class CircuitWrapper:
 
     def _export(self, handler: ConversionHandler, circuit: DAGCircuit, is_language: bool):
         if is_language:
-            (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_language(circuit)
+            (circuit, self.qreg_mapping_export,
+             self.creg_mapping_export) = handler.export_language(circuit)
         else:
-            (circuit, self.qreg_mapping_export, self.creg_mapping_export) = handler.export_circuit(circuit)
+            (circuit, self.qreg_mapping_export,
+             self.creg_mapping_export) = handler.export_circuit(circuit)
         return circuit
 
     def export_pyquil(self) -> Program:
         (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
         converter = PyquilConverter()
-        handler = ConversionHandler(converter)        
+        handler = ConversionHandler(converter)
         return self._export(handler, circuit, False)
 
     def export_quil(self) -> str:
@@ -72,7 +80,7 @@ class CircuitWrapper:
         handler = ConversionHandler(converter)
         return self._export(handler, circuit, True)
 
-    def export_qiskit(self) -> QuantumCircuit:        
+    def export_qiskit(self) -> QuantumCircuit:
         return self.circuit
 
     def export_qasm(self) -> str:
@@ -80,34 +88,36 @@ class CircuitWrapper:
         qasm = circuit.qasm()
         return qasm
 
+    def export_qiskit_commands(self) -> QuantumCircuit:
+        instructions = circuit_to_commands(self.circuit)
+        return instructions
+
     def decompose_to_standard_gates(self) -> None:
         (self.circuit, self.dag) = self.decompose_to_standard_gates_return()
 
     def decompose_to_standard_gates_return(self) -> Tuple[QuantumCircuit, DAGCircuit]:
-        decomposer = Decomposer()    
+        decomposer = Decomposer()
         dag = decomposer.decompose_to_standard_gates(self.dag)
         circuit = dag_to_circuit(dag)
         return (circuit, dag)
 
     def decompose_non_standard_non_unitary_gates(self) -> None:
-        (self.circuit, self.dag) = self.decompose_non_standard_non_unitary_gates_return()        
+        (self.circuit, self.dag) = self.decompose_non_standard_non_unitary_gates_return()
 
     def decompose_non_standard_non_unitary_gates_return(self) -> Tuple[QuantumCircuit, DAGCircuit]:
-        decomposer = Decomposer()    
+        decomposer = Decomposer()
         dag = decomposer.decompose_non_standard_non_unitary_gates(self.dag)
         circuit = dag_to_circuit(dag)
         return (circuit, dag)
 
-
     def unroll_ibm(self) -> QuantumCircuit:
         return self.unroll(["u1", "u2", "u3", "cx", "id"])
-    def unroll_rigetti(self) -> QuantumCircuit:        
+
+    def unroll_rigetti(self) -> QuantumCircuit:
         return self.unroll(["rx", "rz", "cz", "id"])
 
     def unroll(self, gates: List[str]) -> QuantumCircuit:
-        unroll_pass = Unroller(gates)    
+        unroll_pass = Unroller(gates)
         self.dag = unroll_pass.run(self.dag)
         self.circuit = dag_to_circuit(self.dag)
         return self.circuit
-
-

@@ -25,3 +25,4 @@ def show_figure(circuit: QuantumCircuit) -> None:
 def check_matrix_equality(self, matrix1: np.array, matrix2: np.array) -> bool:
     """checks equality of matrices up to global phase"""
     return matrix_equal(matrix1, matrix2, ignore_phase=True)
+

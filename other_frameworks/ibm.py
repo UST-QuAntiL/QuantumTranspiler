@@ -64,27 +64,14 @@ def dag_default(circ):
 
 
 if __name__ == "__main__":
+    qc = QuantumCircuit(5)
+    qc.unitary(np.array([[ 0.14480819+0.1752384j , -0.51892816-0.52424259j,
+        -0.14955858+0.312755j  ,  0.16913481-0.50538631j],
+       [-0.92717439-0.08785062j, -0.11260331-0.1818585j ,
+         0.12255872+0.09640286j, -0.24498509-0.05045841j],
+       [-0.00798428-0.20355071j, -0.38932055-0.05180925j,
+         0.26051706+0.32864025j,  0.44517308+0.65589332j],
+       [ 0.03137922+0.19613952j,  0.4980475 +0.08846049j,
+         0.34078865+0.750661j  ,  0.01464807-0.15755843j]]) ,[0, 1], label='unitary_2qubits')
 
-    # logging.basicConfig(level='DEBUG')
-    # logging.getLogger('qiskit.transpiler').setLevel('INFO')
-
-    cz_matrix = np.array([[1, 0, 0, 0],
-                   [0, 1, 0, 0],
-                   [0, 0, 1, 0],
-                   [0, 0, 0, -1]], dtype=complex)
-    cz_gate = UnitaryGate(cz_matrix)
-
-    custom_matrix1 = np.array([
-        [np.e**(1j*np.pi/2), 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, np.e**(1j*np.pi/2)]
-    ], dtype=complex)
-    # custom_matrix1 = random_unitary(4, seed=42)
-    custom_gate1 = UnitaryGate(custom_matrix1)
-    print(custom_gate1.definition)
-    two_qubit_cz_decompose = TwoQubitBasisDecomposer(cz_gate)
-    custom_gate1.definition = two_qubit_cz_decompose(
-        custom_gate1.to_matrix()).data
-    print(custom_gate1.definition)
-    # gate =
+    print(qc)

@@ -22,14 +22,16 @@ def circuit_to_internal():
     elif option == "Pyquil":
         wrapper = CircuitWrapper(pyquil_program=circuit)
     elif option == "OpenQASM":
-        wrapper = CircuitWrapper(circuit)
+        wrapper = CircuitWrapper(qasm=circuit)
     elif option == "Qiskit":
-        wrapper = CircuitWrapper(qiskit_circuit=circuit)
+        wrapper = CircuitWrapper(qisqakit_circuit=circuit)
+    else:
+        return "Bad Request!", 400
 
-
-    print(option)
-
-    return request.json
+    output = wrapper.export_qiskit()
+    output = output.data
+    print(output)
+    return output
 
 
 
