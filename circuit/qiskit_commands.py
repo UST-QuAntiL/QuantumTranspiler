@@ -1,4 +1,10 @@
 from qiskit import QuantumCircuit
+import numpy as np
+
+def commands_to_circuit(commands: str) -> QuantumCircuit:
+    exec(commands)
+    val = eval("qc")     
+    return val   
 
 def circuit_to_commands(circuit: QuantumCircuit):
     commands = ""
@@ -46,6 +52,10 @@ def _handle_instructions(circuit, simple_registers):
         clbits = instr[2]        
         param_str = ""
 
+        # if operation.name == "barrier":
+        #     print(operation)
+        #     param_str += _create_reg_string(qubits, param_str, simple_registers)
+            
         if operation.name == "unitary":
             matrix = _create_matrix(params)
             param_str += _create_reg_string(qubits, param_str, simple_registers)
@@ -53,11 +63,10 @@ def _handle_instructions(circuit, simple_registers):
             commands += f"qc.{operation.name}({matrix} ,{param_str}, label='{operation.label}')\n"  
 
         else:
-            param_str += _create_param_string(params, param_str)
-            param_str += _create_reg_string(qubits, param_str, simple_registers)
-            param_str += _create_reg_string(clbits, param_str, simple_registers)  
-            commands += f"qc.{operation.name}({param_str})\n"    
-
+            param_str = _create_param_string(params, param_str)
+            param_str = _create_reg_string(qubits, param_str, simple_registers)
+            param_str = _create_reg_string(clbits, param_str, simple_registers)  
+            commands += f"qc.{operation.name}({param_str})\n"   
     return commands
 
 def _create_param_string(params, param_str):
@@ -80,7 +89,6 @@ def _create_reg_string(regs, param_str, simple_registers):
 
 def _create_matrix(params):
     params = params[0]
-    print(repr(params))
     matrix_str = f"np.{repr(params)}"
     return matrix_str
 

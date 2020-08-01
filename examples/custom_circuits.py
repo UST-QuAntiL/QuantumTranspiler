@@ -72,7 +72,7 @@ def qiskit_custom():
     qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
     """barrier"""
-    # qiskit_circuit.barrier(0)
+    qiskit_circuit.barrier()
     
     """custom gate #3"""
     # custom_matrix1 = random_unitary(8, seed=42)
@@ -124,7 +124,7 @@ def qiskit_custom():
     
 
     """measurement"""
-    # qiskit_circuit.measure_all()
+    qiskit_circuit.measure_all()
     return qiskit_circuit
 
 def pyquil_custom() -> Program:

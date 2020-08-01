@@ -1,4 +1,5 @@
 import ast
+from circuit.qiskit_commands import commands_to_circuit
 from pyquil import Program, get_qc
 from pyquil.gates import H, CNOT, CCNOT
 from circuit.qiskit_utility import show_figure
@@ -37,10 +38,8 @@ class TestCircuitWrapper:
         print(qiskit_custom())
         commands = wrapper.export_qiskit_commands()        
         print(commands)
-        # QuantumCircuit
-        exec(commands)
-        val = eval("qc")     
-        print(val)   
+        circuit = commands_to_circuit(commands)
+        print(circuit)
         
     def test_unroll(self):
         wrapper = CircuitWrapper(qiskit_circuit=qiskit_custom_unroll())
