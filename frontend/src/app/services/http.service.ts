@@ -28,7 +28,7 @@ export class HttpService {
     let data = JSON.stringify(input_circuit)
     try {
       let circuit = await this.http.post(url + "circuit_to_internal", data, { headers, responseType: 'text' }).toPromise()
-      console.log(circuit)
+      this.snackbar.open("Successfully converted to Qiskit circuit implementation.");
       return circuit
     } catch (err) {
       console.log(err)

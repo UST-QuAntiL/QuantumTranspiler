@@ -1,4 +1,4 @@
-from circuit.qiskit_commands import circuit_to_commands
+from conversion.converter.command_converter import circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.dagcircuit.dagcircuit import DAGCircuit
 from qiskit.transpiler.passes.basis import decompose
@@ -20,11 +20,11 @@ class CircuitWrapper:
             self._set_circuit(qiskit_circuit)
         elif qasm:
             self.import_qasm(qasm)
-        # elif pyquil_instructions:
-        #     circuit 
-        #     self.import_qasm(qasm)
-        # elif qiskit_instructions:
-        #     self.import_qasm(qasm)
+        elif pyquil_instructions:
+            program = pyquil_commands_to_program(pyquil_instructions)
+            self.import_pyquil(program)
+        elif qiskit_instructions:
+            self._set_circuit(qiskit_commands_to_circuit(qiskit_instructions))
         else:
             self._set_circuit(QuantumCircuit())
             self.qreg_mapping_import = {}
@@ -89,7 +89,7 @@ class CircuitWrapper:
         return qasm
 
     def export_qiskit_commands(self) -> QuantumCircuit:
-        instructions = circuit_to_commands(self.circuit)
+        instructions = circuit_to_qiskit_commands(self.circuit)
         return instructions
 
     def decompose_to_standard_gates(self) -> None:

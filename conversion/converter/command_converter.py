@@ -1,3 +1,5 @@
+from pyquil.gates import *
+from pyquil.quil import Program
 from circuit.qiskit_utility import standard_instructions
 from qiskit import QuantumCircuit
 import numpy as np
@@ -5,12 +7,18 @@ from qiskit.circuit.classicalregister import ClassicalRegister
 from qiskit.circuit.library.standard_gates import *
 from qiskit.circuit.quantumregister import QuantumRegister
 
-def commands_to_circuit(commands: str) -> QuantumCircuit:
+def pyquil_commands_to_program(commands: str) -> QuantumCircuit:
+    
+    exec(commands)
+    val = eval("p")
+    return val   
+
+def qiskit_commands_to_circuit(commands: str) -> QuantumCircuit:
     exec(commands)
     val = eval("qc")     
     return val   
 
-def circuit_to_commands(circuit: QuantumCircuit):
+def circuit_to_qiskit_commands(circuit: QuantumCircuit):
     commands = ""
     (reg_str, simple_registers) = _handle_regs(circuit)
     commands += reg_str

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { HttpService } from '../services/http.service';
 import { DataService } from '../services/data.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-input',
@@ -30,7 +31,7 @@ MEASURE 2 ro[2]
 `
   editorOptions = { theme: 'vs-light', language: 'python', automaticLayout: true };
 
-  constructor(private http: HttpService, private data: DataService) { }
+  constructor(private http: HttpService, private data: DataService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
   }
@@ -68,6 +69,11 @@ MEASURE 2 ro[2]
   }
 
   async computeInternal() {
+    if (!(this.options.includes(this.selectedOption))) {
+      this.snackbar.open("You must choose an input language/framework.");
+      return
+    }
+
     let object = {
       "option": this.selectedOption,
       "circuit": this.circuit

@@ -40,6 +40,14 @@ class TestCircuitWrapper:
         print(commands)
         circuit = commands_to_circuit(commands)
         print(circuit)
+
+    def test_pyquil_command_input(self):
+        wrapper = CircuitWrapper(qiskit_circuit=grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)"))
+        # print(wrapper.circuit)
+        # commands = wrapper.export_qiskit_commands()        
+        # print(commands)
+        # circuit = commands_to_circuit(commands)
+        # print(circuit)
         
     def test_unroll(self):
         wrapper = CircuitWrapper(qiskit_circuit=qiskit_custom_unroll())
@@ -50,4 +58,4 @@ class TestCircuitWrapper:
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_qiskit_commands()
+    test.test_pyquil_command_input()
