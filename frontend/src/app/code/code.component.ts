@@ -9,7 +9,7 @@ import { DataService } from '../services/data.service';
 export class CodeComponent implements OnInit {
   editorOptions = {theme: 'vs-light', language: 'python', automaticLayout: true};  
 
-  constructor(private data: DataService) {   
+  constructor(public data: DataService) {   
 
    }
 
