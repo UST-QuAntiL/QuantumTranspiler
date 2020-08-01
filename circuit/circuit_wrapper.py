@@ -11,13 +11,15 @@ from transpilation.unroll import Unroller
 from typing import List, Tuple
 
 class CircuitWrapper:
-    def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None):
+    def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None, qasm: str = None):
         if pyquil_program:
             self.import_pyquil(pyquil_program)
         elif quil_str:
             self.import_quil(quil_str)
         elif qiskit_circuit:
             self._set_circuit(qiskit_circuit)
+        elif qasm:
+            self.import_qasm(qasm)
         else:
             self._set_circuit(QuantumCircuit())
             self.qreg_mapping_import = {}
@@ -36,6 +38,10 @@ class CircuitWrapper:
     def _set_circuit(self, circuit: QuantumCircuit):
         self.circuit = circuit
         self.dag = circuit_to_dag(circuit)
+
+    def import_qasm(self, qasm: str):
+        circuit = QuantumCircuit.from_qasm_str(qasm)
+        self._set_circuit(circuit)
 
     def import_pyquil(self, program: Program) -> None:
         converter = PyquilConverter()

@@ -17,6 +17,16 @@ def circuit_to_internal():
     data = request.json
     option = data["option"]
     circuit = data["circuit"]
+    if option == "Quil":
+        wrapper = CircuitWrapper(quil_str=circuit)
+    elif option == "Pyquil":
+        wrapper = CircuitWrapper(pyquil_program=circuit)
+    elif option == "OpenQASM":
+        wrapper = CircuitWrapper(circuit)
+    elif option == "Qiskit":
+        wrapper = CircuitWrapper(qiskit_circuit=circuit)
+
+
     print(option)
 
     return request.json
