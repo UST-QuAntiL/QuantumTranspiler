@@ -11,6 +11,7 @@ It is recommended to install them with [Pip](https://pip.pypa.io/en/stable/).
 pip install qiskit
 pip install pyquil
 pip install flask
+pip install flask-cors
 pip install pydot
 
 ```
