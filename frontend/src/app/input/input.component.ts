@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { HttpService } from '../services/http.service';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-input',
@@ -29,7 +30,7 @@ MEASURE 2 ro[2]
 `
   editorOptions = { theme: 'vs-light', language: 'python', automaticLayout: true };
 
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService, private data: DataService) { }
 
   ngOnInit(): void {
   }
@@ -71,8 +72,10 @@ MEASURE 2 ro[2]
       "option": this.selectedOption,
       "circuit": this.circuit
     }
-    await this.http.circuit_to_internal(object)
-
+    let circuit = await this.http.circuit_to_internal(object)
+    if (circuit) {
+      this.data.circuit = circuit
+    }
   }
 
 }

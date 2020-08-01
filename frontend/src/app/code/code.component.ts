@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-code',
@@ -7,9 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CodeComponent implements OnInit {
   editorOptions = {theme: 'vs-light', language: 'python', automaticLayout: true};  
-  circuitCode: string = 'def create():\n print("he")';
 
-  constructor() {   
+  constructor(private data: DataService) {   
 
    }
 

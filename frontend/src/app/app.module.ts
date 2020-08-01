@@ -24,6 +24,7 @@ import { CircuitComponent } from './circuit/circuit.component';
 import { ConvertComponent } from './convert/convert.component';
 import { GraphicalComponent } from './graphical/graphical.component';
 import { HttpClientModule } from '@angular/common/http';
+import {MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
 
 
 const monacoConfig: NgxMonacoEditorConfig = {
@@ -59,11 +60,14 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MatTooltipModule,
     FormsModule,
     MonacoEditorModule.forRoot(),
-    HttpClientModule
+    HttpClientModule,
+    MatSnackBarModule
 
 
   ],
-  providers: [],
+  providers: [
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
