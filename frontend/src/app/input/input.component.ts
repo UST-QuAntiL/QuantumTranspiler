@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
+import { HttpService } from '../services/http.service';
 
 @Component({
   selector: 'app-input',
@@ -10,10 +11,25 @@ import { MatSelectChange } from '@angular/material/select';
 export class InputComponent implements OnInit {
   options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"]
   selectedOption: string;
-  circuit: string = "test"; 
-  editorOptions = {theme: 'vs-light', language: 'python', automaticLayout: true};
+  circuit: string = `DECLARE ro BIT[3]
+H 0
+H 1
+H 2
+H 1
+CNOT 2 3
+CPHASE (0) 1 0
+CNOT 2 4
+H 0
+CPHASE (0) 1 2
+CPHASE (0) 0 2
+H 2
+MEASURE 0 ro[0]
+MEASURE 1 ro[1]
+MEASURE 2 ro[2]
+`
+  editorOptions = { theme: 'vs-light', language: 'python', automaticLayout: true };
 
-  constructor() { }
+  constructor(private http: HttpService) { }
 
   ngOnInit(): void {
   }
@@ -50,8 +66,13 @@ export class InputComponent implements OnInit {
     reader.readAsText(file);
   }
 
-  computeInternal() {
-    
+  async computeInternal() {
+    let object = {
+      "option": this.selectedOption,
+      "circuit": this.circuit
+    }
+    await this.http.circuit_to_internal(object)
+
   }
 
 }
