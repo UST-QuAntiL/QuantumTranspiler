@@ -4,6 +4,7 @@ import { ImportComponent } from './import/import.component';
 import { CircuitComponent } from './circuit/circuit.component';
 import { ExportComponent } from './export/export.component';
 import { ConvertComponent } from './convert/convert.component';
+import { StepperComponent } from './stepper/stepper.component';
 
 
 const routes: Routes = [
@@ -11,7 +12,8 @@ const routes: Routes = [
   { path: 'circuit', component: CircuitComponent },
   { path: 'export', component: ExportComponent },
   { path: 'convert', component: ConvertComponent },
-  { path: '**', redirectTo: '/circuit' },
+  { path: 'stepper', component: StepperComponent },
+  { path: '**', redirectTo: '/stepper' },
 ];
 
 @NgModule({

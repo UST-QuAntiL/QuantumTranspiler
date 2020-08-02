@@ -1,0 +1,14 @@
+<mat-horizontal-stepper #stepper>
+  <mat-step [stepControl]="firstFormGroup" state="input">
+    <ng-template matStepLabel>Input</ng-template>
+    <app-input></app-input>
+  </mat-step>
+  <mat-step [stepControl]="firstFormGroup" state="circuit">
+    <ng-template matStepLabel>Internal Representation</ng-template>
+    <app-circuit></app-circuit>
+  </mat-step>
+  <mat-step [stepControl]="firstFormGroup" state="export">
+    <ng-template matStepLabel>Export</ng-template>
+    <app-export></app-export>
+  </mat-step>
+</mat-horizontal-stepper>

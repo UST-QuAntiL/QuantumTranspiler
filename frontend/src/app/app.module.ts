@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CodeComponent } from './code/code.component';
 import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ImportComponent } from './import/import.component';
 import { ExportComponent } from './export/export.component';
 import { CircuitComponent } from './circuit/circuit.component';
@@ -25,7 +25,8 @@ import { ConvertComponent } from './convert/convert.component';
 import { GraphicalComponent } from './graphical/graphical.component';
 import { HttpClientModule } from '@angular/common/http';
 import {MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
-
+import {MatStepperModule} from '@angular/material/stepper';
+import { StepperComponent } from './stepper/stepper.component';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -42,7 +43,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     ExportComponent,
     CircuitComponent,
     ConvertComponent,
-    GraphicalComponent
+    GraphicalComponent,
+    StepperComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +63,10 @@ const monacoConfig: NgxMonacoEditorConfig = {
     FormsModule,
     MonacoEditorModule.forRoot(),
     HttpClientModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatStepperModule,
+    FormsModule,
+    ReactiveFormsModule
 
 
   ],
