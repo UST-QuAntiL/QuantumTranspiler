@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { HttpService } from '../services/http.service';
 import { DataService } from '../services/data.service';
@@ -81,7 +81,6 @@ MEASURE 2 ro[2]
     let circuit = await this.http.circuit_to_internal(object)
     if (circuit) {
       this.data.circuit = circuit
-    }
+    }    
   }
-
 }

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-stepper',
@@ -12,17 +13,25 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 })
 export class StepperComponent implements OnInit {
   firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
+  @ViewChild('stepper') private stepper: MatStepper;
 
-  constructor(private _formBuilder: FormBuilder) { }
+
+  constructor(private _formBuilder: FormBuilder) {
+    
+  }
 
   ngOnInit() {
     this.firstFormGroup = this._formBuilder.group({
       firstCtrl: ['', Validators.required]
     });
-    this.secondFormGroup = this._formBuilder.group({
-      secondCtrl: ['', Validators.required]
-    });
+    
   }
 
+  computeInternal() {
+    console.log("internal")
+  }
+
+  ngAfterViewInit() {
+    // this.stepper.selectedIndex = 1;
+  }
 }

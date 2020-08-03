@@ -3,7 +3,7 @@
     <ng-template matStepLabel>Input</ng-template>
     <app-input></app-input>
   </mat-step>
-  <mat-step [stepControl]="firstFormGroup" state="circuit">
+  <mat-step [stepControl]="firstFormGroup" state="circuit" (click)="computeInternal()">
     <ng-template matStepLabel>Internal Representation</ng-template>
     <app-circuit></app-circuit>
   </mat-step>
