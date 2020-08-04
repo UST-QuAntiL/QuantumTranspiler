@@ -78,6 +78,14 @@ MEASURE 2 ro[2]
       "option": this.selectedOption,
       "circuit": this.circuit
     }
+    if (this.compute === "convert") {
+      if (this.data.exportFormat === "") {
+        this.snackbar.open("You must choose an output language/framework.");
+      return
+
+      }
+      object["optionOutput"] = this.data.exportFormat;
+    }
     let circuit = await this.http.computeCircuit(object, this.compute)
     if (circuit) {
       this.data.circuit = circuit
