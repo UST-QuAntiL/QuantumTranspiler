@@ -47,7 +47,7 @@ def export_circuit():
     return output
 
 @app.route('/convert', methods=['Post'])
-def export_circuit():
+def convert():
     data = request.json
     option = data["option"]
     option_output = data["optionOutput"]
