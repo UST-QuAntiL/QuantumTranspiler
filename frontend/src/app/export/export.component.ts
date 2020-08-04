@@ -35,7 +35,7 @@ export class ExportComponent implements OnInit {
     }
     let circuit = await this.http.export_circuit(object)
     if (circuit) {
-      this.data.circuit = circuit
+      this.data.exportCircuit = circuit
     }    
   }
 
