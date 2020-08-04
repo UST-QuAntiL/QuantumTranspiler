@@ -1,3 +1,14 @@
-<div class="outerDiv" style="height: auto; width: 100%" class="pt-2">
-    <ngx-monaco-editor style="min-height: 500px" [options]="editorOptions" [(ngModel)]="data.exportCircuit"></ngx-monaco-editor>
+
+<div class="row float-right">
+    <button (click)="download()" mat-mini-fab class="float-right"
+            matTooltip="Export Circuit in the chosen format." matTooltipClass="tooltip-large"
+            color="primary">
+            <mat-icon>system_update</mat-icon>
+        </button>
+</div>
+<div class="row exportCode pr-4">
+    <div class="outerDiv" style="height: auto; width: 100%" class="pt-2">
+        <ngx-monaco-editor style="min-height: 500px" [options]="editorOptions" [(ngModel)]="data.exportCircuit"></ngx-monaco-editor>
+    </div>
+    
 </div>

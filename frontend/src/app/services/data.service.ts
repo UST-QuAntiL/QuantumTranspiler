@@ -6,7 +6,10 @@ import { Operation, operationMap, OperationIndex } from './Operation';
   providedIn: 'root'
 })
 export class DataService {
-  public exportCircuit: string = ""
+  public exportCircuit: string = "";
+  public exportFormat: string = "";
+
+
   public circuit: string = `
 qc = QuantumCircuit(5,3)
 qc.h(0)
@@ -200,5 +203,10 @@ qc.measure(2, 2)
     })
 
     this.maxIndexTotal = max;
+  }
+
+  setExportCircuit(circuit: string, format: string) {
+    this.exportCircuit = circuit;
+    this.exportFormat = format;
   }
 }

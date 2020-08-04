@@ -5,6 +5,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 $primary: #3f51b5;
 $dark: #002984;
-$light: #757de8
+$light: #757de8;
 
-;
+
+.tooltip-large {
+    font-size: 12px;
+}

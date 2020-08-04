@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../services/http.service';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,7 +7,8 @@ import { DataService } from '../services/data.service';
 @Component({
   selector: 'app-export',
   templateUrl: './export.component.html',
-  styleUrls: ['./export.component.scss']
+  styleUrls: ['./export.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ExportComponent implements OnInit {  
   options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"]
@@ -35,7 +36,7 @@ export class ExportComponent implements OnInit {
     }
     let circuit = await this.http.export_circuit(object)
     if (circuit) {
-      this.data.exportCircuit = circuit
+      this.data.setExportCircuit(circuit, this.selectedOption)
     }    
   }
 
