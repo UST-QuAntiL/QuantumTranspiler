@@ -3,6 +3,7 @@ import { DataService } from '../services/data.service';
 import { Observable } from 'rxjs';
 import { saveAs } from "file-saver";
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { editorOptions } from '../services/Options';
 
 @Component({
   selector: 'app-output',
@@ -11,7 +12,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   encapsulation: ViewEncapsulation.None,
 })
 export class OutputComponent implements OnInit {
-  editorOptions = {theme: 'vs-light', language: 'python', automaticLayout: true};  
+  editorOptions = editorOptions;
+
   
   constructor(public data: DataService, private snackbar: MatSnackBar) { }
 

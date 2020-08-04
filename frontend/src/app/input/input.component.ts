@@ -3,6 +3,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { HttpService } from '../services/http.service';
 import { DataService } from '../services/data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {editorOptions} from '../services/Options';
 
 @Component({
   selector: 'app-input',
@@ -31,8 +32,8 @@ MEASURE 0 ro[0]
 MEASURE 1 ro[1]
 MEASURE 2 ro[2]
 `
-  editorOptions = { theme: 'vs-light', language: 'python', automaticLayout: true };
-
+  
+  editorOptions = editorOptions;
   constructor(private http: HttpService, private data: DataService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
+import { editorOptions } from '../services/Options';
 
 @Component({
   selector: 'app-code',
@@ -7,7 +8,8 @@ import { DataService } from '../services/data.service';
   styleUrls: ['./code.component.scss']
 })
 export class CodeComponent implements OnInit {
-  editorOptions = {theme: 'vs-light', language: 'python', automaticLayout: true};  
+  editorOptions = editorOptions;
+ 
 
   constructor(public data: DataService) {   
 
