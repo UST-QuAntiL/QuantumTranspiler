@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class InputComponent implements OnInit {
   @Input() compute: string;
+  convert: boolean = false;
   options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"]
   selectedOption: string;
   circuit: string = `DECLARE ro BIT[3]
@@ -35,6 +36,11 @@ MEASURE 2 ro[2]
   constructor(private http: HttpService, private data: DataService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
+    if (this.compute === "convert") {
+      this.convert = true;
+    } else {
+      this.convert = false;
+    }
   }
 
   changed(event: MatSelectChange) {
@@ -78,7 +84,7 @@ MEASURE 2 ro[2]
       "option": this.selectedOption,
       "circuit": this.circuit
     }
-    if (this.compute === "convert") {
+    if (this.convert) {
       if (this.data.exportFormat === "") {
         this.snackbar.open("You must choose an output language/framework.");
       return
@@ -88,7 +94,11 @@ MEASURE 2 ro[2]
     }
     let circuit = await this.http.computeCircuit(object, this.compute)
     if (circuit) {
-      this.data.circuit = circuit
+      if (this.convert) {
+        this.data.exportCircuit = circuit
+      } else {
+        this.data.circuit = circuit
+      }      
     }    
   }
 }
