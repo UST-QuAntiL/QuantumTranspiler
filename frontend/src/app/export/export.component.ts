@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../services/http.service';
 import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-export',
@@ -10,8 +12,8 @@ import { MatSelectChange } from '@angular/material/select';
 export class ExportComponent implements OnInit {  
   options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"]
   selectedOption: string;
-  
-  constructor(private http: HttpService) { }
+
+  constructor(private http: HttpService, private snackbar: MatSnackBar, private data: DataService) { }
 
   ngOnInit(): void {
   }
@@ -23,15 +25,15 @@ export class ExportComponent implements OnInit {
 
   async computeExport() {
     if (!(this.options.includes(this.selectedOption))) {
-      this.snackbar.open("You must choose an input language/framework.");
+      this.snackbar.open("You must choose an output language/framework.");
       return
     }
 
     let object = {
       "option": this.selectedOption,
-      "circuit": this.circuit
+      "circuit": this.data.circuit
     }
-    let circuit = await this.http.circuit_to_internal(object)
+    let circuit = await this.http.export_circuit(object)
     if (circuit) {
       this.data.circuit = circuit
     }    

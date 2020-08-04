@@ -7,12 +7,7 @@ import json
 app = Flask(__name__)
 cors = CORS(app)
 
-@app.route('/')
-def hello():
-    return 'Hello, World!'
-
 @app.route('/circuit_to_internal', methods=['Post'])
-@cross_origin()
 def circuit_to_internal():
     data = request.json
     option = data["option"]
@@ -28,7 +23,26 @@ def circuit_to_internal():
     else:
         return "Bad Request!", 400
 
-    output = wrapper.export_qiskit_commands()
+    output = wrapper.export_qiskit_commands()    
+    return output
+
+@app.route('/export_circuit', methods=['Post'])
+def export_circuit():
+    data = request.json
+    option = data["option"]
+    circuit = data["circuit"]
+    wrapper = CircuitWrapper(qiskit_instructions=circuit) 
+    if option == "Quil":
+        output = wrapper.export_quil()
+    elif option == "Pyquil":
+        output = wrapper.export_pyquil()
+    elif option == "OpenQASM":
+        output = wrapper.export_qasm()
+    elif option == "Qiskit":
+        output = wrapper.export_qiskit_commands()
+    else:
+        return "Bad Request!", 400
+
     print(output)
     return output
 
