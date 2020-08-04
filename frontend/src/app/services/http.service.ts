@@ -36,4 +36,16 @@ export class HttpService {
     }
 
   }
+
+  async export_circuit(circuit: {}) {
+    let data = JSON.stringify(circuit)
+    try {
+      let exportCircuit = await this.http.post(url + "export_circuit", data, { headers, responseType: 'text' }).toPromise()
+      this.snackbar.open("Successfully converted to " + circuit["selectedOption"] + ".");
+      return exportCircuit
+    } catch (err) {
+      console.log(err)
+      this.snackbar.open("Error at handling the given circuit implementation.");
+    }
+  }
 }

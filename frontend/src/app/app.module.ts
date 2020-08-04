@@ -28,6 +28,7 @@ import {MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/materia
 import {MatStepperModule} from '@angular/material/stepper';
 import { StepperComponent } from './stepper/stepper.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { OutputComponent } from './output/output.component';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -45,7 +46,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     CircuitComponent,
     ConvertComponent,
     GraphicalComponent,
-    StepperComponent
+    StepperComponent,
+    OutputComponent
   ],
   imports: [
     BrowserModule,

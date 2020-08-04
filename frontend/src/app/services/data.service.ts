@@ -6,6 +6,7 @@ import { Operation, operationMap, OperationIndex } from './Operation';
   providedIn: 'root'
 })
 export class DataService {
+  public exportCircuit: string = ""
   public circuit: string = `
 qc = QuantumCircuit(5,3)
 qc.h(0)
