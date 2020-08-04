@@ -24,11 +24,11 @@ export class HttpService {
 
   constructor(private http: HttpClient, private snackbar: MatSnackBar) { }
 
-  async circuit_to_internal(input_circuit: {}) {
+  async computeCircuit(input_circuit: {}, path: string) {
     let data = JSON.stringify(input_circuit)
     try {
-      let circuit = await this.http.post(url + "circuit_to_internal", data, { headers, responseType: 'text' }).toPromise()
-      this.snackbar.open("Successfully converted to Qiskit circuit implementation.");
+      let circuit = await this.http.post(url + path, data, { headers, responseType: 'text' }).toPromise()
+      this.snackbar.open("Successfully converted the circuit implementation.");
       return circuit
     } catch (err) {
       console.log(err)
@@ -37,7 +37,7 @@ export class HttpService {
 
   }
 
-  async export_circuit(circuit: {}) {
+  async exportCircuit(circuit: {}) {
     let data = JSON.stringify(circuit)
     try {
       let exportCircuit = await this.http.post(url + "export_circuit", data, { headers, responseType: 'text' }).toPromise()

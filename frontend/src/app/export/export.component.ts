@@ -34,7 +34,7 @@ export class ExportComponent implements OnInit {
       "option": this.selectedOption,
       "circuit": this.data.circuit
     }
-    let circuit = await this.http.export_circuit(object)
+    let circuit = await this.http.exportCircuit(object)
     if (circuit) {
       this.data.setExportCircuit(circuit, this.selectedOption)
     }    

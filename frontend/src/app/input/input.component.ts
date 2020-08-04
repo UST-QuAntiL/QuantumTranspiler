@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, Input } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { HttpService } from '../services/http.service';
 import { DataService } from '../services/data.service';
@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   encapsulation: ViewEncapsulation.None,
 })
 export class InputComponent implements OnInit {
+  @Input() compute: string;
   options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"]
   selectedOption: string;
   circuit: string = `DECLARE ro BIT[3]
@@ -44,7 +45,6 @@ MEASURE 2 ro[2]
   inputFile() {
     document.getElementById('fileInput').addEventListener('change', this.readFile.bind(this), false);
     document.getElementById('fileInput').click()
-
   }
 
   readFile(event: any) {
@@ -78,7 +78,7 @@ MEASURE 2 ro[2]
       "option": this.selectedOption,
       "circuit": this.circuit
     }
-    let circuit = await this.http.circuit_to_internal(object)
+    let circuit = await this.http.computeCircuit(object, this.compute)
     if (circuit) {
       this.data.circuit = circuit
     }    
