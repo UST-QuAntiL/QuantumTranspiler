@@ -19,4 +19,8 @@ export class CodeComponent implements OnInit {
   ngAfterViewInit(): void {
   }
 
+  onChange() {
+    this.data.parseCircuit()
+  }
+
 }

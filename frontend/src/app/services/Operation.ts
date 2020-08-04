@@ -1,5 +1,3 @@
-
-
 export class Operation {
     name: string;
     numberOfParameter: number;
@@ -19,11 +17,16 @@ export class OperationIndex {
     index: number;
     operation: Operation;
     parameter: number[];
-    bits: number[];
+    qubits: number[];
+    clbits: number[];
+    lineNumberInCircuit: number[];
 
-    constructor(index, operation, parameter, bits) {
+    constructor(index, operation, parameter, qubits, clbits, lineNumberInCircuit) {
         this.index = index;
         this.operation = operation;
+        this.qubits = qubits;
+        this.clbits = clbits;
+        this.lineNumberInCircuit = lineNumberInCircuit;
     }
 }
 
@@ -36,12 +39,18 @@ const CU1 = new Operation("CU1", 2)
 const BARRIER = new Operation("Barrier", -1)
 const MEASURE = new Operation("Measure", 1, 0, 1)
 
-export let OperationMap = {
+export let operationMap = {
     "h": H,
     "cx": CX,
     "cu1": CU1,
     "barrier": BARRIER,
     "measure": MEASURE
-
 }
+
+let operationListLocal = [];
+for (let key in operationMap) {
+    operationListLocal.push(operationMap[key]);
+}
+
+export let operationList = operationListLocal;
 

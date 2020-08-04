@@ -27,6 +27,7 @@ import { HttpClientModule } from '@angular/common/http';
 import {MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
 import {MatStepperModule} from '@angular/material/stepper';
 import { StepperComponent } from './stepper/stepper.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -66,7 +67,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MatSnackBarModule,
     MatStepperModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DragDropModule
 
 
   ],

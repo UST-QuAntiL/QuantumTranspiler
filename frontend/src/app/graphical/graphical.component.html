@@ -1,1 +1,90 @@
-<p>graphical works!</p>
+<div class="container-fluid">
+    <div class="row possibleGates">
+        <div class="col" id="gateList" cdkDropList #gateList="cdkDropList" [cdkDropListData]="operationList"
+            *ngFor="let operation of operationList"
+            (cdkDropListDropped)="drop($event)">
+            <div class="gate" cdkDrag>
+                {{operation.name}}
+            </div>
+
+        </div>
+    </div>
+
+
+    <mat-divider></mat-divider>
+    <div>
+        <div *ngFor="let qubit of data.qubitNames; index as index_qubit">
+            <div class="row">
+                <div class="col-1 qubitName">
+                    |{{qubit}}>
+                </div>
+
+                <div class="col-11">
+                    <div class="row circuit" id={{index_qubit}} #circuitList="cdkDropList"
+                        [cdkDropListData]="data.operationsAtBit" cdkDropList
+                        (cdkDropListDropped)="drop($event)">
+                        <div *ngFor="let _ of [].constructor(data.maxIndexTotal); index as index" class="placeholder">
+                            <div cdkDrag [cdkDragData]="[index, index_qubit]" class="gate"
+                                *ngIf="data.operationsAtBit[index_qubit][index]">
+                                {{data.operationsAtBit[index_qubit][index].operation.name}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="cotainer-fluid">
+    <div class="col" cdkDropList #gateList="cdkDropList" [cdkDropListData]="operationList"
+        [cdkDropListConnectedTo]="[circuitList]" (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let operation of operationList">
+            <div class="gate" cdkDrag>
+                {{operation.name}}
+            </div>
+        </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="row circuit" #circuitList="cdkDropList" [cdkDropListData]="data.operationsAtBit[0]"
+        [cdkDropListConnectedTo]="[gateList]" cdkDropList (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let _ of [].constructor(data.maxIndexTotal); index as index" class="placeholder">
+            <div cdkDrag class="gate" *ngIf="data.operationsAtBit[0][index]">
+                {{data.operationsAtBit[0][index].operation.name}}
+            </div>
+        </div>
+    </div>
+
+</div> -->
+
+
+<div class="example-container">
+    <h2>To do</h2>
+  
+    <div
+      cdkDropList
+      #todoList="cdkDropList"
+      [cdkDropListData]="todo"
+      [cdkDropListConnectedTo]="[doneList]"
+      class="example-list"
+      (cdkDropListDropped)="drop($event)">
+      <div class="example-box" *ngFor="let item of todo" cdkDrag>{{item.name}}</div>
+    </div>
+  </div>
+  
+  <div class="example-container">
+    <h2>Done</h2>
+  
+    <div
+      cdkDropList
+      #doneList="cdkDropList"
+      [cdkDropListData]="done"
+      [cdkDropListConnectedTo]="[todoList]"
+      class="example-list"
+      (cdkDropListDropped)="drop($event)">
+      <div class="example-box" *ngFor="let item of done" cdkDrag>{{item.operation.name}}</div>
+    </div>
+  </div>
