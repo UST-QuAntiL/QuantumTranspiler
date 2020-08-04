@@ -46,6 +46,36 @@ def export_circuit():
     print(output)
     return output
 
+@app.route('/convert', methods=['Post'])
+def export_circuit():
+    data = request.json
+    option = data["option"]
+    option_output = data["optionOutput"]
+    circuit = data["circuit"]
+    if option == "Quil":
+        wrapper = CircuitWrapper(quil_str=circuit)
+    elif option == "Pyquil":
+        wrapper = CircuitWrapper(pyquil_instructions=circuit)
+    elif option == "OpenQASM":
+        wrapper = CircuitWrapper(qasm=circuit)
+    elif option == "Qiskit":
+        wrapper = CircuitWrapper(qiskit_instructions=circuit)
+    else:
+        return "Bad Request!", 400
+
+    if option_output == "Quil":
+        output = wrapper.export_quil()
+    elif option_output == "Pyquil":
+        output = wrapper.export_pyquil()
+    elif option_output == "OpenQASM":
+        output = wrapper.export_qasm()
+    elif option_output == "Qiskit":
+        output = wrapper.export_qiskit_commands()
+    else:
+        return "Bad Request!", 400
+
+    return output
+
 
 
 if __name__ == '__main__':
