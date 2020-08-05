@@ -184,7 +184,6 @@ def grover_fix_SAT_qiskit() -> QuantumCircuit:
 
 def bernstein_vazirani_general_qiskit_integer(number_of_qubits: int, a: int, use_iden: bool = True) -> QuantumCircuit:   
     a = a % 2**(number_of_qubits) # a = a mod 2^(number_of_qubits)
-    print(a)
 
     qr = QuantumRegister(number_of_qubits)
     cr = ClassicalRegister(number_of_qubits)
@@ -203,7 +202,7 @@ def bernstein_vazirani_general_qiskit_integer(number_of_qubits: int, a: int, use
             qc.z(qr[i])
         else:
             if use_iden:
-                qc.iden(qr[i])  # else (=0) use identity
+                qc.i(qr[i])  # else (=0) use identity
 
     qc.barrier()
 
@@ -237,7 +236,7 @@ def bernstein_vazirani_general_qiskit_binary_string(number_of_qubits: int, s: st
     s = s[::-1]  # reverse s to fit qiskit's qubit ordering
     for q in range(n):
         if s[q] == '0':
-            bv_circuit.iden(q)
+            bv_circuit.i(q)
         else:
             bv_circuit.cx(q, n)
 
