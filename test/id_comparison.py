@@ -34,6 +34,6 @@ def run_circuit(circuit: QuantumCircuit):
 
 if __name__ == "__main__":
     # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
-    circuit = iden_circuit(True)
+    circuit = iden_circuit(False)
     run_circuit(circuit)    
 

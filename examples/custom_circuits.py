@@ -285,11 +285,18 @@ def qiskit_u3_error(decomposition = False):
     print(job_result.get_counts(qc))
 
 def iden_circuit(use_iden = False):
-    qc = QuantumCircuit(2, 2)
+    qc = QuantumCircuit(3, 3)
+    qc.barrier()
+    for _ in range(5):
+        qc.x(0)
     if use_iden:
-        for _ in range(5):
-            qc.i(0)
+        for _ in range(5):            
+            qc.i(1)
+            qc.i(2)
+
+    qc.barrier()
     qc.measure(0, 0)
     qc.measure(1, 1)
+    qc.measure(2, 2)
     return qc
 
