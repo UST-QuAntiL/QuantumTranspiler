@@ -22,10 +22,6 @@ class ConverterInterface(ABC):
     def circuit(self):
         pass
 
-    @property
-    def commands(self):
-        pass
-
     @abstractmethod
     def import_circuit(self, circuit):
         pass   

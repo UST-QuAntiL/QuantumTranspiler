@@ -59,15 +59,13 @@ class CircuitWrapper:
         handler = ConversionHandler(converter)
         self._import(handler, quil, True)
 
-    def _export(self, handler: ConversionHandler, circuit: DAGCircuit, is_language: bool, getCommands: bool = False):
+    def _export(self, handler: ConversionHandler, circuit: DAGCircuit, is_language: bool):
         if is_language:
             (circuit, self.qreg_mapping_export,
-             self.creg_mapping_export, commands) = handler.export_language(circuit)
+             self.creg_mapping_export) = handler.export_language(circuit)
         else:
             (circuit, self.qreg_mapping_export,
-             self.creg_mapping_export, commands) = handler.export_circuit(circuit)
-        if getCommands:
-            return commands
+             self.creg_mapping_export) = handler.export_circuit(circuit)
 
         return circuit
 
@@ -96,10 +94,7 @@ class CircuitWrapper:
         return instructions
 
     def export_pyquil_commands(self) -> str :
-        (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
-        converter = PyquilConverter()
-        handler = ConversionHandler(converter)
-        return self._export(handler, circuit, False, True)
+        raise NotImplementedError("Conversion to Pyquil Commands is outdated. Export export_pyquil or export_quil should be used.")
 
     def decompose_to_standard_gates(self) -> None:
         (self.circuit, self.dag) = self.decompose_to_standard_gates_return()
