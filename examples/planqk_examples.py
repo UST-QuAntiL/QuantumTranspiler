@@ -182,7 +182,7 @@ def grover_fix_SAT_qiskit() -> QuantumCircuit:
     qc.measure(q[1], c[1])
     return qc
 
-def bernstein_vazirani_general_qiskit_integer(number_of_qubits: int, a: int) -> QuantumCircuit:   
+def bernstein_vazirani_general_qiskit_integer(number_of_qubits: int, a: int, use_iden: bool = True) -> QuantumCircuit:   
     a = a % 2**(number_of_qubits) # a = a mod 2^(number_of_qubits)
     print(a)
 
@@ -202,7 +202,8 @@ def bernstein_vazirani_general_qiskit_integer(number_of_qubits: int, a: int) -> 
         if (a & (1 << i)):  #if bin(a)[i] = 1 then use Z gate
             qc.z(qr[i])
         else:
-            qc.iden(qr[i])  # else (=0) use identity
+            if use_iden:
+                qc.iden(qr[i])  # else (=0) use identity
 
     qc.barrier()
 

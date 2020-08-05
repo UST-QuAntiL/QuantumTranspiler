@@ -151,10 +151,8 @@ class PyquilConverter(ConverterInterface):
             control_qubits = qubits[:(len(qubits) - num_qubits_base_gate)]
             qubits = qubits[(len(qubits) - num_qubits_base_gate):]            
             self.program += gate(*params, *qubits).controlled(control_qubits) 
-            self._add_gate_operation_to_commands(gate.__name__, params, qubits, is_controlled, control_qubits)
         else:
             self.program += gate(*params, *qubits)     
-            self._add_gate_operation_to_commands(gate.__name__, params, qubits)
 
 
     def custom_gate(self, matrix, name, qubits, params = []):
