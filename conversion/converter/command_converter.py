@@ -1,3 +1,4 @@
+from conversion.converter.CommandUtility import create_matrix_params, create_param_string, create_reg_string
 from pyquil.gates import *
 from pyquil.quil import Program
 from circuit.qiskit_utility import standard_instructions
@@ -7,8 +8,7 @@ from qiskit.circuit.classicalregister import ClassicalRegister
 from qiskit.circuit.library.standard_gates import *
 from qiskit.circuit.quantumregister import QuantumRegister
 
-def pyquil_commands_to_program(commands: str) -> QuantumCircuit:
-    
+def pyquil_commands_to_program(commands: str) -> QuantumCircuit:    
     exec(commands)
     val = eval("p")
     return val   
@@ -63,15 +63,15 @@ def _handle_instructions(circuit, simple_registers):
         param_str = ""
             
         if operation.name == "unitary":
-            matrix = _create_matrix(params)
-            param_str += _create_reg_string(qubits, param_str, simple_registers)
+            matrix = create_matrix_params(params)
+            param_str += create_reg_string(qubits, param_str, simple_registers)
             param_str = f"[{param_str}]"
             commands += f"qc.{operation.name}({matrix} ,{param_str}, label='{operation.label}')\n"  
 
         else:
-            param_str = _create_param_string(params, param_str)
-            param_str = _create_reg_string(qubits, param_str, simple_registers)
-            param_str = _create_reg_string(clbits, param_str, simple_registers)  
+            param_str = create_param_string(params, param_str)
+            param_str = create_reg_string(qubits, param_str, simple_registers)
+            param_str = create_reg_string(clbits, param_str, simple_registers)  
 
             if operation.name in standard_instructions:
                 commands += f"qc.{operation.name}({param_str})\n" 
@@ -80,26 +80,5 @@ def _handle_instructions(circuit, simple_registers):
                 commands += f"qc.append(gate, qargs=[{param_str}])\n"     
     return commands
 
-def _create_param_string(params, param_str):
-    param = ""
-    for param in params:            
-        if param_str != "":
-            param_str += ", "
-        param_str += f"{param}"
-    return param_str
 
-def _create_reg_string(regs, param_str, simple_registers):
-    for bit in regs:
-        if param_str != "":
-            param_str += ", "
-        if simple_registers:
-            param_str += f"{bit.index}" 
-        else:
-            param_str += f"{bit.register.name}[{bit.index}]"            
-    return param_str
-
-def _create_matrix(params):
-    params = params[0]
-    matrix_str = f"np.{repr(params)}"
-    return matrix_str
     

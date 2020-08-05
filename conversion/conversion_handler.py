@@ -22,8 +22,8 @@ class ConversionHandler:
         return self.converter.import_circuit(circuit)
 
     def export_language(self, circuit: QuantumCircuit) -> str:
-        (converted_circuit, qreg_mapping, creg_mapping) = self.export_circuit(circuit)
-        return (self.converter.circuit_to_language(converted_circuit), qreg_mapping, creg_mapping)
+        (converted_circuit, qreg_mapping, creg_mapping, commands) = self.export_circuit(circuit)
+        return (self.converter.circuit_to_language(converted_circuit), qreg_mapping, creg_mapping, commands)
 
     def export_circuit(self, circuit: QuantumCircuit, recursive: bool = False):
         # method can be executed recursively for subcircuits
@@ -70,7 +70,7 @@ class ConversionHandler:
                 raise NotImplementedError(
                     "Unsupported Instruction: " + str(instr))
 
-        return (converter.circuit, qreg_mapping, creg_mapping)
+        return (converter.circuit, qreg_mapping, creg_mapping, converter.commands)
 
     def _handle_gate_export(self, converter, qiskit_gate, qubits) -> None:
         # needed for controlled modifier

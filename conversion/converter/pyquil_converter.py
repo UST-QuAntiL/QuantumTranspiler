@@ -1,3 +1,4 @@
+from conversion.converter.CommandUtility import create_matrix, create_param_string
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from pyquil import Program
 from pyquil.quilatom import Parameter as pyquil_Parameter
@@ -126,6 +127,7 @@ class PyquilConverter(ConverterInterface):
 
     def init_circuit(self):
         self.program = Program()
+        self.command_str = "p = Program()\n"
 
     def create_qreg_mapping(self, qreg_mapping, qubit: Qubit, index: int):
         qreg_mapping[qubit] = index
@@ -138,6 +140,7 @@ class PyquilConverter(ConverterInterface):
             total_size += cr.size
 
         creg_pyquil = self.program.declare("ro", 'BIT', total_size)
+        self.command_str += f"p.declare(ro, BIT, {total_size})\n"
         for cr in cregs:
             for i, clbit in enumerate(cr):                
                 creg_mapping[clbit] = creg_pyquil[i]
@@ -150,16 +153,37 @@ class PyquilConverter(ConverterInterface):
             control_qubits = qubits[:(len(qubits) - num_qubits_base_gate)]
             qubits = qubits[(len(qubits) - num_qubits_base_gate):]            
             self.program += gate(*params, *qubits).controlled(control_qubits) 
+            self._add_gate_operation_to_commands(gate.__name__, params, qubits, is_controlled, control_qubits)
         else:
-            self.program += gate(*params, *qubits)        
+            self.program += gate(*params, *qubits)     
+            self._add_gate_operation_to_commands(gate.__name__, params, qubits)
+
+    def _add_gate_operation_to_commands(self, name, params, qubits, is_controlled = False, control_qubits = None):
+        param_str = ""        
+        param_str = create_param_string(qubits, param_str)
+        param_str = create_param_string(params, param_str)
+        if is_controlled:
+            control_qubits_str = ""
+            self._params_to_string(control_qubits, control_qubits_str)
+            self.command_str += f"p += {name}({param_str}).controlled({control_qubits_str})\n" 
+        else:
+            self.command_str += f"p += {name}({param_str})\n"  
 
     def custom_gate(self, matrix, name, qubits, params = []):
         custom_gate_definition = pyquil_circuit_library.DefGate(name, matrix)
         gate = custom_gate_definition.get_constructor()  
-        self.program += custom_gate_definition 
+        self.program += custom_gate_definition         
         # qubits reverse is necessary, because qiskit interpretes qubit order for custom gates reversed
         qubits.reverse()
         self.program += gate(*params, *qubits) 
+
+        self.command_str += f"{custom_gate_definition.__class__.__name__.lower()} = {create_matrix(matrix)}\n"
+        self.command_str += f"{custom_gate_definition.__class__.__name__.lower()}_definition = DefGate('{custom_gate_definition.__class__.__name__}', {custom_gate_definition.__class__.__name__.lower()})\n"
+        self.command_str += f"{custom_gate_definition.__class__.__name__} = {custom_gate_definition.__class__.__name__.lower()}_definition.get_constructor()\n"
+        self.command_str += f"p += {custom_gate_definition.__class__.__name__.lower()}_definition\n"
+        print(gate.__name__)
+        self._add_gate_operation_to_commands({custom_gate_definition.__class__.__name__}, params, qubits)
+
 
     def parameter_conversion(self, parameter: qiskit_Parameter):
         return pyquil_Parameter(parameter.name)
@@ -177,6 +201,7 @@ class PyquilConverter(ConverterInterface):
 
     def measure(self, qubit, clbit):
         self.program += MEASURE(qubit, clbit)
+        self.command_str += f"p += MEASURE({qubit}, {clbit})\n"
 
     def subcircuit(self, subcircuit: Program, qubits, clbits = None):
         qreg_mapping = {}
@@ -189,6 +214,7 @@ class PyquilConverter(ConverterInterface):
         for def_gate in subcircuit.defined_gates:
             if  not(def_gate in self.program.defined_gates):
                 self.program += def_gate
+                self.command_str += f"p += {def_gate})\n"
                 
         for instr in subcircuit.instructions:     
             if isinstance(instr, pyquil_circuit_library.Gate):    
@@ -196,6 +222,7 @@ class PyquilConverter(ConverterInterface):
                 for qubit in instr.qubits:
                     qubit.index = qreg_mapping[qubit.index]
                 self.program += instr
+                self.command_str += f"p += {instr})\n"
 
             elif isinstance(instr, pyquil_circuit_library.Measurement):
                 raise NotImplementedError("Measurement in subcircuits not supported (pyquil_converter): " + str(instr))  
@@ -211,5 +238,9 @@ class PyquilConverter(ConverterInterface):
     @property
     def circuit(self):
         return self.program
+
+    @property
+    def commands(self):
+        return self.command_str
 
             

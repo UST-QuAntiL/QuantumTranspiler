@@ -1,5 +1,5 @@
 import ast
-from circuit.qiskit_commands import commands_to_circuit
+from conversion.converter.command_converter import qiskit_commands_to_circuit
 from pyquil import Program, get_qc
 from pyquil.gates import H, CNOT, CCNOT
 from circuit.qiskit_utility import show_figure
@@ -38,14 +38,14 @@ class TestCircuitWrapper:
         print(wrapper.circuit)
         commands = wrapper.export_qiskit_commands()        
         print(commands)
-        circuit = commands_to_circuit(commands)
+        circuit = qiskit_commands_to_circuit(commands)
         print(circuit)
 
-    def test_pyquil_command_input(self):
+    def test_pyquil_commands(self):
         wrapper = CircuitWrapper(qiskit_circuit=grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)"))
-        # print(wrapper.circuit)
-        # commands = wrapper.export_qiskit_commands()        
-        # print(commands)
+        print(wrapper.circuit)
+        commands = wrapper.export_pyquil_commands()        
+        print(commands)
         # circuit = commands_to_circuit(commands)
         # print(circuit)
         
@@ -58,4 +58,4 @@ class TestCircuitWrapper:
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_pyquil_command_input()
+    test.test_pyquil_commands()
