@@ -283,3 +283,13 @@ def qiskit_u3_error(decomposition = False):
     job = execute(qc, backend=backend)
     job_result = job.result()
     print(job_result.get_counts(qc))
+
+def iden_circuit(use_iden = False):
+    qc = QuantumCircuit(2, 2)
+    if use_iden:
+        for _ in range(5):
+            qc.i(0)
+    qc.measure(0, 0)
+    qc.measure(1, 1)
+    return qc
+

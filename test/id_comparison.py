@@ -2,6 +2,7 @@
 
 
 
+from examples.custom_circuits import iden_circuit
 from qiskit.aqua.quantum_instance import QuantumInstance
 from qiskit.compiler.assemble import assemble
 from qiskit.compiler.transpile import transpile
@@ -19,8 +20,10 @@ def run_circuit(circuit: QuantumCircuit):
     backend = provider.get_backend("ibmq_ourense")
     print(backend)
     mapped_circuit = transpile(circuit, backend=backend)
-    qobj = assemble(mapped_circuit, backend=backend, shots=1024)
+    qobj = assemble(mapped_circuit, backend=backend, shots=8192)
+    # print(qobj)
     job = backend.run(qobj)
+
     print("Job: ")
     print(job)
     print(job.status())
@@ -29,33 +32,8 @@ def run_circuit(circuit: QuantumCircuit):
     counts = result.get_counts()
     print(counts)
 
-    # backend = least_busy(large_enough_devices)
-    # print("Backend " + backend.name())
-
-    # shots = 1000
-    # max_credits = 1 
-    # job_exp = execute(circuit, backend=backend, shots=shots, max_credits=max_credits)
-    # result_real = job_exp.result()
-    # print(result_real.get_counts("qc"))
-    
-    # backend = QasmSimulator()
-    # optimal simulation
-    # backend_options = {"method": "statevector"}
-    # simulation with noise
-    # backend_options = {"method": "density_matrix"}
-    # qobj = compile(circuit, backend, shots=2000)
-    # job = execute(circuit, backend, backend_options=backend_options, optimization_level = 0)
-
-
-    # result = job.result()
-    # print(job)
-    # counts = result.get_counts(circuit)
-    # print(counts)
-
-
-
 if __name__ == "__main__":
-    circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
-    # print(circuit.qasm())
+    # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
+    circuit = iden_circuit(True)
     run_circuit(circuit)    
 
