@@ -15,13 +15,11 @@
                             </mat-option>
                             <mat-divider></mat-divider>
                             <p class="pl-2 pt-2 subtitle">Frameworks</p>
-                            <mat-option
-                                matTooltip="Name of the circuit must be qc. All occurences can be changed with CTRL + F2."
-                                matTooltipClass="tooltip-large" value="Qiskit">
+                            <mat-option value="Qiskit">
                                 Qiskit
                             </mat-option>
-                            <mat-option
-                                matTooltip="Name of the program must be p. All occurences can be changed with CTRL + F2."
+                            <mat-option disabled
+                                matTooltip="Pyquil program can be exported in the backend. However, converting it to a string to show it in the frontend is not useful. Use Quil in this case."
                                 matTooltipClass="tooltip-large" value="Pyquil">
                                 Pyquil
                             </mat-option>
@@ -45,7 +43,7 @@
         </div>
         <div class="col">
             <app-output></app-output>
-            
+
 
         </div>
     </div>
