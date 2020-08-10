@@ -27,6 +27,7 @@ qc.measure(0, 0)
 qc.measure(1, 1)
 qc.measure(2, 2)
   `;
+  public unrolledCircuit: string = "";
 
   public numQbits: number = 0;
   public numClbits: number = 0;

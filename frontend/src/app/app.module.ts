@@ -29,6 +29,8 @@ import {MatStepperModule} from '@angular/material/stepper';
 import { StepperComponent } from './stepper/stepper.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { OutputComponent } from './output/output.component';
+import { UnrollComponent } from './unroll/unroll.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -47,7 +49,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     ConvertComponent,
     GraphicalComponent,
     StepperComponent,
-    OutputComponent
+    OutputComponent,
+    UnrollComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +73,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MatStepperModule,
     FormsModule,
     ReactiveFormsModule,
-    DragDropModule
+    DragDropModule,
+    MatCheckboxModule
 
 
   ],

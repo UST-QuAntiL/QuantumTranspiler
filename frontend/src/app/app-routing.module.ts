@@ -5,6 +5,7 @@ import { CircuitComponent } from './circuit/circuit.component';
 import { ExportComponent } from './export/export.component';
 import { ConvertComponent } from './convert/convert.component';
 import { StepperComponent } from './stepper/stepper.component';
+import { UnrollComponent } from './unroll/unroll.component';
 
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'export', component: ExportComponent },
   { path: 'convert', component: ConvertComponent },
   { path: 'stepper', component: StepperComponent },
+  { path: 'unroll', component: UnrollComponent },
   { path: '**', redirectTo: '/stepper' },
 ];
 
