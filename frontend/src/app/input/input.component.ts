@@ -95,11 +95,13 @@ MEASURE 2 ro[2]
     }
     let circuit = await this.http.computeCircuit(object, this.compute)
     if (circuit) {
+      let index;
       if (this.convert) {
-        this.data.exportCircuit = circuit
+        index = 2;
       } else {
-        this.data.circuits[0] = circuit
-      }      
+        index = 0;
+      }
+      this.data.setCircuit(1, circuit)      
     }    
   }
 }

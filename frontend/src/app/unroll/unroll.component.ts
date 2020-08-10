@@ -17,7 +17,7 @@ export class UnrollComponent implements OnInit {
   chooseRigetti = false;
   chooseIBMQ = false;
   chooseNative = false;
-  
+
   constructor(private http: HttpService, private data: DataService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -26,7 +26,7 @@ export class UnrollComponent implements OnInit {
   deselect() {
     this.chooseIBMQ = false;
     this.chooseRigetti = false;
-    this.chooseNative = false; 
+    this.chooseNative = false;
 
   }
 
@@ -35,27 +35,25 @@ export class UnrollComponent implements OnInit {
       this.snackbar.open("You must choose to which gates the circuit should be unrolled to.");
       return
     }
+    let option = ""
+    if (this.chooseIBMQ) {
+      option = "IBMQ"
+    } else if (this.chooseNative) {
+      option = "Custom"
+    } else if (this.chooseRigetti) {
+      option = "Rigetti"
+    }
 
-    // let object = {
-    //   "option": this.selectedOption,
-    //   "circuit": this.circuit
-    // }
-    // if (this.convert) {
-    //   if (this.data.exportFormat === "") {
-    //     this.snackbar.open("You must choose an output language/framework.");
-    //   return
+    let object = {
+      "option": option,
+      "circuit": this.data.circuits[0],
+      "nativeGates": this.selectedGates
+    }
 
-    //   }
-    //   object["optionOutput"] = this.data.exportFormat;
-    // }
-    // let circuit = await this.http.computeCircuit(object, this.compute)
-    // if (circuit) {
-    //   if (this.convert) {
-    //     this.data.exportCircuit = circuit
-    //   } else {
-    //     this.data.circuits[0] = circuit
-    //   }      
-    // }    
+    let circuit = await this.http.computeCircuit(object, "unroll")
+    if (circuit) {
+      this.data.setCircuit(1, circuit)
+    }
   }
 
 }

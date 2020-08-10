@@ -6,10 +6,10 @@ import { Operation, operationMap, OperationIndex } from './Operation';
   providedIn: 'root'
 })
 export class DataService {
-  public exportCircuit: string = "";
   public exportFormat: string = "";
 
-
+  // circuits indices
+  // internal format: 0, unrolled circuit: 1, export circuit: 2
   public circuits: string[] = [`
 qc = QuantumCircuit(5,3)
 qc.h(0)
@@ -26,8 +26,7 @@ qc.h(2)
 qc.measure(0, 0)
 qc.measure(1, 1)
 qc.measure(2, 2)
-  `, ""];
-  public unrolledCircuit: string = "";
+  `, "", ""];
 
   public numQbits: number = 0;
   public numClbits: number = 0;
@@ -48,9 +47,9 @@ qc.measure(2, 2)
   }
 
 
-  public setCircuitInternal(circuit: string) {
-    this.circuits[0] = circuit[0];
-    this.parseCircuit()
+  public setCircuit(index: number, circuit: string) {
+    this.circuits[index] = circuit;
+    // this.parseCircuit()
   }
 
 
@@ -205,7 +204,7 @@ qc.measure(2, 2)
   }
 
   setExportCircuit(circuit: string, format: string) {
-    this.exportCircuit = circuit;
+    this.setCircuit(2, circuit);
     this.exportFormat = format;
   }
 

@@ -21,7 +21,7 @@ export class OutputComponent implements OnInit {
   }
 
   download() {
-    if (this.data.exportCircuit === "") {
+    if (this.data.circuits[2] === "") {
       this.snackbar.open("Circuit is empty.");
       return;
     }
@@ -38,7 +38,7 @@ export class OutputComponent implements OnInit {
       this.snackbar.open("No valid format selected.");
       return;
     }
-    var blob = new Blob([this.data.exportCircuit], {type: "text/plain;charset=utf-8"});
+    var blob = new Blob([this.data.circuits[2]], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "circuit." + format);
   }
 }
