@@ -15,7 +15,7 @@
                     <mat-form-field appearance="fill" class="multipleSelect">
                         <mat-label>Gates</mat-label>
                         <mat-select multiple>
-                            <mat-option *ngFor="let item of operationMap | keyvalue" [value]="item.key" (value)="selectedGates">{{item.key}}</mat-option>
+                            <mat-option *ngFor="let item of gateMap | keyvalue" [value]="item.key" (value)="selectedGates">{{item.key}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
@@ -24,17 +24,23 @@
             
         </div>
     </div>
+    <div class="row text-center d-flex justify-content-center pt-2">
+        <button (click)="unroll()" mat-mini-fab class="float-right" matTooltip="Unroll Circuit."
+                matTooltipClass="tooltip-large" color="primary">
+                <mat-icon>forward</mat-icon>
+            </button>
+    </div>
 </div>
 
-<div class="container-fluid pt-2">
+<div class="container-fluid pt-4">
     <div class="row">
         <div class="col content-left">
             <!-- <h3>From</h3> -->
-            <app-input compute="compute_internal"></app-input>
+            <app-code circuitRef='raw'></app-code>
         </div>
 
         <div class="col">
-            <app-code></app-code>
+            <app-code circuitRef='unrolled'></app-code>
         </div>
     </div>
 </div>

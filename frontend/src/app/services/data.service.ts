@@ -10,7 +10,7 @@ export class DataService {
   public exportFormat: string = "";
 
 
-  public circuit: string = `
+  public circuits: string[] = [`
 qc = QuantumCircuit(5,3)
 qc.h(0)
 qc.h(1)
@@ -26,7 +26,7 @@ qc.h(2)
 qc.measure(0, 0)
 qc.measure(1, 1)
 qc.measure(2, 2)
-  `;
+  `, ""];
   public unrolledCircuit: string = "";
 
   public numQbits: number = 0;
@@ -48,8 +48,8 @@ qc.measure(2, 2)
   }
 
 
-  public setCircuit(circuit: string) {
-    this.circuit = circuit;
+  public setCircuitInternal(circuit: string) {
+    this.circuits[0] = circuit[0];
     this.parseCircuit()
   }
 
@@ -68,8 +68,8 @@ qc.measure(2, 2)
     this.operationsAtIndex = [];
     this.operationsAtBit = [];
 
-
-    let arrayOfLines = this.circuit.split("\n");
+    let circuit = this.circuits[0]
+    let arrayOfLines = circuit.split("\n");
     arrayOfLines.forEach((line, lineNumber) => {
       if (line.includes("QuantumCircuit")) {
         let afterBracket = line.split("(")[1].replace(")", "");
@@ -151,15 +151,15 @@ qc.measure(2, 2)
       }
     })
 
-    let operationsAtBit =[];
+    let operationsAtBit = [];
 
     for (let qubit_index = 0; qubit_index < this.numBits; qubit_index++) {
       operationsAtBit.push([])
       for (let index = 0; index < this.maxIndexTotal; index++) {
-        operationsAtBit[qubit_index].push(this.operationsAtIndex[index][qubit_index])      
-      } 
+        operationsAtBit[qubit_index].push(this.operationsAtIndex[index][qubit_index])
+      }
     }
-    this.operationsAtBit = operationsAtBit; 
+    this.operationsAtBit = operationsAtBit;
 
   }
 
@@ -168,12 +168,12 @@ qc.measure(2, 2)
     console.log(operation)
     let lineNumbers = operation.lineNumberInCircuit;
     console.log(lineNumbers)
-    let lines = this.circuit.split('\n');
+    let lines = this.circuits[0].split('\n');
     lineNumbers.forEach(lineNumber => {
       lines.splice(lineNumber, 1);
     })
 
-    this.circuit = lines.join('\n');
+    this.circuits[0] = lines.join('\n');
     this.parseCircuit()
 
     // let operation: OperationIndex = this.operationsAtIndex[index][qubit_index];
@@ -186,8 +186,6 @@ qc.measure(2, 2)
     // });
 
     // this.setMaxIndex()
-
-
   }
 
   setMaxIndex() {
@@ -209,5 +207,23 @@ qc.measure(2, 2)
   setExportCircuit(circuit: string, format: string) {
     this.exportCircuit = circuit;
     this.exportFormat = format;
+  }
+
+  getCircuit(circuitRef: string) {
+    if (circuitRef == "current") {
+      if (this.circuits[1] != "") {
+        return this.circuits[1];
+      }
+      return this.circuits[0]
+    } else if (circuitRef == "raw") {
+      return this.circuits[0]
+    } else if (circuitRef == "unrolled") {
+      return this.circuits[1]
+    }
+
+  }
+
+  get() {
+    return this.circuits[0];
   }
 }

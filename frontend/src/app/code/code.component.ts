@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { editorOptions } from '../services/Options';
 
@@ -8,12 +8,14 @@ import { editorOptions } from '../services/Options';
   styleUrls: ['./code.component.scss']
 })
 export class CodeComponent implements OnInit {
+  @Input() circuitRef: string;
+
   editorOptions = editorOptions;
  
 
   constructor(public data: DataService) {   
-
-   }
+    console.log(this.circuitRef)
+  }
 
   ngOnInit(): void {
   }

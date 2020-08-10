@@ -98,7 +98,7 @@ MEASURE 2 ro[2]
       if (this.convert) {
         this.data.exportCircuit = circuit
       } else {
-        this.data.circuit = circuit
+        this.data.circuits[0] = circuit
       }      
     }    
   }

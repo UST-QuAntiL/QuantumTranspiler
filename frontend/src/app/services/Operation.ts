@@ -39,13 +39,21 @@ const CU1 = new Operation("CU1", 2)
 const BARRIER = new Operation("Barrier", -1)
 const MEASURE = new Operation("Measure", 1, 0, 1)
 
-export let operationMap = {
+export let gateMap = {
     "h": H,
     "cx": CX,
     "cu1": CU1,
+}
+
+export let operationMapLocal = {    
     "barrier": BARRIER,
     "measure": MEASURE
 }
+
+for (let key in gateMap) {
+    operationMapLocal[key] = gateMap[key];
+} 
+export let operationMap = operationMapLocal;
 
 let operationListLocal = [];
 for (let key in operationMap) {
