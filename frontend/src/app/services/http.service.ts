@@ -28,11 +28,11 @@ export class HttpService {
     let data = JSON.stringify(input_circuit)
     try {
       let circuit = await this.http.post(url + path, data, { headers, responseType: 'text' }).toPromise()
-      this.snackbar.open("Successfully converted the circuit implementation.");
+      this.snackbar.open("Successfully processed the circuit implementation.");
       return circuit
     } catch (err) {
       console.log(err)
-      this.snackbar.open("Error at handling the given circuit implementation.");
+      this.snackbar.open("Error at handling the circuit implementation. The log shows detailed information about this error (see HttpErrorResponse.error).");
     }
 
   }
@@ -45,7 +45,7 @@ export class HttpService {
       return exportCircuit
     } catch (err) {
       console.log(err)
-      this.snackbar.open("Error at handling the given circuit implementation.");
+      this.snackbar.open("Error at handling the circuit implementation. The log shows detailed information about this error (see HttpErrorResponse.error).");
     }
   }
 }

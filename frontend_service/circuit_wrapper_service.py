@@ -3,6 +3,7 @@ from flask import request
 from flask_cors import CORS, cross_origin
 from circuit.circuit_wrapper import CircuitWrapper
 import json
+import sys
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -82,15 +83,19 @@ def unroll():
     option = data["option"]
     nativeGates = data["nativeGates"]
     circuit = data["circuit"]
-    wrapper = CircuitWrapper(qiskit_instructions=circuit)
-    if option == "Rigetti":
-        wrapper.unroll_rigetti()
-    elif option == "IBMQ":
-        wrapper.unroll_ibm()
-    elif option == "Custom":
-        wrapper.unroll(nativeGates)    
-    else:
-        return "Bad Request!", 400
+    try:
+        wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        if option == "Rigetti":
+            wrapper.unroll_rigetti()
+        elif option == "IBMQ":
+            wrapper.unroll_ibm()
+        elif option == "Custom":
+            wrapper.unroll(nativeGates)    
+        else:
+            return "Bad Request!", 400
+    except Exception as e:
+        print(str(e))
+        return str(e), 500
 
     output = wrapper.export_qiskit_commands()
     return output
