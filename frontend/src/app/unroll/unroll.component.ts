@@ -46,7 +46,7 @@ export class UnrollComponent implements OnInit {
 
     let object = {
       "option": option,
-      "circuit": this.data.circuits[0],
+      "circuit": this.data.circuits["internal"],
       "nativeGates": this.selectedGates
     }
 
