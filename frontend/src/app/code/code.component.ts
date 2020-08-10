@@ -23,8 +23,8 @@ export class CodeComponent implements OnInit {
   ngAfterViewInit(): void {
   }
 
-  onChange() {
-    this.data.parseCircuit()
+  onChange(circuit: string) {
+    this.data.setCircuitOnWrite(this.circuitRef, circuit)
   }
 
 }

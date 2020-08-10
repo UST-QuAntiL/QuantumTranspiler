@@ -93,7 +93,6 @@ def unroll():
         return "Bad Request!", 400
 
     output = wrapper.export_qiskit_commands()
-    print(output)
     return output
 
 

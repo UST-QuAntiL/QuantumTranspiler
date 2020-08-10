@@ -49,23 +49,51 @@ qc.measure(2, 2)
 
   public setCircuit(index: number, circuit: string) {
     this.circuits[index] = circuit;
-    // this.parseCircuit()
+    if (index == 0) {
+      this.parseCircuit()
+    }    
+  }
+
+  public setCircuitOnWrite(circuitRef: string, circuit: string) {
+    let index = this.circuitRefToIndex(circuitRef)
+    try {
+      this.setCircuit(index, circuit);
+    } catch (e) {
+      // happens when a user is changing the circuit (and data is just partly changed), but should not happen otherwise
+      console.log("Circuit data cannot be parsed.")
+      // console.log(e)
+    }
+    
+  }
+
+  private circuitRefToIndex(circuitRef: string) {
+    let index;
+    if (circuitRef == "raw") {
+      index = 0;
+    } else if (circuitRef == "unrolled") {
+      index = 1;
+    } else if (circuitRef == "export") {
+      index = 2;
+    } else {
+      console.error("Circuit Ref not recognized: " + circuitRef)
+    }
+    return index;
   }
 
 
-  parseCircuit() {
-    // clean up
-    this.numQbits = 0;
-    this.numClbits = 0;
-    this.numBits = 0;
-    this.maxIndexTotal = 0;
-    this.qubitNames = [];
-    this.clbitNames = [];
-    this.bitNames = [];
-    this.currentIndexQ = Array(this.numQbits).fill(-1);
-    this.currentIndexCl = Array(this.numQbits).fill(-1);
-    this.operationsAtIndex = [];
-    this.operationsAtBit = [];
+  parseCircuit() {    
+    // temp variables
+    let numQbits = 0;
+    let numClbits = 0;
+    let numBits = 0;
+    let maxIndexTotal = 0;
+    let qubitNames = [];
+    let clbitNames = [];
+    let bitNames = [];
+    let currentIndexQ = Array(this.numQbits).fill(-1);
+    let currentIndexCl = Array(this.numQbits).fill(-1);
+    let operationsAtIndex = [];
+    let operationsAtBit = [];
 
     let circuit = this.circuits[0]
     let arrayOfLines = circuit.split("\n");
@@ -73,24 +101,21 @@ qc.measure(2, 2)
       if (line.includes("QuantumCircuit")) {
         let afterBracket = line.split("(")[1].replace(")", "");
         let numbers = afterBracket.split(",")
-        this.numQbits = parseInt(numbers[0].trim())
+        numQbits = parseInt(numbers[0].trim())
         if (numbers.length > 1) {
-          this.numClbits = parseInt(numbers[1].trim())
+         numClbits = parseInt(numbers[1].trim())
         }
         // TODO handle imports via registers
-        let qubitNames = []
-        for (let i = 0; i < this.numQbits; i++) {
+        for (let i = 0; i < numQbits; i++) {
           qubitNames.push(i)
-        }
-        this.qubitNames = qubitNames;
+        }        
 
         let clbitNames = []
-        for (let i = 0; i < this.numClbits; i++) {
+        for (let i = 0; i < numClbits; i++) {
           clbitNames.push(i)
         }
-        this.clbitNames = clbitNames;
-        this.bitNames = this.qubitNames.concat(this.clbitNames)
-        this.numBits = this.numQbits + this.numClbits;
+        bitNames = qubitNames.concat(clbitNames)
+        numBits = numQbits + numClbits;
 
       } else if (line.includes("qc.")) {
         let lineTrimmed = line.replace(/qc./g, "").trim();
@@ -115,51 +140,59 @@ qc.measure(2, 2)
         // compute max index
         let maxIndex = 0;
         qubits.forEach(qubit => {
-          if (this.currentIndexQ[qubit] > maxIndex) {
-            maxIndex = this.currentIndexQ[qubit]
+          if (currentIndexQ[qubit] > maxIndex) {
+            maxIndex = currentIndexQ[qubit]
           }
         })
         clbits.forEach(clbit => {
-          if (this.currentIndexQ[clbit] > maxIndex) {
-            maxIndex = this.currentIndexQ[clbit]
+          if (currentIndexQ[clbit] > maxIndex) {
+            maxIndex = currentIndexQ[clbit]
           }
         })
         let lastIndex = maxIndex;
         maxIndex += 1;
-        if (maxIndex > this.maxIndexTotal) {
-          this.maxIndexTotal = maxIndex;
+        if (maxIndex > maxIndexTotal) {
+          maxIndexTotal = maxIndex;
         }
         // set max index in arrays
         qubits.forEach(qubit => {
-          this.currentIndexQ[qubit] = maxIndex
+          currentIndexQ[qubit] = maxIndex
         })
         clbits.forEach(clbit => {
-          this.currentIndexQ[clbit] = maxIndex
+          currentIndexQ[clbit] = maxIndex
         })
         let lineNumbers = [lineNumber]
         let operationIndex = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers)
-        if (maxIndex > this.operationsAtIndex.length) {
-          this.operationsAtIndex[lastIndex] = Array(this.numBits).fill(null)
+        if (maxIndex > operationsAtIndex.length) {
+          operationsAtIndex[lastIndex] = Array(numBits).fill(null)
         }
 
 
         // fill operations at index
         qubits.forEach(qubit => {
-          this.operationsAtIndex[lastIndex][qubit] = operationIndex;
+          operationsAtIndex[lastIndex][qubit] = operationIndex;
         })
       }
     })
 
-    let operationsAtBit = [];
-
-    for (let qubit_index = 0; qubit_index < this.numBits; qubit_index++) {
+    for (let qubit_index = 0; qubit_index < numBits; qubit_index++) {
       operationsAtBit.push([])
-      for (let index = 0; index < this.maxIndexTotal; index++) {
-        operationsAtBit[qubit_index].push(this.operationsAtIndex[index][qubit_index])
+      for (let index = 0; index < maxIndexTotal; index++) {
+        operationsAtBit[qubit_index].push(operationsAtIndex[index][qubit_index])
       }
     }
+    // at the end if parsing errors occur, the data is not written partly
+    this.numQbits = numQbits;
+    this.numClbits = numClbits;
+    this.numBits = numBits;
+    this.maxIndexTotal = maxIndexTotal;
+    this.qubitNames = qubitNames;
+    this.clbitNames = clbitNames;
+    this.bitNames = bitNames;
+    this.currentIndexQ = currentIndexQ;
+    this.currentIndexCl = currentIndexCl;
+    this.operationsAtIndex = operationsAtIndex;
     this.operationsAtBit = operationsAtBit;
-
   }
 
   removeOperation(index, qubit_index) {
