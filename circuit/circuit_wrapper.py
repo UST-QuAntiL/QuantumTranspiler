@@ -94,7 +94,7 @@ class CircuitWrapper:
         return instructions
 
     def export_pyquil_commands(self) -> str :
-        raise NotImplementedError("Conversion to Pyquil Commands is outdated. Export export_pyquil or export_quil should be used.")
+        raise NotImplementedError("Conversion to Pyquil Commands is not implemented. Export export_pyquil or export_quil should be used.")
 
     def decompose_to_standard_gates(self) -> None:
         (self.circuit, self.dag) = self.decompose_to_standard_gates_return()

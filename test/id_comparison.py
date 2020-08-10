@@ -10,7 +10,7 @@ from qiskit.execute import execute
 from qiskit.providers.aer import Aer
 from qiskit.providers.aer.backends.qasm_simulator import QasmSimulator
 from qiskit.providers.ibmq import IBMQ, least_busy
-from examples.planqk_examples import bernstein_vazirani_general_qiskit_integer
+from examples.planqk_examples import bernstein_vazirani_general_qiskit_binary_string, bernstein_vazirani_general_qiskit_integer
 from qiskit.circuit.quantumcircuit import QuantumCircuit
 
 def run_circuit(circuit: QuantumCircuit):
@@ -32,8 +32,21 @@ def run_circuit(circuit: QuantumCircuit):
     counts = result.get_counts()
     print(counts)
 
+def export_latex(circuit: QuantumCircuit):
+    # circuit.draw(output='latex_source', filename="./test/results/circuit.tex")
+    circuit.draw(output='mpl', filename="./test/results/circuit.pdf")
+
+def analyze_circuit(circuit: QuantumCircuit):
+    provider = IBMQ.load_account()
+    backend = provider.get_backend("ibmq_ourense")
+    mapped_circuit = transpile(circuit, backend=backend)
+    qobj = assemble(mapped_circuit, backend=backend, shots=8192)
+    print(mapped_circuit)
+    print(qobj)
+
 if __name__ == "__main__":
-    # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
-    circuit = iden_circuit(False)
-    run_circuit(circuit)    
+    circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
+    # circuit = bernstein_vazirani_general_qiskit_binary_string("010000110")
+    # circuit = iden_circuit(False)
+    analyze_circuit(circuit)    
 

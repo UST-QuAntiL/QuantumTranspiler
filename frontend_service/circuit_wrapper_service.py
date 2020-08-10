@@ -76,6 +76,25 @@ def convert():
 
     return output
 
+@app.route('/unroll', methods=['Post'])
+def unroll():
+    data = request.json
+    option = data["option"]
+    nativeGates = data["nativeGates"]
+    circuit = data["circuit"]
+    wrapper = CircuitWrapper(qiskit_instructions=circuit)
+    if option == "Rigetti":
+        unrolled = wrapper.unroll_rigetti()
+    elif option == "IBMQ":
+        unrolled = wrapper.unroll_ibm()
+    elif option == "Custom":
+        unrolled = wrapper.unroll(nativeGates)    
+    else:
+        return "Bad Request!", 400
+
+    output = wrapper.export_qiskit_commands()
+    return output
+
 
 
 if __name__ == '__main__':
