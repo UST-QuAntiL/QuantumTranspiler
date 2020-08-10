@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { DataService } from '../services/data.service';
+import { InputComponent } from '../input/input.component';
 
 @Component({
   selector: 'app-convert',
@@ -8,6 +9,8 @@ import { DataService } from '../services/data.service';
   styleUrls: ['./convert.component.scss']
 })
 export class ConvertComponent implements OnInit {
+  @ViewChild(InputComponent) child:InputComponent;
+  selectedOption: string;
   options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"]
 
   constructor(public data: DataService) { }
@@ -15,8 +18,8 @@ export class ConvertComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  changed(event: MatSelectChange) {
-    this.data.exportFormat = event.value;
+  async computeInternal() {
+    this.child.computeInternal()
   }
 
 }

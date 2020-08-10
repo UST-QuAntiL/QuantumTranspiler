@@ -38,7 +38,7 @@ export class OutputComponent implements OnInit {
       this.snackbar.open("No valid format selected.");
       return;
     }
-    var blob = new Blob([this.data.circuits[2]], {type: "text/plain;charset=utf-8"});
+    var blob = new Blob([this.data.circuits["export"]], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "circuit." + format);
   }
 }

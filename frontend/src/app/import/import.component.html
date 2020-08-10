@@ -1,12 +1,50 @@
+<div class="container pt-2">
+    <div class="row pt-2">
+        <div class="col">
+            <mat-form-field class="w-100">
+                <mat-label> Choose Input</mat-label>
+                <mat-select (selectionChange)="this.data.changedInput($event)">
+                    <p class="pl-2 pt-2 subtitle">Languages</p>
+                    <mat-option value="OpenQASM">
+                        OpenQASM
+                    </mat-option>
+                    <mat-option value="Quil">
+                        Quil
+                    </mat-option>
+                    <mat-divider></mat-divider>
+                    <p class="pl-2 pt-2 subtitle">Frameworks</p>
+                    <mat-option
+                        matTooltip="Name of the circuit must be qc. All occurences can be changed with CTRL + F2."
+                        matTooltipClass="tooltip-large" value="Qiskit">
+                        Qiskit
+                    </mat-option>
+                    <mat-option
+                        matTooltip="Name of the program must be p. All occurences can be changed with CTRL + F2."
+                        matTooltipClass="tooltip-large" value="Pyquil">
+                        Pyquil
+                    </mat-option>
+
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col text-center">
+            <button (click)="computeInternal()" mat-mini-fab matTooltip="Import Circuit."
+                matTooltipClass="tooltip-large" color="primary">
+                <mat-icon>forward</mat-icon>
+            </button>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
 <div class="container-fluid pt-2">
     <div class="row">        
         <div class="col content-left">
-            <!-- <h3>From</h3> -->
-            <app-input compute="compute_internal"></app-input>
+            <app-input compute="circuit_to_internal"></app-input>
         </div>
 
         <div class="col">
-            <app-code circuitRef='raw'></app-code>
+            <app-code circuitRef='internal'></app-code>
         </div>
     </div>
 </div>

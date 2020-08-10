@@ -52,7 +52,7 @@ export class UnrollComponent implements OnInit {
 
     let circuit = await this.http.computeCircuit(object, "unroll")
     if (circuit) {
-      this.data.setCircuit(1, circuit)
+      this.data.setCircuit("unroll", circuit)
     }
   }
 

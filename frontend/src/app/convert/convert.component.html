@@ -1,3 +1,68 @@
+
+<div class="container pt-2">
+    <div class="row pt-2">
+        <div class="col">
+            <mat-form-field class="w-100">
+                <mat-label> Choose Input</mat-label>
+                <mat-select (selectionChange)="data.changedInput($event)">
+                    <p class="pl-2 pt-2 subtitle">Languages</p>
+                    <mat-option value="OpenQASM">
+                        OpenQASM
+                    </mat-option>
+                    <mat-option value="Quil">
+                        Quil
+                    </mat-option>
+                    <mat-divider></mat-divider>
+                    <p class="pl-2 pt-2 subtitle">Frameworks</p>
+                    <mat-option
+                        matTooltip="Name of the circuit must be qc. All occurences can be changed with CTRL + F2."
+                        matTooltipClass="tooltip-large" value="Qiskit">
+                        Qiskit
+                    </mat-option>
+                    <mat-option
+                        matTooltip="Name of the program must be p. All occurences can be changed with CTRL + F2."
+                        matTooltipClass="tooltip-large" value="Pyquil">
+                        Pyquil
+                    </mat-option>
+
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col text-center">
+            <button (click)="computeInternal()" mat-mini-fab matTooltip="Convert Circuit."
+                matTooltipClass="tooltip-large" color="primary">
+                <mat-icon>forward</mat-icon>
+            </button>
+        </div>
+        <div class="col">
+            <mat-form-field class="w-100">
+                <mat-label> Choose Output</mat-label>
+                <mat-select (selectionChange)="data.changedExport($event)">
+                    <p class="pl-2 pt-2 subtitle">Languages</p>
+                    <mat-option value="OpenQASM">
+                        OpenQASM
+                    </mat-option>
+                    <mat-option value="Quil">
+                        Quil
+                    </mat-option>
+                    <mat-divider></mat-divider>
+                    <p class="pl-2 pt-2 subtitle">Frameworks</p>
+                    <mat-option
+                        matTooltipClass="tooltip-large" value="Qiskit">
+                        Qiskit
+                    </mat-option>
+                    <mat-option disabled
+                        matTooltip="Pyquil program can be exported in the backend. However, converting it to a string to show it in the frontend is not useful. Use Quil in this case."
+                        matTooltipClass="tooltip-large" value="Pyquil">
+                        Pyquil
+                    </mat-option>
+
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid pt-2">
     <div class="row">
         <div class="col content-left">
@@ -5,32 +70,7 @@
         </div>
         <div class="col">
             <div class="row">
-                <div class="col pr-5 pl-5">
-                    <mat-form-field class="w-100">
-                        <mat-label> Choose Output</mat-label>
-                        <mat-select (selectionChange)="changed($event)">
-                            <p class="pl-2 pt-2 subtitle">Languages</p>
-                            <mat-option value="OpenQASM">
-                                OpenQASM
-                            </mat-option>
-                            <mat-option value="Quil">
-                                Quil
-                            </mat-option>
-                            <mat-divider></mat-divider>
-                            <p class="pl-2 pt-2 subtitle">Frameworks</p>
-                            <mat-option
-                                matTooltipClass="tooltip-large" value="Qiskit">
-                                Qiskit
-                            </mat-option>
-                            <mat-option disabled
-                                matTooltip="Pyquil program can be exported in the backend. However, converting it to a string to show it in the frontend is not useful. Use Quil in this case."
-                                matTooltipClass="tooltip-large" value="Pyquil">
-                                Pyquil
-                            </mat-option>
-
-                        </mat-select>
-                    </mat-form-field>
-                </div>
+                
             </div>
             <app-output></app-output>    
         </div>

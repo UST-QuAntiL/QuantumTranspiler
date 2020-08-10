@@ -1,17 +1,36 @@
 import { Injectable } from '@angular/core';
 import { Operation, operationMap, OperationIndex } from './Operation';
+import { MatSelectChange } from '@angular/material/select';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
+  public options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"];
+  public inputFormat: string = "";
   public exportFormat: string = "";
 
-  // circuits indices
-  // internal format: 0, unrolled circuit: 1, export circuit: 2
-  public circuits: string[] = [`
-qc = QuantumCircuit(5,3)
+  public circuits: { [id: string] : string; } = {
+    "import": 
+`DECLARE ro BIT[3]
+H 0
+H 1
+H 2
+H 1
+CNOT 2 3
+CPHASE (0) 1 0
+CNOT 2 4
+H 0
+CPHASE (0) 1 2
+CPHASE (0) 0 2
+H 2
+MEASURE 0 ro[0]
+MEASURE 1 ro[1]
+MEASURE 2 ro[2]
+`,
+    "internal": 
+`qc = QuantumCircuit(5,3)
 qc.h(0)
 qc.h(1)
 qc.h(2)
@@ -25,8 +44,10 @@ qc.cu1(0, 0, 2)
 qc.h(2)
 qc.measure(0, 0)
 qc.measure(1, 1)
-qc.measure(2, 2)
-  `, "", ""];
+qc.measure(2, 2)`,
+"unroll": "",
+"export": ""}
+;
 
   public numQbits: number = 0;
   public numClbits: number = 0;
@@ -47,37 +68,22 @@ qc.measure(2, 2)
   }
 
 
-  public setCircuit(index: number, circuit: string) {
+  public setCircuit(index: string, circuit: string) {
     this.circuits[index] = circuit;
-    if (index == 0) {
+    if (index == "internal") {
       this.parseCircuit()
     }    
   }
 
   public setCircuitOnWrite(circuitRef: string, circuit: string) {
-    let index = this.circuitRefToIndex(circuitRef)
     try {
-      this.setCircuit(index, circuit);
+      this.setCircuit(circuitRef, circuit);
     } catch (e) {
       // happens when a user is changing the circuit (and data is just partly changed), but should not happen otherwise
       console.log("Circuit data cannot be parsed.")
       // console.log(e)
     }
     
-  }
-
-  private circuitRefToIndex(circuitRef: string) {
-    let index;
-    if (circuitRef == "raw") {
-      index = 0;
-    } else if (circuitRef == "unrolled") {
-      index = 1;
-    } else if (circuitRef == "export") {
-      index = 2;
-    } else {
-      console.error("Circuit Ref not recognized: " + circuitRef)
-    }
-    return index;
   }
 
 
@@ -95,7 +101,7 @@ qc.measure(2, 2)
     let operationsAtIndex = [];
     let operationsAtBit = [];
 
-    let circuit = this.circuits[0]
+    let circuit = this.circuits["internal"]
     let arrayOfLines = circuit.split("\n");
     arrayOfLines.forEach((line, lineNumber) => {
       if (line.includes("QuantumCircuit")) {
@@ -200,12 +206,12 @@ qc.measure(2, 2)
     console.log(operation)
     let lineNumbers = operation.lineNumberInCircuit;
     console.log(lineNumbers)
-    let lines = this.circuits[0].split('\n');
+    let lines = this.circuits["internal"].split('\n');
     lineNumbers.forEach(lineNumber => {
       lines.splice(lineNumber, 1);
     })
 
-    this.circuits[0] = lines.join('\n');
+    this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
 
     // let operation: OperationIndex = this.operationsAtIndex[index][qubit_index];
@@ -237,25 +243,26 @@ qc.measure(2, 2)
   }
 
   setExportCircuit(circuit: string, format: string) {
-    this.setCircuit(2, circuit);
+    this.setCircuit("export", circuit);
     this.exportFormat = format;
   }
 
   getCircuit(circuitRef: string) {
     if (circuitRef == "current") {
-      if (this.circuits[1] != "") {
-        return this.circuits[1];
+      if (this.circuits["unroll"] != "") {
+        return this.circuits["unroll"];
       }
-      return this.circuits[0]
-    } else if (circuitRef == "raw") {
-      return this.circuits[0]
-    } else if (circuitRef == "unrolled") {
-      return this.circuits[1]
-    }
+      return this.circuits["internal"];   
+    } 
+    return this.circuits[circuitRef]
 
   }
 
-  get() {
-    return this.circuits[0];
+  public changedInput(event: MatSelectChange) {
+    this.inputFormat = event.value;
+  }
+
+  public changedExport(event: MatSelectChange) {
+    this.exportFormat = event.value;
   }
 }

@@ -1,44 +1,4 @@
 <div class="container">
-    <div class="row ">
-        <div class="col-10">
-            <mat-form-field class="w-100">
-                <mat-label> Choose Input</mat-label>
-                <mat-select (selectionChange)="changed($event)">
-                    <p class="pl-2 pt-2 subtitle">Languages</p>
-                    <mat-option value="OpenQASM">
-                        OpenQASM
-                    </mat-option>
-                    <mat-option value="Quil">
-                        Quil
-                    </mat-option>
-                    <mat-divider></mat-divider>
-                    <p class="pl-2 pt-2 subtitle">Frameworks</p>
-                    <mat-option
-                        matTooltip="Name of the circuit must be qc. All occurences can be changed with CTRL + F2."
-                        matTooltipClass="tooltip-large" value="Qiskit">
-                        Qiskit
-                    </mat-option>
-                    <mat-option
-                        matTooltip="Name of the program must be p. All occurences can be changed with CTRL + F2."
-                        matTooltipClass="tooltip-large" value="Pyquil">
-                        Pyquil
-                    </mat-option>
-
-                </mat-select>
-            </mat-form-field>
-        </div>
-
-        <div class="col-2 float-right">
-            <button (click)="computeInternal()" mat-mini-fab class="float-right" matTooltip="Convert Circuit."
-                matTooltipClass="tooltip-large" color="primary">
-                <mat-icon>forward</mat-icon>
-            </button>
-        </div>
-
-
-
-    </div>
-
     <div class="row float-left pr-2">
         <input id="fileInput" type="file" />
         <button (click)="inputFile()" mat-mini-fab class="" matTooltip="Import File." matTooltipClass="tooltip-large"
@@ -47,11 +7,6 @@
         </button>
     </div>
     <div class="row exportCode pr-4">
-        <div class="outerDiv" style="height: auto; width: 100%" class="pt-2">
-            <ngx-monaco-editor style="min-height: 700px" [options]="editorOptions" [(ngModel)]="circuit">
-            </ngx-monaco-editor>
-        </div>
-
+        <app-code circuitRef='import'></app-code>
     </div>
-
 </div>

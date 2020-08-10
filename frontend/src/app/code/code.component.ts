@@ -13,8 +13,7 @@ export class CodeComponent implements OnInit {
   editorOptions = editorOptions;
  
 
-  constructor(public data: DataService) {   
-    console.log(this.circuitRef)
+  constructor(public data: DataService) {  
   }
 
   ngOnInit(): void {
