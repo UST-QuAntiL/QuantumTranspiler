@@ -9,15 +9,15 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
   styleUrls: ['./graphical.component.scss']
 })
 export class GraphicalComponent implements OnInit {
-  operationList = operationList;
-
-  todo = operationList;
-
-  done;
-
+  public operationList: Operation[] = operationList;
+  public secondList: Operation[] = [];
+;
 
   constructor(public data: DataService) {
-    this.done = data.operationsAtBit[0]
+    const H = new Operation("H")
+    const CX = new Operation("CX", 2)
+    this.secondList.push(H)
+    this.secondList.push(CX)
   }
 
   createCircuit() {
@@ -29,14 +29,14 @@ export class GraphicalComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    // if (event.previousContainer === event.container) {
-    //   moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    // } else {
-    //   transferArrayItem(event.previousContainer.data,
-    //                     event.container.data,
-    //                     event.previousIndex,
-    //                     event.currentIndex);
-    // }
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+                        event.container.data,
+                        event.previousIndex,
+                        event.currentIndex);
+    }
   }
 
   // drop(event: CdkDragDrop<any>) {
