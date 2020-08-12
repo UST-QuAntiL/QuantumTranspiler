@@ -38,7 +38,7 @@ export class GraphicalComponent implements OnInit {
       console.log(event.currentIndex)
       this.data.removeOperation(event.previousIndex, qubitIndex)
       this.data.addOperation(event.container.data[event.previousIndex], event.currentIndex, qubitIndex)
-      
+       
       // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(event.previousContainer.data,
