@@ -7,8 +7,6 @@
         </button>
 </div>
 <div class="row exportCode pr-4">
-    <div class="outerDiv" style="height: auto; width: 100%" class="pt-2">
-        <ngx-monaco-editor style="min-height: 700px" [options]="editorOptions" [(ngModel)]="data.circuits['export']"></ngx-monaco-editor>
-    </div>
+    <app-code class="pt-2" circuitRef='export'></app-code>
     
 </div>

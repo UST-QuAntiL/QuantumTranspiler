@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
 import { DataService } from '../services/data.service';
 import { InputComponent } from '../input/input.component';
 

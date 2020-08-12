@@ -3,7 +3,6 @@ import { MatSelectChange } from '@angular/material/select';
 import { HttpService } from '../services/http.service';
 import { DataService } from '../services/data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {editorOptions} from '../services/Options';
 
 @Component({
   selector: 'app-input',
@@ -15,7 +14,6 @@ export class InputComponent implements OnInit {
   @Input() compute: string;
   convert: boolean = false;
   
-  editorOptions = editorOptions;
   constructor(private http: HttpService, private data: DataService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {

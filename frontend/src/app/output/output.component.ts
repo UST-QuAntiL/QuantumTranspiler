@@ -3,7 +3,6 @@ import { DataService } from '../services/data.service';
 import { Observable } from 'rxjs';
 import { saveAs } from "file-saver";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { editorOptions } from '../services/Options';
 
 @Component({
   selector: 'app-output',
@@ -11,10 +10,7 @@ import { editorOptions } from '../services/Options';
   styleUrls: ['./output.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class OutputComponent implements OnInit {
-  editorOptions = editorOptions;
-
-  
+export class OutputComponent implements OnInit {  
   constructor(public data: DataService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {

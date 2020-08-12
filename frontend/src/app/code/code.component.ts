@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DataService } from '../services/data.service';
-import { editorOptions } from '../services/Options';
 
 @Component({
   selector: 'app-code',
@@ -10,7 +9,19 @@ import { editorOptions } from '../services/Options';
 export class CodeComponent implements OnInit {
   @Input() circuitRef: string;
 
-  editorOptions = editorOptions;
+  editorOptions = {
+    theme: 'vs-light', language: 'python', automaticLayout: true, scrollbar: {
+        useShadows: false,
+        verticalHasArrows: true,
+        horizontalHasArrows: true,
+        vertical: 'hidden',
+        horizontal: 'hidden',
+
+        verticalScrollbarSize: 0,
+        horizontalScrollbarSize: 17,
+        arrowSize: 30
+    }
+};;
  
 
   constructor(public data: DataService) {  
