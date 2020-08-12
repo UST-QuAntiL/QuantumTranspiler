@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Operation, operationMap, OperationIndex } from './Operation';
 import { MatSelectChange } from '@angular/material/select';
+import { element } from 'protractor';
 
 
 @Injectable({
@@ -11,9 +12,9 @@ export class DataService {
   public inputFormat: string = "";
   public exportFormat: string = "";
 
-  public circuits: { [id: string] : string; } = {
-    "import": 
-`DECLARE ro BIT[3]
+  public circuits: { [id: string]: string; } = {
+    "import":
+      `DECLARE ro BIT[3]
 H 0
 H 1
 H 2
@@ -29,25 +30,31 @@ MEASURE 0 ro[0]
 MEASURE 1 ro[1]
 MEASURE 2 ro[2]
 `,
-    "internal": 
-`qc = QuantumCircuit(5,3)
+    "internal":
+      `qc = QuantumCircuit(5,3)
 qc.h(0)
-qc.h(1)
-qc.h(2)
-qc.h(1)
-qc.cx(2, 3)
-qc.cu1(0, 1, 0)
-qc.cx(2, 4)
-qc.h(0)
-qc.cu1(0, 1, 2)
-qc.cu1(0, 0, 2)
-qc.h(2)
-qc.measure(0, 0)
-qc.measure(1, 1)
-qc.measure(2, 2)`,
-"unroll": "",
-"export": ""}
-;
+qc.x(0)
+qc.y(0)
+`,
+    // `qc = QuantumCircuit(5,3)
+    // qc.h(0)
+    // qc.h(1)
+    // qc.h(2)
+    // qc.h(1)
+    // qc.cx(2, 3)
+    // qc.cu1(0, 1, 0)
+    // qc.cx(2, 4)
+    // qc.h(0)
+    // qc.cu1(0, 1, 2)
+    // qc.cu1(0, 0, 2)
+    // qc.h(2)
+    // qc.measure(0, 0)
+    // qc.measure(1, 1)
+    // qc.measure(2, 2)`,
+    "unroll": "",
+    "export": ""
+  }
+    ;
 
   public numQbits: number = 0;
   public numClbits: number = 0;
@@ -59,9 +66,8 @@ qc.measure(2, 2)`,
   public currentIndexQ = Array(this.numQbits).fill(-1);
   public currentIndexCl = Array(this.numQbits).fill(-1);
 
-  public operationsAtIndex: OperationIndex[][] = [];
   public operationsAtBit: OperationIndex[][] = [];
-
+  public firstOperationAt: number = 0;
 
   constructor() {
     this.parseCircuit()
@@ -72,7 +78,7 @@ qc.measure(2, 2)`,
     this.circuits[index] = circuit;
     if (index == "internal") {
       this.parseCircuit()
-    }    
+    }
   }
 
   public setCircuitOnWrite(circuitRef: string, circuit: string) {
@@ -83,11 +89,11 @@ qc.measure(2, 2)`,
       console.log("Circuit data cannot be parsed.")
       // console.log(e)
     }
-    
+
   }
 
 
-  parseCircuit() {    
+  parseCircuit() {
     // temp variables
     let numQbits = 0;
     let numClbits = 0;
@@ -98,9 +104,8 @@ qc.measure(2, 2)`,
     let bitNames = [];
     let currentIndexQ = Array(this.numQbits).fill(-1);
     let currentIndexCl = Array(this.numQbits).fill(-1);
-    let operationsAtIndex = [];
     let operationsAtBit = [];
-
+    let firstOperationAt = -1;
     let circuit = this.circuits["internal"]
     let arrayOfLines = circuit.split("\n");
     arrayOfLines.forEach((line, lineNumber) => {
@@ -109,12 +114,12 @@ qc.measure(2, 2)`,
         let numbers = afterBracket.split(",")
         numQbits = parseInt(numbers[0].trim())
         if (numbers.length > 1) {
-         numClbits = parseInt(numbers[1].trim())
+          numClbits = parseInt(numbers[1].trim())
         }
         // TODO handle imports via registers
         for (let i = 0; i < numQbits; i++) {
           qubitNames.push(i)
-        }        
+        }
 
         let clbitNames = []
         for (let i = 0; i < numClbits; i++) {
@@ -123,13 +128,19 @@ qc.measure(2, 2)`,
         bitNames = qubitNames.concat(clbitNames)
         numBits = numQbits + numClbits;
 
+        for (let i = 0; i < numBits; i++) {
+          operationsAtBit.push([]);
+        }
+
       } else if (line.includes("qc.")) {
+        if (firstOperationAt == -1) {
+          firstOperationAt = lineNumber;
+        }
         let lineTrimmed = line.replace(/qc./g, "").trim();
         let lineSplitted = lineTrimmed.split("(");
         let operationString = lineSplitted[0];
         let parameters = lineSplitted[1].replace(")", "").split(",");
         let operation = operationMap[operationString];
-
         let paramsWithoutBits = []
         let qubits = []
         let clbits = []
@@ -169,24 +180,18 @@ qc.measure(2, 2)`,
         })
         let lineNumbers = [lineNumber]
         let operationIndex = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers)
-        if (maxIndex > operationsAtIndex.length) {
-          operationsAtIndex[lastIndex] = Array(numBits).fill(null)
-        }
-
-
+        let placeholder = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers, true)
         // fill operations at index
         qubits.forEach(qubit => {
-          operationsAtIndex[lastIndex][qubit] = operationIndex;
+          if (lastIndex > operationsAtBit[qubit].length - 1) {
+            for (let i = operationsAtBit[qubit].length; i <= lastIndex; i++) {
+              operationsAtBit[qubit].push(placeholder)
+            }
+          }
+          operationsAtBit[qubit][lastIndex] = operationIndex;
         })
       }
     })
-
-    for (let qubit_index = 0; qubit_index < numBits; qubit_index++) {
-      operationsAtBit.push([])
-      for (let index = 0; index < maxIndexTotal; index++) {
-        operationsAtBit[qubit_index].push(operationsAtIndex[index][qubit_index])
-      }
-    }
     // at the end if parsing errors occur, the data is not written partly
     this.numQbits = numQbits;
     this.numClbits = numClbits;
@@ -197,15 +202,13 @@ qc.measure(2, 2)`,
     this.bitNames = bitNames;
     this.currentIndexQ = currentIndexQ;
     this.currentIndexCl = currentIndexCl;
-    this.operationsAtIndex = operationsAtIndex;
     this.operationsAtBit = operationsAtBit;
+    this.firstOperationAt = firstOperationAt;
   }
 
-  removeOperation(index, qubit_index) {
-    let operation = this.operationsAtIndex[index][qubit_index];
-    console.log(operation)
+  removeOperation(index: number, qubitIndex: number) {
+    let operation = this.operationsAtBit[qubitIndex][index];
     let lineNumbers = operation.lineNumberInCircuit;
-    console.log(lineNumbers)
     let lines = this.circuits["internal"].split('\n');
     lineNumbers.forEach(lineNumber => {
       lines.splice(lineNumber, 1);
@@ -214,8 +217,8 @@ qc.measure(2, 2)`,
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
 
-    // let operation: OperationIndex = this.operationsAtIndex[index][qubit_index];
-    // this.operationsAtIndex[index][qubit_index] = null;
+    // let operation: OperationIndex = this.operationsAtIndex[index][qubitIndex];
+    // this.operationsAtIndex[index][qubitIndex] = null;
 
     // operation.qubits.forEach(qubit => {
     //   if (this.currentIndexQ[qubit] == this.maxIndexTotal) {
@@ -224,6 +227,46 @@ qc.measure(2, 2)`,
     // });
 
     // this.setMaxIndex()
+  }
+
+  addOperation(operationIndex: OperationIndex, index: number, qubitIndex: number) {
+    let lines = this.circuits["internal"].split('\n');
+    console.log("index: " + index)
+    let firstOperationAt: number = this.firstOperationAt - 1;
+    for (let i = index; i >= 0; i--) {
+      let previousOperation = this.operationsAtBit[qubitIndex][i];
+      if (!previousOperation.placeholder) {
+        firstOperationAt = previousOperation.lineNumberInCircuit[0];
+        console.log(previousOperation)
+        break;
+      }
+    }
+    console.log(firstOperationAt)
+    lines.splice(firstOperationAt + 1, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.listToString(operationIndex.qubits)}${this.commaNeeded(operationIndex)}${this.listToString(operationIndex.parameter)})`);
+    this.circuits["internal"] = lines.join('\n');
+    this.parseCircuit()
+  }
+
+  private listToString(list: any[]): string {
+    let string: string = "";
+    for (let i = 0; i < list.length; i++) {
+      if (i < list.length - 1) {
+        string += list[i] + ","
+      } else {
+        string += list[i]
+      }
+    }
+    return string;
+  }
+
+  private commaNeeded(operationIndex: OperationIndex): string {
+    let qubits = operationIndex.qubits;
+    let parameter = operationIndex.parameter;
+    let string = "";
+    if ((qubits.length > 0) && parameter.length > 0) {
+      string = ","
+    }
+    return string;
   }
 
   setMaxIndex() {
@@ -252,8 +295,8 @@ qc.measure(2, 2)`,
       if (this.circuits["unroll"] != "") {
         return this.circuits["unroll"];
       }
-      return this.circuits["internal"];   
-    } 
+      return this.circuits["internal"];
+    }
     return this.circuits[circuitRef]
 
   }

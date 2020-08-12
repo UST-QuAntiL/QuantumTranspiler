@@ -1,35 +1,6 @@
 @import "../../styles.scss";
 
-.mat-divider {
-  width: 100%;
-  padding-top: 20px;
-}
 
-.row {
-  padding-top: 2.5px;
-  padding-bottom: 2.5px;
-}
-
-.circuit {
-  position: relative;
-}
-
-
-// .line {
-//     width: 100%;
-//     border-bottom: 1px solid black;
-//     vertical-align: middle;
-// }
-
-.placeholder {
-  width: 55px;
-  height: 55px;
-}
-
-// .gate:hover {
-//   background-color: $primary;
-//   color: white;
-// }
 
 .gate {
   width: 50px;
@@ -71,7 +42,7 @@
 .custom-container:after {
   position: absolute;
   left: 0;
-  top: 70%;
+  top: 68%;
   height: 1px;
   background: $dark;
   content: "";
@@ -89,11 +60,17 @@
   line-height: 50px;
   z-index: 1;
   background-color: white;
-  overflow: hidden;
+  overflow: hidden;  
   display: block;
   cursor: move;
   box-sizing: border-box;
   flex-direction: row;
+}
+
+.placeholder {
+  width: 60px;
+  height: 60px;
+  z-index: 1;
 }
 
 .cdk-drag-preview {

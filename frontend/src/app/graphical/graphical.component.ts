@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
-import { Operation, operationList } from '../services/Operation';
+import { Operation, operationList, OperationIndex } from '../services/Operation';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
@@ -28,9 +28,18 @@ export class GraphicalComponent implements OnInit {
     
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+  drop(event: CdkDragDrop<OperationIndex[]>) {
+    if (event.previousContainer === event.container) {      
+      if (event.container.id === "gateList") {
+        return;
+      }
+      let qubitIndex: number = parseInt(event.container.id)
+      console.log(event.previousIndex)
+      console.log(event.currentIndex)
+      this.data.removeOperation(event.previousIndex, qubitIndex)
+      this.data.addOperation(event.container.data[event.previousIndex], event.currentIndex, qubitIndex)
+      
+      // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(event.previousContainer.data,
                         event.container.data,

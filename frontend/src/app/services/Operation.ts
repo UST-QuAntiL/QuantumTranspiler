@@ -14,6 +14,7 @@ export class Operation {
 
 
 export class OperationIndex {
+    placeholder: boolean;
     index: number;
     operation: Operation;
     parameter: number[];
@@ -21,17 +22,22 @@ export class OperationIndex {
     clbits: number[];
     lineNumberInCircuit: number[];
 
-    constructor(index, operation, parameter, qubits, clbits, lineNumberInCircuit) {
+    constructor(index, operation, parameter, qubits, clbits, lineNumberInCircuit, placeholder = false) {
         this.index = index;
         this.operation = operation;
+        this.parameter = parameter;
         this.qubits = qubits;
         this.clbits = clbits;
         this.lineNumberInCircuit = lineNumberInCircuit;
+        this.placeholder = placeholder;
+    
     }
 }
 
 // gates
 const H = new Operation("H")
+const X = new Operation("X")
+const Y = new Operation("Y")
 const CX = new Operation("CX", 2)
 const CU1 = new Operation("CU1", 2)
 
@@ -43,6 +49,8 @@ export let gateMap = {
     "h": H,
     "cx": CX,
     "cu1": CU1,
+    "x": X,
+    "y": Y,
 }
 
 export let operationMapLocal = {    

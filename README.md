@@ -4,7 +4,7 @@ The Vendor-Independent Quantum Transpiler is a quantum transpiler written in Pyt
 
 ## Dependencies
 
-There are several dependencies that need to be installed on the system.
+There are several dependencies that need to be installed on the system. Some of the dependencies (e.g Qiskit and Pyquil) need gcc to be installed on the system.
 It is recommended to install them with [Pip](https://pip.pypa.io/en/stable/).
 
 ```bash
@@ -13,7 +13,6 @@ pip install pyquil
 pip install flask
 pip install flask-cors
 pip install pydot
-
 ```
 
 ### Optional dependencies:

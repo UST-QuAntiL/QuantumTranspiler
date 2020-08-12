@@ -65,7 +65,7 @@
         <div class="row">
             <div>
                 <h2>Possible Gates</h2>
-                <div class="row" cdkDropList #gateList="cdkDropList" [cdkDropListData]="operationList" cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+                <div cdkDropListSortingDisabled id="gateList" class="row" cdkDropList #gateList="cdkDropList" [cdkDropListData]="operationList" cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
                     <div class="col" *ngFor="let item of operationList">
                         <div class="gate" cdkDrag>
                             {{item.name}}
@@ -73,27 +73,48 @@
                     </div>
                 </div>
             </div>
+
+            <mat-divider class="w-100 mb-5 mt-5"></mat-divider>
+            
             <div class="row">
                 <div class="custom-container">
                     <h2>Circuit</h2>
 
-                    <div cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList" [cdkDropListData]="secondList" class="list"
+                    <div id="0" cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList" [cdkDropListData]="data.operationsAtBit[0]" class="list"
                         (cdkDropListDropped)="drop($event)">
-                        <div class="box" *ngFor="let item of secondList" cdkDrag>{{item.name}}</div>
+                        <!-- <div *ngFor="let _ of [].constructor(data.maxIndexTotal); index as index" class="placeholder">
+                            <div cdkDrag [cdkDragData]="[index, index_qubit]" class="gate"
+                                *ngIf="data.operationsAtBit[index_qubit][index]">
+                                {{data.operationsAtBit[index_qubit][index].operation.name}}
+                            </div>
+                            <div class="placeholder" cdkDrag>
+                                <div *ngIf="data.operationsAtBit[index_qubit][index]">
+                                    name
+                                </div>
+                                
+                            </div>
+                        </div> -->
+                        <div class="placeholder" *ngFor="let _ of [].constructor(data.maxIndexTotal); index as index">
+                            <div class="box" cdkDrag *ngIf="!data.operationsAtBit[0][index].placeholder">{{data.operationsAtBit[0][index].operation.name}}</div>
+                            <div cdkDrag *ngIf="data.operationsAtBit[0][index].placeholder"></div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="custom-container">
-                    <h2>Circuit</h2>
+            
 
+            <!-- <div class="row">
+                <div class="custom-container"> 
                     <div cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList" [cdkDropListData]="secondList" class="list"
                         (cdkDropListDropped)="drop($event)">
-                        <div class="box" *ngFor="let item of secondList" cdkDrag>{{item.name}}</div>
+                        <div class="placeholder" *ngFor="let item of secondList">
+                            <div class="box" cdkDrag>{{item.name}}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             
         </div>
     </div>
