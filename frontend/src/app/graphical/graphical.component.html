@@ -65,8 +65,7 @@
         <div class="row">
             <div>
                 <h2>Possible Gates</h2>
-                <div class="row" cdkDropList #gateList="cdkDropList" [cdkDropListData]="operationList"
-                    (cdkDropListDropped)="drop($event)">
+                <div class="row" cdkDropList #gateList="cdkDropList" [cdkDropListData]="operationList" cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
                     <div class="col" *ngFor="let item of operationList">
                         <div class="gate" cdkDrag>
                             {{item.name}}
@@ -75,15 +74,27 @@
                 </div>
             </div>
             <div class="row">
-                <div class="example-container">
+                <div class="custom-container">
                     <h2>Circuit</h2>
 
-                    <div cdkDropList #gateList="cdkDropList" [cdkDropListData]="secondList" class="example-list"
+                    <div cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList" [cdkDropListData]="secondList" class="list"
                         (cdkDropListDropped)="drop($event)">
-                        <div class="example-box" *ngFor="let item of secondList" cdkDrag>{{item.name}}</div>
+                        <div class="box" *ngFor="let item of secondList" cdkDrag>{{item.name}}</div>
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="custom-container">
+                    <h2>Circuit</h2>
+
+                    <div cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList" [cdkDropListData]="secondList" class="list"
+                        (cdkDropListDropped)="drop($event)">
+                        <div class="box" *ngFor="let item of secondList" cdkDrag>{{item.name}}</div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>
