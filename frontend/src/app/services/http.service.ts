@@ -4,8 +4,9 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { HttpHeaders } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from './../../environments/environment';
 
-const url = "http://localhost:5000/"
+const url = environment.apiUrl
 
 // const httpOptions = {
 //   headers: new HttpHeaders({
