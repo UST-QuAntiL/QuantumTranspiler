@@ -15,14 +15,23 @@ pip install flask-cors
 pip install pydot
 ```
 
-### Optional dependencies:
-For the usage of pydot (used for drawing of dags) [Graphviz](http://www.graphviz.org/download/) need to be installed on the system.
-
+### Frontend
+The fronted is developed with [Angular](https://angular.io/):
+ ```bash
+npm install -g @angular/cli
+cd frontend
+npm install
+```
 
 ## Usage
 To start the server run:
 ```bash
 python -m frontend_service.circuit_wrapper_service
+```
+
+To start the frontend run:
+```bash
+ng serve --open
 ```
 
 The library is executed as a module.
