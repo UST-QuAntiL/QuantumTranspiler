@@ -2,7 +2,7 @@
   <mat-horizontal-stepper #stepper>
     <mat-step [stepControl]="firstFormGroup" state="input">
       <ng-template matStepLabel>Input</ng-template>
-      <app-input></app-input>
+      <app-import></app-import>
     </mat-step>
     <mat-step [stepControl]="firstFormGroup" state="circuit" (click)="computeInternal()">
       <ng-template matStepLabel>Internal Representation</ng-template>
