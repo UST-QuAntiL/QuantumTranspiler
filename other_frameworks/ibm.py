@@ -62,9 +62,26 @@ def dag_default(circ):
     c = dag_to_circuit(dag)
     show_figure(c)
 
+def printBloch():
+    from qiskit.visualization import plot_bloch_vector
+    vector = [0,1,0]
+    figure = plot_bloch_vector(vector)
+    figure.savefig("other_frameworks/bloch.png")
+
+def printBlochMulti():
+    from qiskit import QuantumCircuit, BasicAer, execute
+    from qiskit.visualization import plot_bloch_multivector
+
+    qc = QuantumCircuit(2, 2)
+    qc.h(0)
+    qc.h(1)
+    qc.z(1)
+    qc.measure([0, 1], [0, 1])
+
+    backend = BasicAer.get_backend('statevector_simulator')
+    job = execute(qc, backend).result()
+    figure = plot_bloch_multivector(job.get_statevector(qc), title="New Bloch Multivector")
+    plt.show(figure)
 
 if __name__ == "__main__":
-    qc = QuantumCircuit(5)
-    gate = qiskit_gates.MCXVChain(3, ctrl_state=7)
-    qc.append(gate, qargs=[0,1,2,3,4])
-    print(qc)
+    printBlochMulti()
