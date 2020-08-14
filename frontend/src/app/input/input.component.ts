@@ -63,7 +63,7 @@ export class InputComponent implements OnInit {
       }
       object["optionOutput"] = this.data.exportFormat;
     }
-    let circuit = await this.http.computeCircuit(object, this.compute)
+    let circuit = await this.http.callBackend(object, this.compute)
     if (circuit) {
       let index: string;
       if (this.convert) {

@@ -50,7 +50,7 @@ export class UnrollComponent implements OnInit {
       "nativeGates": this.selectedGates
     }
 
-    let circuit = await this.http.computeCircuit(object, "unroll")
+    let circuit = await this.http.callBackend(object, "unroll")
     if (circuit) {
       this.data.setCircuit("unroll", circuit)
     }

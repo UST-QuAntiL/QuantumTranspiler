@@ -111,7 +111,7 @@ def unroll():
     return output
 
 @app.route('/simulate', methods=['Post'])
-def unroll():
+def simulate():
     data = request.json
     circuit = data["circuit"]
     try:

@@ -59,7 +59,6 @@
     </div>
 
 </div> -->
-
 <div cdkDropListGroup>
     <div class="container-fluid">
         <div class="row">
@@ -73,10 +72,12 @@
                             {{item.name}}
                         </div>
                     </div>
-                </div>
+                </div>                
             </div>
 
-            <mat-divider class="w-100 mb-5 mt-5"></mat-divider>
+           
+
+            <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
 
             <div *ngFor="let qubit of data.qubitNames; index as qubitIndex">
                 <div class="row">
@@ -100,18 +101,9 @@
                 </div>
             </div>
 
-
-
-            <!-- <div class="row">
-                <div class="custom-container"> 
-                    <div cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList" [cdkDropListData]="secondList" class="list"
-                        (cdkDropListDropped)="drop($event)">
-                        <div class="placeholder" *ngFor="let item of secondList">
-                            <div class="box" cdkDrag>{{item.name}}</div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
+            <div class="col text-center simulateButton mt-2">
+                <button class="" color="primary" mat-flat-button (click)="simulate()"><mat-icon>memory</mat-icon>  Simulate </button>
+            </div>
 
         </div>
     </div>

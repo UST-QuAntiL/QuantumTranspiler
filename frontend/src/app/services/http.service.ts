@@ -25,30 +25,17 @@ export class HttpService {
 
   constructor(private http: HttpClient, private snackbar: MatSnackBar) { }
 
-  async computeCircuit(input_circuit: {}, path: string) {
-    let data = JSON.stringify(input_circuit)
+  async callBackend(data: {}, path: string) {
+    let dataJSON = JSON.stringify(data)
     try {
-      let circuit = await this.http.post(url + path, data, { headers, responseType: 'text' }).toPromise()
-      this.snackbar.open("Successfully processed the circuit implementation.");
+      let circuit = await this.http.post(url + path, dataJSON, { headers, responseType: 'text' }).toPromise()
+      this.snackbar.open("Successfully processed the data.");
       return circuit
     } catch (err) {
       console.log(err)
       console.log("Backend error:" +  err.error)
-      this.snackbar.open("Error at handling the circuit implementation. The log shows detailed information about this error.");
+      this.snackbar.open("Error at handling the data. The log shows detailed information about this error.");
     }
 
-  }
-
-  async exportCircuit(circuit: {}) {
-    let data = JSON.stringify(circuit)
-    try {
-      let exportCircuit = await this.http.post(url + "export_circuit", data, { headers, responseType: 'text' }).toPromise()
-      this.snackbar.open("Successfully converted to " + circuit["selectedOption"] + ".");
-      return exportCircuit
-    } catch (err) {
-      console.log(err)
-      console.log("Backend error:" +  err.error)
-      this.snackbar.open("Error at handling the circuit implementation. The log shows detailed information about this error.");
-    }
   }
 }

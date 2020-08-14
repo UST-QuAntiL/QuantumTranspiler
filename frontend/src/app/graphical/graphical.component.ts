@@ -35,24 +35,8 @@ export class GraphicalComponent implements OnInit {
     }
   }
 
-  // drop(event: CdkDragDrop<any>) {
-  //   console.log("drop event")
-  //   console.log(event)
-  //   if (event.previousContainer.id === event.container.id) {
-  //     console.log("he")
-  //     // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-  //   }
-    
-  //   // if (event.item.data) {
-  //   //   let data = event.item.data
-  //   //   console.log(event.item.data)
-  //   //   this.data.removeOperation(data[0], data[1]);
-  //   //   // this.data.operationsAtIndex[data[0]][data[1]] = null;
-  //   // }
-    
-  // }
-  
-
-
+  simulate() {
+    // callBackend
+  }
 
 }
