@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { Operation, operationList, OperationIndex } from '../services/Operation';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { HttpService } from '../services/http.service';
 
 @Component({
   selector: 'app-graphical',
@@ -10,8 +11,8 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 })
 export class GraphicalComponent implements OnInit {
   public operationList: Operation[] = operationList;;
-
-  constructor(public data: DataService) {
+  public counts = {};
+  constructor(public data: DataService, private http: HttpService) {
   }
 
   ngOnInit(): void {
@@ -35,8 +36,13 @@ export class GraphicalComponent implements OnInit {
     }
   }
 
-  simulate() {
-    // callBackend
+  async simulate() {
+    let object = {     
+      "circuit": this.data.getCircuit("internal")
+    }
+    let counts = await this.http.callBackend(object, "simulate")
+    if (counts) {
+      this.counts = counts;
+    }    
   }
-
 }
