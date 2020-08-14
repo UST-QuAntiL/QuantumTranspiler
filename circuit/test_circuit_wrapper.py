@@ -34,7 +34,7 @@ class TestCircuitWrapper:
         print(wrapper.circuit)
 
     def test_qiskit_commands(self):
-        wrapper = CircuitWrapper(qiskit_circuit=grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)"))
+        wrapper = CircuitWrapper(qiskit_circuit=shor_general(5))
         print(wrapper.circuit)
         commands = wrapper.export_qiskit_commands()        
         print(commands)
@@ -58,4 +58,4 @@ class TestCircuitWrapper:
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_pyquil_commands()
+    test.test_qiskit_commands()
