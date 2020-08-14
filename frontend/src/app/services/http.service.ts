@@ -33,7 +33,8 @@ export class HttpService {
       return circuit
     } catch (err) {
       console.log(err)
-      this.snackbar.open("Error at handling the circuit implementation. The log shows detailed information about this error (see HttpErrorResponse.error).");
+      console.log("Backend error:" +  err.error)
+      this.snackbar.open("Error at handling the circuit implementation. The log shows detailed information about this error.");
     }
 
   }
@@ -46,7 +47,8 @@ export class HttpService {
       return exportCircuit
     } catch (err) {
       console.log(err)
-      this.snackbar.open("Error at handling the circuit implementation. The log shows detailed information about this error (see HttpErrorResponse.error).");
+      console.log("Backend error:" +  err.error)
+      this.snackbar.open("Error at handling the circuit implementation. The log shows detailed information about this error.");
     }
   }
 }
