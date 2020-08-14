@@ -20,15 +20,15 @@ export class OperationIndex {
     parameter: number[];
     qubits: number[];
     clbits: number[];
-    lineNumberInCircuit: number[];
+    lineNumbersInCircuit: number[];
 
-    constructor(index, operation, parameter, qubits, clbits, lineNumberInCircuit, placeholder = false) {
+    constructor(index, operation, parameter, qubits, clbits, lineNumbersInCircuit, placeholder = false) {
         this.index = index;
         this.operation = operation;
         this.parameter = parameter;
         this.qubits = qubits;
         this.clbits = clbits;
-        this.lineNumberInCircuit = lineNumberInCircuit;
+        this.lineNumbersInCircuit = lineNumbersInCircuit;
         this.placeholder = placeholder;
     
     }

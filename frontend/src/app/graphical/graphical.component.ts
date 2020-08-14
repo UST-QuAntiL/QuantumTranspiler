@@ -30,16 +30,13 @@ export class GraphicalComponent implements OnInit {
 
   drop(event: CdkDragDrop<OperationIndex[]>) {
     if (event.previousContainer === event.container) {      
-      if (event.container.id === "gateList") {
+      if ((event.container.id === "gateList") || event.previousIndex == event.currentIndex) {
         return;
       }
-      let qubitIndex: number = parseInt(event.container.id)
-      console.log(event.previousIndex)
-      console.log(event.currentIndex)
-      this.data.removeOperation(event.previousIndex, qubitIndex)
-      this.data.addOperation(event.container.data[event.previousIndex], event.currentIndex, qubitIndex)
+      let qubitIndex: number = parseInt(event.container.id);
+      this.data.moveOperation(qubitIndex, event.previousIndex, event.currentIndex);
        
-      // moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(event.previousContainer.data,
                         event.container.data,

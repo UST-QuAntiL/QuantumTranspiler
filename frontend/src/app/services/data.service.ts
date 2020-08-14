@@ -206,9 +206,40 @@ qc.y(0)
     this.firstOperationAt = firstOperationAt;
   }
 
+  moveOperation(qubitIndex: number, previousIndex: number, currentIndex: number) {
+    let operationIndex = this.operationsAtBit[qubitIndex][previousIndex];
+    // remove
+    let lineNumbersRemove = operationIndex.lineNumbersInCircuit;
+    let lines = this.circuits["internal"].split('\n');
+    lineNumbersRemove.forEach(lineNumber => {
+      lines.splice(lineNumber, 1);
+    })
+    // add
+    let lineToInsert: number = this.firstOperationAt;
+    if (this.operationsAtBit[qubitIndex].length > 0) {
+      let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit
+      // get last line number + 1
+      if (previousIndex < currentIndex) {
+        lineToInsert = this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit[this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit.length - 1] + 1
+      // first line number
+      } else {
+        lineToInsert = this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit[0]
+      }      
+    }
+    
+
+    if (lineNumbersRemove[0] < lineToInsert) {
+      lineToInsert -= lineNumbersRemove.length
+    }
+    
+    lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.listToString(operationIndex.qubits)}${this.commaNeeded(operationIndex)}${this.listToString(operationIndex.parameter)})`);
+    this.circuits["internal"] = lines.join('\n');
+    this.parseCircuit()
+  }
+
   removeOperation(index: number, qubitIndex: number) {
     let operation = this.operationsAtBit[qubitIndex][index];
-    let lineNumbers = operation.lineNumberInCircuit;
+    let lineNumbers = operation.lineNumbersInCircuit;
     let lines = this.circuits["internal"].split('\n');
     lineNumbers.forEach(lineNumber => {
       lines.splice(lineNumber, 1);
@@ -216,17 +247,6 @@ qc.y(0)
 
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
-
-    // let operation: OperationIndex = this.operationsAtIndex[index][qubitIndex];
-    // this.operationsAtIndex[index][qubitIndex] = null;
-
-    // operation.qubits.forEach(qubit => {
-    //   if (this.currentIndexQ[qubit] == this.maxIndexTotal) {
-    //     this.currentIndexQ[qubit]--;
-    //   }
-    // });
-
-    // this.setMaxIndex()
   }
 
   addOperation(operationIndex: OperationIndex, index: number, qubitIndex: number) {
@@ -236,7 +256,7 @@ qc.y(0)
     for (let i = index; i >= 0; i--) {
       let previousOperation = this.operationsAtBit[qubitIndex][i];
       if (!previousOperation.placeholder) {
-        firstOperationAt = previousOperation.lineNumberInCircuit[0];
+        firstOperationAt = previousOperation.lineNumbersInCircuit[0];
         console.log(previousOperation)
         break;
       }
