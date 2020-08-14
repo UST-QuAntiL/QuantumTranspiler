@@ -68,16 +68,31 @@ def _handle_instructions(circuit, simple_registers):
             param_str = f"[{param_str}]"
             commands += f"qc.{operation.name}({matrix} ,{param_str}, label='{operation.label}')\n"  
 
-        else:
-            param_str = create_param_string(params, param_str)
-            param_str = create_reg_string(qubits, param_str, simple_registers)
-            param_str = create_reg_string(clbits, param_str, simple_registers)  
-
+        else:    
             if operation.name in standard_instructions:
+                param_str = create_param_string(params, param_str)
+                param_str = create_reg_string(qubits, param_str, simple_registers)
+                param_str = create_reg_string(clbits, param_str, simple_registers)  
                 commands += f"qc.{operation.name}({param_str})\n" 
+            # non standard non unitary gates
             else:
-                commands += f"gate = {operation.__class__.__name__}({operation.num_ctrl_qubits}, ctrl_state={operation.ctrl_state})\n"
-                commands += f"qc.append(gate, qargs=[{param_str}])\n"     
+                param_str = create_param_string(params, param_str)
+                # if not hasattr(operation, 'num_ctrl_qubits'):
+                #     print(operation.name)
+                command = f"qc.{operation.name}({param_str}, {operation.num_ctrl_qubits}"
+                # check if default ctrl_state (default one must not be specified, because some gates like MCU1Gate dont support it) 
+                if hasattr(operation, 'ctrl_state') and ((2^operation.num_ctrl_qubits -1) != operation.ctrl_state):
+                    if param_str != "":
+                        command += ", "
+                    command += f"ctrl_state={operation.ctrl_state})"
+                else:
+                    command += ")"
+                qargs_str = ""    
+                qargs_str = create_reg_string(qubits, qargs_str, simple_registers)
+                qargs_str = create_reg_string(clbits, qargs_str, simple_registers)                  
+                print(qargs_str)
+                commands += command + "\n"
+                commands += f"qc.append(gate, qargs=[{qargs_str}])\n"     
     return commands
 
 

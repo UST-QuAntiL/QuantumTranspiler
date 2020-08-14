@@ -1,4 +1,6 @@
 import ast
+
+from qiskit.circuit.library.standard_gates.u1 import MCU1Gate
 from conversion.converter.command_converter import qiskit_commands_to_circuit
 from pyquil import Program, get_qc
 from pyquil.gates import H, CNOT, CCNOT
@@ -33,17 +35,17 @@ class TestCircuitWrapper:
         wrapper.decompose_to_standard_gates()
         print(wrapper.circuit)
 
-    def test_qiskit_commands(self):
-        wrapper = CircuitWrapper(qiskit_circuit=shor_general(5))
-        print(wrapper.circuit)
+    def test_qiskit_commands(self):   
+        wrapper = CircuitWrapper(qiskit_circuit=shor_general(3))
+        # print(wrapper.circuit)
         commands = wrapper.export_qiskit_commands()        
         print(commands)
         circuit = qiskit_commands_to_circuit(commands)
-        print(circuit)
+        # print(circuit)
 
     def test_pyquil_commands(self):
         wrapper = CircuitWrapper(qiskit_circuit=grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)"))
-        print(wrapper.circuit)
+        print(wrapper.circuit)        
         commands = wrapper.export_pyquil_commands()        
         print(commands)
         # circuit = commands_to_circuit(commands)
