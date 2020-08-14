@@ -33,8 +33,6 @@ class Decomposer():
                 decompose_pass = Qiskit_Passes.Decompose(node.op.__class__)
                 dag = decompose_pass.run(dag)
                 nodes = get_nodes(dag) 
-                # circuit = dag_to_circuit(dag)
-                # # print(circuit)
         return dag
         
 

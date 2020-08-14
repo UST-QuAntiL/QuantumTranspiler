@@ -54,10 +54,11 @@ class TestCircuitWrapper:
     def test_unroll(self):
         wrapper = CircuitWrapper(qiskit_circuit=shor_general(3))
         wrapper.unroll_rigetti()
+        print(wrapper.circuit)
         # wrapper.unroll(["u3", "u2", "cz", "u1"])
         # wrapper.unroll(["rz", "rx", "cz"])
         # wrapper.unroll(["rx", "cz"])
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_qiskit_commands()
+    test.test_unroll()

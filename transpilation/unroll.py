@@ -85,7 +85,7 @@ class Unroller(TransformationPass):
                 continue
             if node.name in self.basis:  # If already a base, ignore.
                 continue
-
+            
             rules = self._get_rules(node.op)
             self._apply_rules(dag, node, rules)    
 

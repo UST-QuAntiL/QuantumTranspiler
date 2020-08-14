@@ -127,6 +127,7 @@ class CircuitWrapper:
 
     def unroll(self, gates: List[str]) -> QuantumCircuit:
         unroll_pass = Unroller(gates)
+        self.decompose_non_standard_non_unitary_gates()
         self.dag = unroll_pass.run(self.dag)
         self.circuit = dag_to_circuit(self.dag)
         return self.circuit
