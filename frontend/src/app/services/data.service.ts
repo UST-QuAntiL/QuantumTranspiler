@@ -220,18 +220,18 @@ qc.y(0)
       let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit
       // get last line number + 1
       if (previousIndex < currentIndex) {
-        lineToInsert = this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit[this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit.length - 1] + 1
-      // first line number
+        lineToInsert = lineNumbersInCircuit[lineNumbersInCircuit.length - 1] + 1
+        // first line number
       } else {
-        lineToInsert = this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit[0]
-      }      
+        lineToInsert = lineNumbersInCircuit[0]
+      }
     }
-    
+
 
     if (lineNumbersRemove[0] < lineToInsert) {
       lineToInsert -= lineNumbersRemove.length
     }
-    
+
     lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.listToString(operationIndex.qubits)}${this.commaNeeded(operationIndex)}${this.listToString(operationIndex.parameter)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
@@ -244,25 +244,18 @@ qc.y(0)
     lineNumbers.forEach(lineNumber => {
       lines.splice(lineNumber, 1);
     })
-
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
   }
 
   addOperation(operationIndex: OperationIndex, index: number, qubitIndex: number) {
     let lines = this.circuits["internal"].split('\n');
-    console.log("index: " + index)
-    let firstOperationAt: number = this.firstOperationAt - 1;
-    for (let i = index; i >= 0; i--) {
-      let previousOperation = this.operationsAtBit[qubitIndex][i];
-      if (!previousOperation.placeholder) {
-        firstOperationAt = previousOperation.lineNumbersInCircuit[0];
-        console.log(previousOperation)
-        break;
-      }
+    let lineToInsert: number = this.firstOperationAt;
+    if (this.operationsAtBit[qubitIndex].length > 0) {
+      let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
+      lineToInsert = lineNumbersInCircuit[0];
     }
-    console.log(firstOperationAt)
-    lines.splice(firstOperationAt + 1, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.listToString(operationIndex.qubits)}${this.commaNeeded(operationIndex)}${this.listToString(operationIndex.parameter)})`);
+    lines.splice(lineToInsert + 1, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.listToString(operationIndex.qubits)}${this.commaNeeded(operationIndex)}${this.listToString(operationIndex.parameter)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
   }
