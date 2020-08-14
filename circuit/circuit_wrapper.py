@@ -128,7 +128,7 @@ class CircuitWrapper:
         self.circuit = dag_to_circuit(self.dag)
         return self.circuit
 
-    def simulate(self, shots=1024):        
+    def simulate(self, shots=1000):        
         simulator = QasmSimulator()
         result = execute(self.circuit, simulator, shots=shots).result()
         counts = result.get_counts(self.circuit)

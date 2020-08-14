@@ -72,10 +72,10 @@
                             {{item.name}}
                         </div>
                     </div>
-                </div>                
+                </div>
             </div>
 
-           
+
 
             <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
 
@@ -83,7 +83,7 @@
                 <div class="row">
                     <div class="custom-container">
                         <div class="qubitName">
-                            |{{qubit}}>	
+                            |{{qubit}}>
                         </div>
                         <div [id]="qubit" cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList"
                             [cdkDropListData]="data.operationsAtBit[0]" class="list"
@@ -102,11 +102,21 @@
             </div>
 
             <div class="col text-center simulateButton mt-2">
-                <button class="" color="primary" mat-flat-button (click)="simulate()"><mat-icon>memory</mat-icon>  Simulate </button>
+                <button class="" color="primary" mat-flat-button (click)="simulate()">
+                    <mat-icon>memory</mat-icon> Simulate
+                </button>
             </div>
 
-            <div class="row">
-                
+            <div class="chart" *ngIf="counts.length != 0">
+                <mat-divider class="mt-3"></mat-divider>
+                <div class="row pt-3">
+                    <div style="display: block">
+                        <canvas mdbChart [chartType]="chartType" [datasets]="chartDatasets" [labels]="chartLabels"
+                            [colors]="chartColors" [options]="chartOptions" [legend]="true"
+                            (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)">
+                        </canvas>
+                    </div>
+                </div>
             </div>
 
         </div>
