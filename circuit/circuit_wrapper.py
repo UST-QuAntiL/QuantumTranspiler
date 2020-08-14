@@ -1,3 +1,4 @@
+from qiskit.execute import execute
 from conversion.converter.command_converter import circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.dagcircuit.dagcircuit import DAGCircuit
@@ -9,6 +10,7 @@ from qiskit.converters import circuit_to_dag, dag_to_circuit
 from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
 from typing import List, Tuple
+from qiskit.providers.aer import QasmSimulator
 
 class CircuitWrapper:
     def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None, qasm: str = None, pyquil_instructions: str = None, qiskit_instructions: str = None):
@@ -125,3 +127,9 @@ class CircuitWrapper:
         self.dag = unroll_pass.run(self.dag)
         self.circuit = dag_to_circuit(self.dag)
         return self.circuit
+
+    def simulate(self, shots=1024):        
+        simulator = QasmSimulator()
+        result = execute(self.circuit, simulator, shots=shots).result()
+        counts = result.get_counts(self.circuit)
+        return counts
