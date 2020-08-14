@@ -35,13 +35,13 @@ class TestCircuitWrapper:
         wrapper.decompose_to_standard_gates()
         print(wrapper.circuit)
 
-    def test_qiskit_commands(self):   
+    def test_qiskit_commands(self):
         wrapper = CircuitWrapper(qiskit_circuit=shor_general(3))
         # print(wrapper.circuit)
         commands = wrapper.export_qiskit_commands()        
         print(commands)
         circuit = qiskit_commands_to_circuit(commands)
-        # print(circuit)
+        print(circuit)
 
     def test_pyquil_commands(self):
         wrapper = CircuitWrapper(qiskit_circuit=grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)"))
@@ -52,7 +52,7 @@ class TestCircuitWrapper:
         # print(circuit)
         
     def test_unroll(self):
-        wrapper = CircuitWrapper(qiskit_circuit=qiskit_custom_unroll())
+        wrapper = CircuitWrapper(qiskit_circuit=shor_general(3))
         wrapper.unroll_rigetti()
         # wrapper.unroll(["u3", "u2", "cz", "u1"])
         # wrapper.unroll(["rz", "rx", "cz"])

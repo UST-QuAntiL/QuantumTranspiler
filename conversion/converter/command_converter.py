@@ -77,8 +77,6 @@ def _handle_instructions(circuit, simple_registers):
             # non standard non unitary gates
             else:
                 param_str = create_param_string(params, param_str)
-                # if not hasattr(operation, 'num_ctrl_qubits'):
-                #     print(operation.name)
                 command = f"qc.{operation.name}({param_str}, {operation.num_ctrl_qubits}"
                 # check if default ctrl_state (default one must not be specified, because some gates like MCU1Gate dont support it) 
                 if hasattr(operation, 'ctrl_state') and ((2^operation.num_ctrl_qubits -1) != operation.ctrl_state):
@@ -90,7 +88,6 @@ def _handle_instructions(circuit, simple_registers):
                 qargs_str = ""    
                 qargs_str = create_reg_string(qubits, qargs_str, simple_registers)
                 qargs_str = create_reg_string(clbits, qargs_str, simple_registers)                  
-                print(qargs_str)
                 commands += command + "\n"
                 commands += f"qc.append(gate, qargs=[{qargs_str}])\n"     
     return commands

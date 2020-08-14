@@ -72,13 +72,13 @@ class CircuitWrapper:
         return circuit
 
     def export_pyquil(self) -> Program:
-        (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
+        (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
         return self._export(handler, circuit, False)
 
     def export_quil(self) -> str:
-        (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
+        (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
         return self._export(handler, circuit, True)
@@ -87,15 +87,18 @@ class CircuitWrapper:
         return self.circuit
 
     def export_qasm(self) -> str:
-        (circuit, dag) = self.decompose_to_standard_gates_return()
+        (circuit, _) = self.decompose_to_standard_gates_return()
         qasm = circuit.qasm()
         return qasm
 
     def export_qiskit_commands(self) -> str:
-        instructions = circuit_to_qiskit_commands(self.circuit)
+        (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
+        # print(circuit)
+        instructions = circuit_to_qiskit_commands(circuit)
         return instructions
 
     def export_pyquil_commands(self) -> str :
+        (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
         raise NotImplementedError("Conversion to Pyquil Commands is not implemented. Export export_pyquil or export_quil should be used.")
 
     def decompose_to_standard_gates(self) -> None:

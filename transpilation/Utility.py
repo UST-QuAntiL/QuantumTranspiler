@@ -10,9 +10,11 @@ from qiskit.circuit.instruction import Instruction
 from typing import Callable
 
 def _get_nodes(dag: DAGCircuit, check_node: Callable[[DAGNode], bool]):
-    all_nodes = dag.gate_nodes()
+    all_nodes = dag.op_nodes()
     nodes = []
     for node in all_nodes:
+        if node.name == "measure":
+            continue
         if check_node(node):
             nodes.append(node)
     return nodes
