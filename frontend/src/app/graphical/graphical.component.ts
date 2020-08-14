@@ -9,19 +9,9 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
   styleUrls: ['./graphical.component.scss']
 })
 export class GraphicalComponent implements OnInit {
-  public operationList: Operation[] = operationList;
-  public secondList: Operation[] = [];
-;
+  public operationList: Operation[] = operationList;;
 
   constructor(public data: DataService) {
-    const H = new Operation("H")
-    const CX = new Operation("CX", 2)
-    this.secondList.push(H)
-    this.secondList.push(CX)
-  }
-
-  createCircuit() {
-    
   }
 
   ngOnInit(): void {
