@@ -133,3 +133,4 @@ class CircuitWrapper:
         result = execute(self.circuit, simulator, shots=shots).result()
         counts = result.get_counts(self.circuit)
         return counts
+        
