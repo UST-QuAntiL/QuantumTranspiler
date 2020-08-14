@@ -24,11 +24,10 @@ def circuit_to_internal():
             wrapper = CircuitWrapper(qiskit_instructions=circuit)
         else:
             return "Bad Request!", 400
+        output = wrapper.export_qiskit_commands()    
     except Exception as e:
         print(str(e))
-        return str(e), 500
-
-    output = wrapper.export_qiskit_commands()    
+        return str(e), 500    
     return output
 
 @app.route('/export_circuit', methods=['Post'])
@@ -103,11 +102,24 @@ def unroll():
             wrapper.unroll(nativeGates)    
         else:
             return "Bad Request!", 400
+        output = wrapper.export_qiskit_commands()
+
     except Exception as e:
         print(str(e))
         return str(e), 500
+    
+    return output
 
-    output = wrapper.export_qiskit_commands()
+@app.route('/simulate', methods=['Post'])
+def unroll():
+    data = request.json
+    circuit = data["circuit"]
+    try:
+        wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        output = wrapper.simulate()
+    except Exception as e:
+        print(str(e))
+        return str(e), 500
     return output
 
 
