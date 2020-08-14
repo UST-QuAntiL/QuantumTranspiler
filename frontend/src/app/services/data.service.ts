@@ -141,6 +141,7 @@ qc.measure(2, 2)`,
         let operationString = lineSplitted[0];
         let parameters = lineSplitted[1].replace(")", "").split(",");
         let operation = operationMap[operationString];
+        
         let paramsWithoutBits = []
         let qubits = []
         let clbits = []
@@ -231,8 +232,7 @@ qc.measure(2, 2)`,
     if (lineNumbersRemove[0] < lineToInsert) {
       lineToInsert -= lineNumbersRemove.length
     }
-
-    lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.listToString(operationIndex.qubits)}${this.commaNeeded(operationIndex)}${this.listToString(operationIndex.parameter)})`);
+    lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
   }
@@ -255,11 +255,30 @@ qc.measure(2, 2)`,
       let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
       lineToInsert = lineNumbersInCircuit[0];
     }
-    lines.splice(lineToInsert + 1, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.listToString(operationIndex.qubits)}${this.commaNeeded(operationIndex)}${this.listToString(operationIndex.parameter)})`);
+    lines.splice(lineToInsert + 1, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
   }
 
+ 
+  private generateStringFromArguments(operationIndex: OperationIndex): string {    
+    let string = "";
+    string += this.listToString(operationIndex.qubits)    
+    let nextString = this.listToString(operationIndex.clbits)
+    if (string != "" && nextString != "") {
+      string += ","
+    }
+    string += nextString;
+
+    nextString = this.listToString(operationIndex.parameter)
+    if (string != "" && nextString != "") {
+      string += ","
+    }
+    string += nextString;
+
+    return string;
+  }
+  
   private listToString(list: any[]): string {
     let string: string = "";
     for (let i = 0; i < list.length; i++) {
@@ -272,15 +291,6 @@ qc.measure(2, 2)`,
     return string;
   }
 
-  private commaNeeded(operationIndex: OperationIndex): string {
-    let qubits = operationIndex.qubits;
-    let parameter = operationIndex.parameter;
-    let string = "";
-    if ((qubits.length > 0) && parameter.length > 0) {
-      string = ","
-    }
-    return string;
-  }
 
   setMaxIndex() {
     let max = -1;
