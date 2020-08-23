@@ -122,6 +122,29 @@ def simulate():
         return str(e), 500
     return output
 
+@app.route('/depth', methods=['Post'])
+def depth():
+    data = request.json
+    circuit = data["circuit"]
+    try:
+        depth = {}
+        wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        wrapper.unroll_ibm()
+        depth["q_depth"] = wrapper.depth()
+        depth["q_two_qubit"] = wrapper.depth_two_qubit_gates()
+        depth["q_gate_times"] = wrapper.depth_gate_times()
+
+        wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        wrapper.unroll_rigetti()
+        depth["r_depth"] = wrapper.depth()
+        depth["r_two_qubit"] = wrapper.depth_two_qubit_gates()
+        depth["r_gate_times"] = wrapper.depth_gate_times()
+        output = depth
+    except Exception as e:
+        print(str(e))
+        return str(e), 500
+    return output
+
 
 
 if __name__ == '__main__':
