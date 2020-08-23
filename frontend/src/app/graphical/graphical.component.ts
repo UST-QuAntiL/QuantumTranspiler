@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { Operation, operationList, OperationIndex } from '../services/Operation';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { HttpService } from '../services/http.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-graphical',
@@ -57,7 +58,7 @@ export class GraphicalComponent implements OnInit {
   public chartClicked(e: any): void { }
   public chartHovered(e: any): void { }
 
-  constructor(public data: DataService, private http: HttpService) {
+  constructor(public data: DataService, private http: HttpService, private _elementRef : ElementRef, private snackbar: MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -82,6 +83,7 @@ export class GraphicalComponent implements OnInit {
   }
 
   async simulate() {
+    this.showInformation()
     let object = {
       "circuit": this.data.getCircuit("internal")
     }
@@ -106,6 +108,16 @@ export class GraphicalComponent implements OnInit {
         label: "Counts"
       }];
       this.chartLabels = chartLabels;
+
+      // this.bottomDiv.nativeElement.scrollIntoView({ block: 'end',  behavior: 'smooth' });
     }
+  }  
+
+  showInformation() {
+    this.snackbar.open("Request sent to backend. Results will be available shortly.");
+  }
+
+  async analyse() {
+    this.showInformation();
   }
 }
