@@ -16,7 +16,8 @@ from qiskit.quantum_info import Operator
 
 
 def qiskit_custom():
-    qiskit_circuit = QuantumCircuit(5)
+    qiskit_circuit = QuantumCircuit(1, 1)
+    qiskit_circuit.h(0)
     """multiple quantum register"""
     # qr = QuantumRegister(5, "q")
     # qr2 = QuantumRegister(2, "qq")
@@ -27,8 +28,6 @@ def qiskit_custom():
     # qiskit_circuit.add_register(cr2)
 
     """standard qiskit gates """
-    # gate = qiskit_gates.CXGate()
-    # qiskit_circuit.append(gate, qargs=[2,3])
     # gate = qiskit_gates.U2Gate(np.pi, np.pi)
     # qiskit_circuit.append(gate, qargs=[2])
     # gate = qiskit_gates.RZGate(np.pi*3/2)
@@ -67,12 +66,12 @@ def qiskit_custom():
 
     """custom gate #2"""
     """wrong results on rigetti non transpiled"""
-    custom_matrix1 = random_unitary(4, seed=42)
-    custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_2qubits")
-    qiskit_circuit.append(custom_gate1, qargs=[0,1])
+    # custom_matrix1 = random_unitary(4, seed=42)
+    # custom_gate1 = UnitaryGate(custom_matrix1, label="unitary_2qubits")
+    # qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
     """barrier"""
-    qiskit_circuit.barrier()
+    # qiskit_circuit.barrier()
     
     """custom gate #3"""
     # custom_matrix1 = random_unitary(8, seed=42)
@@ -124,7 +123,8 @@ def qiskit_custom():
     
 
     """measurement"""
-    qiskit_circuit.measure_all()
+    # qiskit_circuit.measure_a0ll()
+    qiskit_circuit.measure(0, 0)
     return qiskit_circuit
 
 def pyquil_custom() -> Program:

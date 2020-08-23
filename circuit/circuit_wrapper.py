@@ -1,3 +1,4 @@
+from circuit.qiskit_utility import count_gate_times, count_two_qubit_gates
 from qiskit.execute import execute
 from conversion.converter.command_converter import circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
@@ -137,4 +138,27 @@ class CircuitWrapper:
         result = execute(self.circuit, simulator, shots=shots).result()
         counts = result.get_counts(self.circuit)
         return counts
+
+    # analysis
+    def depth(self): 
+        return self.dag.depth()
+
+    def depth_gate_times(self): 
+        """
+        considers the number of frame changes needed to implement a specific operation
+        e.g. U1: 0
+        U2: 1
+        U3: 2
+        """
+        ops_path = self.dag.count_ops_longest_path()
+        count = count_gate_times(ops_path)
+        return count
+    
+    def depth_two_qubit_gates(self): 
+        """
+        considers the number of the two qubit gates: cz, cx and cy (which include the native two qubit gates from rigetti -cz- and ibm -cx-)
+        """
+        ops_path = self.dag.count_ops_longest_path()
+        count = count_two_qubit_gates(ops_path)
+        return count
         
