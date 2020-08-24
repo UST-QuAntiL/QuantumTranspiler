@@ -32,6 +32,7 @@ import { OutputComponent } from './output/output.component';
 import { UnrollComponent } from './unroll/unroll.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import {MatListModule} from '@angular/material/list';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -76,7 +77,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     ReactiveFormsModule,
     DragDropModule,
     MatCheckboxModule,
-    MDBBootstrapModule.forRoot()
+    MDBBootstrapModule.forRoot(),
+    MatListModule
 
   ],
   providers: [
