@@ -16,8 +16,7 @@ from qiskit.quantum_info import Operator
 
 
 def qiskit_custom():
-    qiskit_circuit = QuantumCircuit(1, 1)
-    qiskit_circuit.h(0)
+    qiskit_circuit = QuantumCircuit(5, 5)
     """multiple quantum register"""
     # qr = QuantumRegister(5, "q")
     # qr2 = QuantumRegister(2, "qq")
@@ -60,7 +59,7 @@ def qiskit_custom():
     #     [0, 0, 1, 0],
     #     [0, 0, 0, np.e**(1j*np.pi/2)]
     # ], dtype=complex)
-    # # custom_matrix1 = random_unitary(4, seed=42)
+    # custom_matrix1 = random_unitary(4, seed=42)
     # custom_gate1 = UnitaryGate(custom_matrix1)
     # qiskit_circuit.append(custom_gate1, qargs=[0,1])
 
@@ -117,9 +116,9 @@ def qiskit_custom():
     # crxgate = qiskit_gates.CrxGate(np.pi)
     # qiskit_circuit.append(crxgate, qargs=[0, 1])
 
-    """qiskit gate sdg"""        
-    # sdggate = qiskit_gates.TdgGate()
-    # qiskit_circuit.append(sdggate, qargs=[0])
+    """qiskit gate MCXVChain"""        
+    # gate = qiskit_gates.MCXVChain(2)
+    # qiskit_circuit.append(gate, qargs=[0,1,2])
     
 
     """measurement"""
