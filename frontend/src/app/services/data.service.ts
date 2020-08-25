@@ -70,7 +70,7 @@ qc.measure(2, 2)`,
   public operationsAtBit: OperationIndex[][] = [];
   public firstOperationAt: number = 0;
 
-  constructor(private http: HttpService) {
+  constructor() {
     this.parseCircuit()
   }
 
