@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Operation, operationMap, OperationIndex } from './Operation';
 import { MatSelectChange } from '@angular/material/select';
 import { element } from 'protractor';
+import { HttpService } from './http.service';
 
 
 @Injectable({
@@ -31,12 +32,12 @@ MEASURE 1 ro[1]
 MEASURE 2 ro[2]
 `,
     "internal":
-//       `qc = QuantumCircuit(5,3)
-// qc.h(0)
-// qc.x(0)
-// qc.y(0)
-// `,
-`qc = QuantumCircuit(5,3)
+      //       `qc = QuantumCircuit(5,3)
+      // qc.h(0)
+      // qc.x(0)
+      // qc.y(0)
+      // `,
+      `qc = QuantumCircuit(5,3)
 qc.h(0)
 qc.h(1)
 qc.h(2)
@@ -53,8 +54,8 @@ qc.measure(1, 1)
 qc.measure(2, 2)`,
     "unroll": "",
     "export": ""
-  }
-    ;
+  };
+
 
   public numQbits: number = 0;
   public numClbits: number = 0;
@@ -69,7 +70,7 @@ qc.measure(2, 2)`,
   public operationsAtBit: OperationIndex[][] = [];
   public firstOperationAt: number = 0;
 
-  constructor() {
+  constructor(private http: HttpService) {
     this.parseCircuit()
   }
 
@@ -141,7 +142,7 @@ qc.measure(2, 2)`,
         let operationString = lineSplitted[0];
         let parameters = lineSplitted[1].replace(")", "").split(",");
         let operation = operationMap[operationString];
-        
+
         let paramsWithoutBits = []
         let qubits = []
         let clbits = []
@@ -260,10 +261,10 @@ qc.measure(2, 2)`,
     this.parseCircuit()
   }
 
- 
-  private generateStringFromArguments(operationIndex: OperationIndex): string {    
+
+  private generateStringFromArguments(operationIndex: OperationIndex): string {
     let string = "";
-    string += this.listToString(operationIndex.qubits)    
+    string += this.listToString(operationIndex.qubits)
     let nextString = this.listToString(operationIndex.clbits)
     if (string != "" && nextString != "") {
       string += ","
@@ -278,7 +279,7 @@ qc.measure(2, 2)`,
 
     return string;
   }
-  
+
   private listToString(list: any[]): string {
     let string: string = "";
     for (let i = 0; i < list.length; i++) {

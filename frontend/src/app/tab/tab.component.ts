@@ -3,6 +3,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SimulateComponent } from '../simulate/simulate.component';
 import { AnalyzeComponent } from '../analyze/analyze.component';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-tab',
@@ -14,7 +15,7 @@ export class TabComponent implements OnInit {
   @ViewChild('analyze', {static: false}) analyzeComponent: AnalyzeComponent;
 
 
-  constructor(private snackbar: MatSnackBar) { }
+  constructor(private snackbar: MatSnackBar, private data: DataService) { }
 
   ngOnInit(): void {
   }
