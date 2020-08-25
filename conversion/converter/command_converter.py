@@ -1,4 +1,4 @@
-from conversion.converter.CommandUtility import create_matrix_params, create_param_string, create_reg_string
+from conversion.converter.command_utility import create_matrix_params, create_param_string, create_reg_string
 from pyquil.gates import *
 from pyquil.quil import Program
 from circuit.qiskit_utility import standard_instructions

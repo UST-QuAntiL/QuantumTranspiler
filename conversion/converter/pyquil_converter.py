@@ -1,4 +1,4 @@
-from conversion.converter.CommandUtility import create_matrix, create_param_string
+from conversion.converter.command_utility import create_matrix, create_param_string
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from pyquil import Program
 from pyquil.quilatom import Parameter as pyquil_Parameter

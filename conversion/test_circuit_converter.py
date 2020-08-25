@@ -1,6 +1,5 @@
 from conversion.conversion_handler import ConversionHandler
 from circuit.qiskit_utility import show_figure
-from conversion.third_party_converter.staq_converter import StaqConverter
 from qiskit import QuantumCircuit
 # from conversion.third_party_converter.pennylane_converter import PennylaneConverter
 # from conversion.third_party_converter.quantastica_converter import QuantasticaConverter
@@ -23,19 +22,6 @@ class TestCircuitConverter:
         # tk = pyquil_to_tk(program)
         # qiskit = tk_to_qiskit(tk)
         # show_figure(qiskit)
-
-    def test_staq(self):
-        staq = StaqConverter(
-            "/home/seedrix/tools/staq/build/staq", shor_qasm())
-        # quil = staq.qasm_to_quil()
-        # does not work, because of undefined Dagger instruction
-        # program = Program(quil)
-        # projectq = staq.qasm_to_projectq()
-        # qsharp = staq.qasm_to_qsharp()
-        # cirq = staq.qasm_to_cirq()
-        # staq.inline()
-        # staq.o2()
-        staq.default_optimization()
 
     def test_pennylane(self):
         qiskit = PennylaneConverter.pyquil_to_qasm(

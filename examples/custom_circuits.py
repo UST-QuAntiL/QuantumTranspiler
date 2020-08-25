@@ -133,12 +133,12 @@ def pyquil_custom() -> Program:
 
 
     """pyquil gates"""
-    program += H(0)
-    program += CNOT(0, 1)
-    program += RX(np.pi, 2)
-    program += CCNOT(0, 1, 2)
-    program += H(3)
-    program += X(1)
+    # program += H(0)
+    # program += CNOT(0, 1)
+    # program += RX(np.pi, 2)
+    # program += CCNOT(0, 1, 2)
+    # program += H(3)
+    # program += X(1)
 
     """pyquil gate with no 1:1 qiskit gate"""
     # program += CPHASE00(np.pi, 1, 0)
@@ -158,7 +158,7 @@ def pyquil_custom() -> Program:
     # program += sqrt_x_definition
     # program += SQRT_X(0)
 
-    """NOT working: parameterized custom gate"""
+    """parameterized custom gate"""
     # theta = Parameter('theta')
     # crx = np.array([
     #     [1, 0, 0, 0],
@@ -169,11 +169,11 @@ def pyquil_custom() -> Program:
     # gate_definition = DefGate('CRX', crx, [theta])
     # CRX = gate_definition.get_constructor()
     # program += gate_definition
-    # program += CRX(np.pi/2)(0, 1)
+    # program += CRX(theta)(0, 1)
 
     """parameterized pyquil circuit"""
-    theta = Parameter("θ")
-    program += RY(theta, 0)
+    # theta = Parameter("θ")
+    # program += RY(theta, 0)
 
     """meausrements"""
     # program += MEASURE(0, ro[0])
