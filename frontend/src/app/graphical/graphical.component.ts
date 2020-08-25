@@ -4,6 +4,7 @@ import { Operation, operationList, OperationIndex } from '../services/Operation'
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { HttpService } from '../services/http.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-graphical',
@@ -11,6 +12,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./graphical.component.scss']
 })
 export class GraphicalComponent implements OnInit {
+  public depth = {
+    "q_depth": 0,
+    "q_gate_times": 0,
+    "q_two_qubit": 0,
+    "r_depth": 0,
+    "r_gate_times": 0,
+    "r_two_qubit": 0
+  };
+
   public operationList: Operation[] = operationList;;
   public counts = [];
 
@@ -119,5 +129,24 @@ export class GraphicalComponent implements OnInit {
 
   async analyse() {
     this.showInformation();
+    let object = {
+      "circuit": this.data.getCircuit("internal")
+    }
+    let counts: string = await this.http.callBackend(object, "depth")
+    let depthObject = JSON.parse(counts)
+    if (depthObject) {
+      console.log(this.depth)
+      this.depth = depthObject;
+      console.log(this.depth)
+    }
+  }
+
+  tabClick(event: MatTabChangeEvent) {
+    let index = event.index;
+    if (index == 1) {
+      this.simulate()
+    } else if (index == 2) {
+      this.analyse();
+    }
   }
 }
