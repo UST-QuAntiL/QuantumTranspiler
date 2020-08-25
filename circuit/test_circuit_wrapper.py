@@ -59,14 +59,15 @@ class TestCircuitWrapper:
         # wrapper.unroll(["rz", "rx", "cz"])
         # wrapper.unroll(["rx", "cz"])
 
-    def test_analysis(self):
-        wrapper = CircuitWrapper(qiskit_circuit=grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)"))
+    def test_analysis(self):       
+        wrapper = CircuitWrapper(qiskit_circuit=shor_15())
         print(wrapper.circuit)
         wrapper.unroll_ibm()
+        print(wrapper.circuit)
 
         # print(wrapper.circuit)
-        print(wrapper.depth())
-        print(wrapper.depth_gate_times())
+        # print(wrapper.depth())
+        # print(wrapper.depth_gate_times())
         print(wrapper.depth_two_qubit_gates())
         
 
