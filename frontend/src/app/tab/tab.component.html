@@ -1,0 +1,24 @@
+<mat-tab-group mat-align-tabs="center" mat-stretch-tabs (selectedTabChange)="tabClick($event)">
+    <mat-tab label="Graphical Representation">
+        <ng-template mat-tab-label class="pb-3">
+            <mat-icon class="tab-icon">view_list</mat-icon>
+            Graphical Representation
+        </ng-template>
+        <app-graphical class="tab-content"></app-graphical>
+    </mat-tab>
+
+    <mat-tab label="Simulate">
+        <ng-template mat-tab-label>
+            <mat-icon class="tab-icon" >memory</mat-icon>
+            Simulate
+        </ng-template>
+        <app-simulate #simulate class="tab-content"></app-simulate>
+    </mat-tab>
+    <mat-tab label="Circuit Depth Analysis">
+        <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">analytics</mat-icon>
+            Circuit Depth Analysis
+        </ng-template>
+        <app-analyze #analyze class="tab-content"></app-analyze>
+    </mat-tab>
+</mat-tab-group>

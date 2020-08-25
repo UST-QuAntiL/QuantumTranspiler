@@ -33,6 +33,9 @@ import { UnrollComponent } from './unroll/unroll.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import {MatListModule} from '@angular/material/list';
+import { TabComponent } from './tab/tab.component';
+import { SimulateComponent } from './simulate/simulate.component';
+import { AnalyzeComponent } from './analyze/analyze.component';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -52,7 +55,10 @@ const monacoConfig: NgxMonacoEditorConfig = {
     GraphicalComponent,
     StepperComponent,
     OutputComponent,
-    UnrollComponent
+    UnrollComponent,
+    TabComponent,
+    SimulateComponent,
+    AnalyzeComponent
   ],
   imports: [
     BrowserModule,

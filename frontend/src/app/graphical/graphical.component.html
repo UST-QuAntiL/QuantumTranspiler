@@ -1,46 +1,38 @@
-<mat-tab-group mat-align-tabs="center" mat-stretch-tabs (selectedTabChange)="tabClick($event)">
-    <mat-tab label="Graphical Representation">
-        <ng-template mat-tab-label class="pb-3">
-            <mat-icon class="tab-icon">view_list</mat-icon>
-            Graphical Representation
-        </ng-template>
-        <div cdkDropListGroup class="tab-content">
-            <div class="container-fluid">
+<div cdkDropListGroup class="tab-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div>
+                <h4>Possible Gates</h4>
+                <div cdkDropListSortingDisabled id="gateList" class="row" cdkDropList #gateList="cdkDropList"
+                    [cdkDropListData]="operationList" cdkDropListOrientation="horizontal"
+                    (cdkDropListDropped)="drop($event)">
+                    <div class="col" *ngFor="let item of operationList">
+                        <div class="gate" cdkDrag>
+                            {{item.name}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
+
+            <div *ngFor="let qubit of data.qubitNames; index as qubitIndex">
                 <div class="row">
-                    <div>
-                        <h4>Possible Gates</h4>
-                        <div cdkDropListSortingDisabled id="gateList" class="row" cdkDropList #gateList="cdkDropList"
-                            [cdkDropListData]="operationList" cdkDropListOrientation="horizontal"
+                    <div class="custom-container">
+                        <div class="qubitName">
+                            |{{qubit}}>
+                        </div>
+                        <div [id]="qubit" cdkDropList cdkDropListOrientation="horizontal"
+                            #gateList="cdkDropList" [cdkDropListData]="data.operationsAtBit[0]" class="list"
                             (cdkDropListDropped)="drop($event)">
-                            <div class="col" *ngFor="let item of operationList">
-                                <div class="gate" cdkDrag>
-                                    {{item.name}}
+                            <div class="placeholder"
+                                *ngFor="let operationIndex of data.operationsAtBit[qubitIndex]; index as index">
+                                <div class="box" cdkDrag *ngIf="!operationIndex.placeholder">
+                                    {{operationIndex.operation.name}}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
-
-                    <div *ngFor="let qubit of data.qubitNames; index as qubitIndex">
-                        <div class="row">
-                            <div class="custom-container">
-                                <div class="qubitName">
-                                    |{{qubit}}>
-                                </div>
-                                <div [id]="qubit" cdkDropList cdkDropListOrientation="horizontal"
-                                    #gateList="cdkDropList" [cdkDropListData]="data.operationsAtBit[0]" class="list"
-                                    (cdkDropListDropped)="drop($event)">
-                                    <div class="placeholder"
-                                        *ngFor="let operationIndex of data.operationsAtBit[qubitIndex]; index as index">
-                                        <div class="box" cdkDrag *ngIf="!operationIndex.placeholder">
-                                            {{operationIndex.operation.name}}
-                                        </div>
-                                        <div cdkDrag *ngIf="operationIndex.placeholder">
-                                        </div>
-                                    </div>
+                                <div cdkDrag *ngIf="operationIndex.placeholder">
                                 </div>
                             </div>
                         </div>
@@ -48,54 +40,5 @@
                 </div>
             </div>
         </div>
-    </mat-tab>
-
-    <mat-tab label="Simulate">
-        <ng-template mat-tab-label>
-            <mat-icon class="tab-icon" >memory</mat-icon>
-            Simulate
-        </ng-template>
-        <div class="container-fluid" class="tab-content">
-            <div class="chart" *ngIf="counts.length != 0">
-                <mat-divider class="mt-3"></mat-divider>
-                <div class="row pt-3">
-                    <div style="display: block">
-                        <canvas mdbChart [chartType]="chartType" [datasets]="chartDatasets" [labels]="chartLabels"
-                            [colors]="chartColors" [options]="chartOptions" [legend]="true"
-                            (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)">
-                        </canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </mat-tab>
-    <mat-tab label="Circuit Depth Analysis">
-        <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">analytics</mat-icon>
-            Circuit Depth Analysis
-        </ng-template>
-        <div class="container-fluid" class="tab-content">
-                <mat-list class="pl-4 w-75">
-                    <div mat-subheader>Qiskit</div>
-                    <div class="row">
-                        <div class="col" matTooltip="Length of the longest path of the unrolled circuit for IBM QX.">Depth:</div>
-                        <div class="col">{{depth['q_depth']}}</div>
-                        <div class="col" matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for IBM QX.">Two-Qubit Depth:</div>
-                        <div class="col">{{depth['q_two_qubit']}}</div>
-                        <div class="col" matTooltip="Counts the gate times of the unrolled circuit for IBM QX.">Gate Times Depth:</div>
-                        <div class="col">{{depth['q_gate_times']}}</div>
-                    </div>
-                    <mat-divider class="mt-2 mb-2"></mat-divider>
-                    <div mat-subheader>Rigetti</div>
-                    <div class="row">
-                        <div class="col" matTooltip="Length of the longest path of the unrolled circuit for Rigetti architectures..">Depth:</div>
-                        <div class="col">{{depth['r_depth']}}</div>
-                        <div class="col" matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for Rigetti architectures.">Two Qubit Depth:</div>
-                        <div class="col">{{depth['r_two_qubit']}}</div>
-                        <div class="col" matTooltip="Counts the gate times of the unrolled circuit for Rigetti architectures.">Gate Times Depth:</div>
-                        <div class="col">{{depth['r_gate_times']}}</div>
-                    </div>
-                </mat-list>
-        </div>
-    </mat-tab>
-</mat-tab-group>
+    </div>
+</div>

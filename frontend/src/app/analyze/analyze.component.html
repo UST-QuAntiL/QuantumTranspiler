@@ -1,0 +1,23 @@
+<div class="container-fluid" class="tab-content">
+    <mat-list class="pl-4 w-75">
+        <div mat-subheader>Qiskit</div>
+        <div class="row">
+            <div class="col" matTooltip="Length of the longest path of the unrolled circuit for IBM QX.">Depth:</div>
+            <div class="col">{{depth['q_depth']}}</div>
+            <div class="col" matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for IBM QX.">Two-Qubit Depth:</div>
+            <div class="col">{{depth['q_two_qubit']}}</div>
+            <div class="col" matTooltip="Counts the gate times of the unrolled circuit for IBM QX.">Gate Times Depth:</div>
+            <div class="col">{{depth['q_gate_times']}}</div>
+        </div>
+        <mat-divider class="mt-2 mb-2"></mat-divider>
+        <div mat-subheader>Rigetti</div>
+        <div class="row">
+            <div class="col" matTooltip="Length of the longest path of the unrolled circuit for Rigetti architectures..">Depth:</div>
+            <div class="col">{{depth['r_depth']}}</div>
+            <div class="col" matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for Rigetti architectures.">Two Qubit Depth:</div>
+            <div class="col">{{depth['r_two_qubit']}}</div>
+            <div class="col" matTooltip="Counts the gate times of the unrolled circuit for Rigetti architectures.">Gate Times Depth:</div>
+            <div class="col">{{depth['r_gate_times']}}</div>
+        </div>
+    </mat-list>
+</div>
