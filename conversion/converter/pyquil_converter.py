@@ -15,6 +15,7 @@ import qiskit.circuit as qiskit_circuit_library
 from conversion.converter.converter_interface import ConverterInterface
 from typing import Tuple, Dict, List
 import numpy as np
+import warnings
 
 class PyquilConverter(ConverterInterface):  
     name = "pyquil"
@@ -174,8 +175,9 @@ class PyquilConverter(ConverterInterface):
             raise NotImplementedError("Parameter Expressions with unbound parameters are not supported: " + str(parameter))     
 
 
-    def barrier(self):
+    def barrier(self, qubits):
         # no pyquil equivalent
+        warnings.warn("The Barrier operation is skipped in the pyQuil circuit.")
         return
 
     def measure(self, qubit, clbit):

@@ -55,7 +55,7 @@ class ConverterInterface(ABC):
         pass    
 
     @abstractmethod
-    def barrier(self):
+    def barrier(self, qubits):
         pass
 
     @abstractmethod
@@ -63,7 +63,7 @@ class ConverterInterface(ABC):
         pass
 
     @abstractmethod
-    def subcircuit(self):
+    def subcircuit(self, subcircuit, qubits, clbits):
         pass  
 
     @abstractmethod

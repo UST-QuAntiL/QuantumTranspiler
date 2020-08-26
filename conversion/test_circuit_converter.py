@@ -49,10 +49,10 @@ class TestCircuitConverter:
     def test_pyquil_own_export(self):
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
-        program = handler.export_circuit(shor_15())[0]
+        program = handler.export_circuit(qc)[0]
         print(program)
-        latex = to_latex(program)
-        print(latex)
+        # latex = to_latex(program)
+        # print(latex)
     
     def test_pyquil(self):
         converter = PyquilConverter()
@@ -67,5 +67,5 @@ class TestCircuitConverter:
 
 
 if __name__ == "__main__":
-    test= TestCircuitConverter()
-    test.test_pyquil()
+    test= TestCircuitConverter()    
+    test.test_pyquil_own_export()

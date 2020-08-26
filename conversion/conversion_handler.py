@@ -53,7 +53,7 @@ class ConversionHandler:
                 self._handle_gate_export(converter, qiskit_gate, qubits)
 
             elif isinstance(instr[0], qiskit_circuit_library.Barrier):
-                converter.barrier()
+                converter.barrier(qubits)
             elif isinstance(instr[0], qiskit_circuit_library.Measure):
                 qubit = qreg_mapping[instr[1][0]]
                 clbit = creg_mapping[instr[2][0]]
