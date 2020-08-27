@@ -54,11 +54,14 @@ def simulate_circuit(circuit: QuantumCircuit):
     figure.savefig("./test/results/plot.pdf")
 
 if __name__ == "__main__":
-    circuit = qiskit_custom()
-    simulate_circuit(circuit)
-    draw(circuit)
+    qc = QuantumCircuit(2,0)
+    qc.h(1)
+    qc.cz(0,1)
+    qc.h(1)
+    draw(qc)
     # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
     # circuit = bernstein_vazirani_general_qiskit_binary_string("010000110")
     # circuit = iden_circuit(False)
+    # simulate_circuit(circuit)
     # analyze_circuit(circuit)    
 

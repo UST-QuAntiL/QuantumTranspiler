@@ -10,6 +10,7 @@ import numpy as np
 from qiskit.quantum_info.synthesis.two_qubit_decompose import TwoQubitBasisDecomposer
 
 class Unroller(TransformationPass):
+    """ adjusted from the Qiskit Unroller class """
     def __init__(self, basis):
         """Unroller initializer.
 

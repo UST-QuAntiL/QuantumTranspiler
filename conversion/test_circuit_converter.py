@@ -1,3 +1,4 @@
+from qiskit.circuit.library.standard_gates.x import CXGate, XGate
 from conversion.conversion_handler import ConversionHandler
 from circuit.qiskit_utility import show_figure
 from qiskit import QuantumCircuit
@@ -69,3 +70,4 @@ class TestCircuitConverter:
 if __name__ == "__main__":
     test= TestCircuitConverter()    
     test.test_pyquil_own_export()
+    XGate
