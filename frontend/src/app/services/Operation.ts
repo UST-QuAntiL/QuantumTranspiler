@@ -3,8 +3,9 @@ export class Operation {
     numberOfParameter: number;
     numberOfQubits: number;
     numberOfClbits: number;
+    numberOfCtrlBits: number;
 
-    constructor(name, numberOfQubits = 1, numberOfParameter = 0, numberOfClbits = 0) {
+    constructor(name, numberOfQubits = 1, numberOfParameter = 0, numberOfClbits = 0, numberOfCtrlBits = 0) {
         this.name = name;
         this.numberOfParameter = numberOfParameter;
         this.numberOfQubits = numberOfQubits;
@@ -15,6 +16,7 @@ export class Operation {
 
 export class OperationIndex {
     placeholder: boolean;
+    control: boolean;
     index: number;
     operation: Operation;
     parameter: number[];
@@ -22,7 +24,7 @@ export class OperationIndex {
     clbits: number[];
     lineNumbersInCircuit: number[];
 
-    constructor(index, operation, parameter, qubits, clbits, lineNumbersInCircuit, placeholder = false) {
+    constructor(index, operation, parameter, qubits, clbits, lineNumbersInCircuit, placeholder = false, control = false) {
         this.index = index;
         this.operation = operation;
         this.parameter = parameter;
@@ -30,7 +32,7 @@ export class OperationIndex {
         this.clbits = clbits;
         this.lineNumbersInCircuit = lineNumbersInCircuit;
         this.placeholder = placeholder;
-    
+        this.control = control;    
     }
 }
 
@@ -38,8 +40,8 @@ export class OperationIndex {
 const H = new Operation("H")
 const X = new Operation("X")
 const Y = new Operation("Y")
-const CX = new Operation("CX", 2)
-const CU1 = new Operation("CU1", 2)
+const CX = new Operation("CX", 2, 0, 0, 1)
+const CU1 = new Operation("CU1", 2, 0, 0, 1)
 
 // other instructions
 const BARRIER = new Operation("Barrier", -1)

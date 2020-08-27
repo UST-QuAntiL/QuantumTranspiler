@@ -23,8 +23,8 @@ gate_mapping = {
     "U1": {"qiskit": {"g": qiskit.U1Gate}, "pyquil": {"g": pyquil.PHASE}},
     "U2": {"qiskit": {"g": qiskit.U2Gate}, "pyquil": {"r": pyquil_replacement.u2_replacement}}, 
     "U3": {"qiskit": {"g": qiskit.U3Gate}, "pyquil": {"r": pyquil_replacement.u3_replacement}},  
-    "Sdg": {"qiskit": {"g": qiskit.SdgGate}, "pyquil": {"r": pyquil_replacement.sdg_replacement}},
-    "Tdg": {"qiskit": {"g": qiskit.TdgGate}, "pyquil": {"r": pyquil_replacement.tdg_replacement}},
+    "Sdg": {"qiskit": {"g": qiskit.SdgGate}, "pyquil": {"r": pyquil_replacement.sdg_replacement}, "matrix": qiskit.SdgGate.to_matrix()},
+    "Tdg": {"qiskit": {"g": qiskit.TdgGate}, "pyquil": {"r": pyquil_replacement.tdg_replacement}, "matrix": qiskit.TdgGate.to_matrix()},
     # multi 
     "CX": {"qiskit": {"g": qiskit.CXGate}, "pyquil": {"g": pyquil.CNOT}, "matrix": qiskit.CXGate().to_matrix()},
     # CZ matrix not defined in qiskit
@@ -38,8 +38,6 @@ gate_mapping = {
     "SWAP": {"qiskit": {"g": qiskit.SwapGate}, "pyquil": {"g": pyquil.SWAP}, "matrix": qiskit.SwapGate().to_matrix()},
     # multi - parameterized 
     "ISWAP": {"qiskit": {"g": qiskit.iSwapGate}, "pyquil": {"g": pyquil.ISWAP}},  
-    # quantastica uses crz, pytket uses cu1, they are not equal according to IBM unitarygate equ tho, cu1 == cphase, but crz != cphase, pennylane does not support CU1 at all
-    # according to https://qiskit.org/documentation/stubs/qiskit.circuit.library.CU1Gate.html the relative phase of cu1 != cphase and therefore cphase is wrong in this context
     "CU1": {"qiskit": {"g": qiskit.CU1Gate}, "pyquil": {"g": pyquil.CPHASE}},  
     "CPHASE00": {"qiskit": {"r": qiskit_replacement.cphase00_replacement}, "pyquil": {"g": pyquil.CPHASE00}}, 
     "CPHASE01": {"qiskit": {"r": qiskit_replacement.cphase01_replacement}, "pyquil": {"g": pyquil.CPHASE01}}, 
@@ -49,10 +47,7 @@ gate_mapping = {
     # unnecessary with controlled modifier (for pyquil)
     # "CRX": {"qiskit": {"g": qiskit.CRXGate}, "pyquil": {"r": pyquil_replacement.crx_replacement}},
     # "C3X": {"qiskit": {"g": qiskit.C3XGate}, "pyquil": {"r": pyquil_replacement.c3x_replacement}},
-    # "C4XGate": {"qiskit": qiskit.C3XGate, "pyquil": (), "matrix": []}
-
-    # TODO gates from https://qiskit.org/documentation/apidoc/circuit_library.html?highlight=circuit%20library
-    
+    # "C4XGate": {"qiskit": qiskit.C3XGate, "pyquil": (), "matrix": []}    
 }
 
 gate_mapping_qiskit = {}

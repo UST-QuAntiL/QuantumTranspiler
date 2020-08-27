@@ -141,7 +141,7 @@ qc.measure(2, 2)`,
         let lineSplitted = lineTrimmed.split("(");
         let operationString = lineSplitted[0];
         let parameters = lineSplitted[1].replace(")", "").split(",");
-        let operation = operationMap[operationString];
+        let operation: Operation = operationMap[operationString];
 
         let paramsWithoutBits = []
         let qubits = []
@@ -184,7 +184,9 @@ qc.measure(2, 2)`,
         let operationIndex = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers)
         let placeholder = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers, true)
         // fill operations at index
-        qubits.forEach(qubit => {
+        let numCtrlBits = operation.numberOfQubits
+        qubits.forEach((qubit, index) => {
+          console.log(index)
           if (lastIndex > operationsAtBit[qubit].length - 1) {
             for (let i = operationsAtBit[qubit].length; i <= lastIndex; i++) {
               operationsAtBit[qubit].push(placeholder)
