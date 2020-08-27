@@ -2,6 +2,7 @@
 
 
 
+from qiskit.circuit.library.standard_gates.z import CZGate
 from examples.custom_circuits import iden_circuit, qiskit_custom
 from qiskit.aqua.quantum_instance import QuantumInstance
 from qiskit.compiler.assemble import assemble
@@ -54,9 +55,9 @@ def simulate_circuit(circuit: QuantumCircuit):
     figure.savefig("./test/results/plot.pdf")
 
 if __name__ == "__main__":
-    qc = QuantumCircuit(2,0)
+    qc = QuantumCircuit(2)
     qc.h(1)
-    qc.cz(0,1)
+    qc.cx(0,1)
     qc.h(1)
     draw(qc)
     # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
