@@ -33,6 +33,9 @@ def check_matrix_equality(self, matrix1: np.array, matrix2: np.array) -> bool:
     return matrix_equal(matrix1, matrix2, ignore_phase=True)
 
 gate_times: Dict[str, int] = {
+    "id": 0,
+    "i": 0,
+    
     "u1": 0,
     "u2": 1,
     "u3": 2,
