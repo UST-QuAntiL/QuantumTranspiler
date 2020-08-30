@@ -36,6 +36,7 @@ import {MatListModule} from '@angular/material/list';
 import { TabComponent } from './tab/tab.component';
 import { SimulateComponent } from './simulate/simulate.component';
 import { AnalyzeComponent } from './analyze/analyze.component';
+import { GateEditComponent } from './gate-edit/gate-edit.component';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -58,7 +59,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     UnrollComponent,
     TabComponent,
     SimulateComponent,
-    AnalyzeComponent
+    AnalyzeComponent,
+    GateEditComponent
   ],
   imports: [
     BrowserModule,

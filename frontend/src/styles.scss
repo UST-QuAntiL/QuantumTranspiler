@@ -1,4 +1,5 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap');
 
 /* You can add global styles to this file, and also import other style files */
 html, body { height: 100%; }
@@ -31,4 +32,19 @@ a:hover {
 
 .mat-tooltip {
     white-space: pre-line;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.myLineDecoration {
+	background: lightblue;
+	width: 5px !important;
+	margin-left: 3px;
 }

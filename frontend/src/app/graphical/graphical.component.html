@@ -26,19 +26,24 @@
                         <div class="qubitName">
                             |{{qubit}}>
                         </div>
-                        <div [id]="qubit" cdkDropList cdkDropListOrientation="horizontal"
-                            #gateList="cdkDropList" [cdkDropListData]="data.operationsAtBit[0]" class="list"
+                        <div [id]="qubit" cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList"
+                            [cdkDropListData]="data.operationsAtBit[0]" class="list"
                             (cdkDropListDropped)="drop($event)">
                             <div class="placeholder"
                                 *ngFor="let operationIndex of data.operationsAtBit[qubitIndex]; index as index">
-                                <div id="{{qubitIndex}}-{{index}}" class="box" cdkDrag *ngIf="(!operationIndex.placeholder && !operationIndex.control)" matTooltip="{{getTooltip(operationIndex)}}">
-                                    <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit</mat-icon>
+                                <div id="{{qubitIndex}}-{{index}}" class="box" cdkDrag (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
+                                    *ngIf="(!operationIndex.placeholder && !operationIndex.control)"
+                                    matTooltip="{{getTooltip(operationIndex)}}">
+                                    <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
+                                    </mat-icon>
                                     {{operationIndex.operation.name}}
                                 </div>
                                 <div class="box emptyBox" *ngIf="operationIndex.placeholder">
                                 </div>
-                                <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" matTooltip="{{getTooltip(operationIndex)}}">
-                                    <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit</mat-icon>
+                                <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
+                                    matTooltip="{{getTooltip(operationIndex)}}">
+                                    <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
+                                    </mat-icon>
                                     <div class="controlBox"></div>
                                 </div>
                             </div>
@@ -46,7 +51,11 @@
                     </div>
                 </div>
             </div>
-           
+            <div *ngIf="isGateSelected">
+                <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
+                <app-gate-edit [gate]="selectedGate"></app-gate-edit>
+            </div>
+
 
         </div>
     </div>

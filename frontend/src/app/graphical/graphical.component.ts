@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DOCUMENT } from '@angular/common';
 import { ConnectorAttributes, delay } from '../services/Utility'
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-graphical',
@@ -16,6 +17,9 @@ import { ConnectorAttributes, delay } from '../services/Utility'
 export class GraphicalComponent implements OnInit, AfterViewInit {
   public operationList: Operation[] = operationList;;
   public lineList: ConnectorAttributes[] = [];
+  public isGateSelected: boolean = false;
+  public selectedGate: OperationIndex;  
+  public oldSelectedGate: OperationIndex;
 
   constructor(public data: DataService, private http: HttpService, private _elementRef: ElementRef, private snackbar: MatSnackBar, @Inject(DOCUMENT) document, private cdRef: ChangeDetectorRef) {
   }
@@ -112,9 +116,25 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   }
 
   edit(operationIndex: OperationIndex) {
-    console.log("")
+    this.oldSelectedGate = operationIndex;
+    this.showGate(operationIndex)
   }
 
-  
+  onMouseEnter(operationIndex: OperationIndex) {
+    if (!this.oldSelectedGate) {
+      this.showGate(operationIndex);
+    }
+  }
 
+  showGate(operationIndex: OperationIndex) {
+    this.data.highlightLines.next(operationIndex.lineNumbersInCircuit)
+    this.selectedGate = operationIndex;
+    this.isGateSelected = true;
+  }
+
+  onMouseLeave() {
+    if (this.oldSelectedGate) {
+      this.showGate(this.oldSelectedGate);
+    }  
+  }
 }

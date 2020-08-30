@@ -11,6 +11,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class DataService {
   public circuitChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public highlightLines: BehaviorSubject<number[]> = new BehaviorSubject([]);
 
   public options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"];
   public inputFormat: string = "";

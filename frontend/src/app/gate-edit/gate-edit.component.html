@@ -1,0 +1,22 @@
+<h4>{{gate.operation.name}} Gate</h4>
+<div class="pl-4 row matList">
+    <div class="col-4">
+        <div mat-subheader>Control Qubits</div>
+        <div class="col" *ngFor="let qubit of gate.qubits; index as index">
+            <input *ngIf="(index < gate.operation.numberOfCtrlBits)" [ngModel]="qubit">
+        </div>
+
+    </div>
+    <div class="col">
+        <div mat-subheader>Target Qubits</div>
+        <div class="col" *ngFor="let qubit of gate.qubits; index as index">
+            <input *ngIf="(index < gate.operation.numberOfCtrlBits)" [ngModel]="qubit">
+        </div>
+    </div>
+    <div class="col">
+        <div mat-subheader>Parameter</div>
+        <div class="col" *ngFor="let parameter of gate.parameter; index as index">
+            <input [ngModel]="parameter">
+        </div>
+    </div>
+</div>
