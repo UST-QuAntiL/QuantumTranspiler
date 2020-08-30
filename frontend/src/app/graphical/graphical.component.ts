@@ -111,6 +111,10 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     return styles;
   }
 
+  edit(operationIndex: OperationIndex) {
+    console.log("")
+  }
+
   
 
 }

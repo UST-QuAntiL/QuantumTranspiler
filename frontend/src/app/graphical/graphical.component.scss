@@ -72,6 +72,7 @@
   cursor: move;
   box-sizing: border-box;
   flex-direction: row;
+  position: relative;
 }
 
 .emptyBox {
@@ -83,11 +84,28 @@
   width: 15px;
   border-radius: 50%;
   background: black;
-  position: relative;
+  position: absolute;
   top: 16px;
   left: 16px;
   z-index: 2;
 }
+
+.editBox {
+  position: absolute;  
+  right: 2px;
+  top: 2px;
+  width: 15px;
+  height: 15px;
+  padding: 0px;
+  margin: 0px;
+  font-size: 15px;
+  display: none;
+}
+
+.box:hover .editBox {
+  display: block;
+}
+
 
 .connector {
   position: fixed;
