@@ -17,6 +17,8 @@
 
 
             <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
+            <div *ngFor="let line of lineList" class="connector" [ngStyle]="setStyle(line)"></div>
+            <!-- <svg class="connector" width="" height="" *ngFor="let line of lineList"><line x1="line[xLeft]" y1="50" x2="350" y2="50" stroke="red"/></svg> -->
 
             <div *ngFor="let qubit of data.qubitNames; index as qubitIndex">
                 <div class="row">
@@ -29,16 +31,21 @@
                             (cdkDropListDropped)="drop($event)">
                             <div class="placeholder"
                                 *ngFor="let operationIndex of data.operationsAtBit[qubitIndex]; index as index">
-                                <div class="box" cdkDrag *ngIf="!operationIndex.placeholder">
+                                <div id="{{qubitIndex}}-{{index}}" class="box" cdkDrag *ngIf="(!operationIndex.placeholder && !operationIndex.control)" matTooltip="{{getTooltip(operationIndex)}}">
                                     {{operationIndex.operation.name}}
                                 </div>
-                                <div cdkDrag *ngIf="operationIndex.placeholder">
+                                <div class="box emptyBox" *ngIf="operationIndex.placeholder">
+                                </div>
+                                <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" matTooltip="{{getTooltip(operationIndex)}}">
+                                    <div class="controlBox"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+           
+
         </div>
     </div>
 </div>

@@ -14,6 +14,11 @@ from qiskit.providers.ibmq import IBMQ, least_busy
 from examples.planqk_examples import bernstein_vazirani_general_qiskit_binary_string, bernstein_vazirani_general_qiskit_integer
 from qiskit.circuit.quantumcircuit import QuantumCircuit
 from qiskit.visualization import plot_histogram
+# optimizing algorithms:
+# from qiskit.optimization.algorithms
+# decompose algorithms:
+# from qiskit.extensions.unitary import UnitaryGate
+# from qiskit.quantum_info.synthesis
 
 def run_circuit(circuit: QuantumCircuit):
     """account must be saved first: https://quantum-computing.ibm.com/"""
@@ -56,6 +61,14 @@ def simulate_circuit(circuit: QuantumCircuit):
 
 if __name__ == "__main__":
     qc = QuantumCircuit(2)
+    qc.cnot(0,1)
+    qc.h(0)
+    qc.h(1)
+    qc.cnot(0,1)
+    qc.h(0)
+    qc.h(1)
+    qc.cnot(0,1)
+    draw(qc)
     # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
     # circuit = bernstein_vazirani_general_qiskit_binary_string("010000110")
     # circuit = iden_circuit(False)

@@ -10,6 +10,7 @@ export class Operation {
         this.numberOfParameter = numberOfParameter;
         this.numberOfQubits = numberOfQubits;
         this.numberOfClbits = numberOfClbits;
+        this.numberOfCtrlBits = numberOfCtrlBits;
     }
 }
 
@@ -41,7 +42,7 @@ const H = new Operation("H")
 const X = new Operation("X")
 const Y = new Operation("Y")
 const CX = new Operation("CX", 2, 0, 0, 1)
-const CU1 = new Operation("CU1", 2, 0, 0, 1)
+const CU1 = new Operation("CU1", 2, 1, 0, 1)
 
 // other instructions
 const BARRIER = new Operation("Barrier", -1)

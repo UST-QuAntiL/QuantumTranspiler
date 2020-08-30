@@ -16,7 +16,7 @@
 
 .qubitName {
   position: absolute;
-  top: 27%;
+  top: 15px;
   left: 0px;
   background-color: white;
   z-index: 1;
@@ -43,13 +43,19 @@
 
 .custom-container:after {
   position: absolute;
-  top: 45%;
+  top: 25px;
   height: 1px;
   background: $dark;
   content: "";
   width: 100%;
   display: block;
   z-index: 0;
+}
+
+.placeholder {
+  width: 60px;
+  height: 60px;
+  z-index: 1;
 }
 
 .box {
@@ -68,11 +74,30 @@
   flex-direction: row;
 }
 
-.placeholder {
-  width: 60px;
-  height: 60px;
+.emptyBox {
+  display: none !important;
+}
+
+.controlBox {
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: black;
+  position: relative;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+}
+
+.connector {
+  position: fixed;
+  background-image: linear-gradient(to bottom right, blue, lightblue);
+  opacity: 30%;
   z-index: 1;
 }
+
+
+
 
 .cdk-drag-preview {
   box-sizing: border-box;

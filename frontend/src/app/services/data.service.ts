@@ -3,12 +3,15 @@ import { Operation, operationMap, OperationIndex } from './Operation';
 import { MatSelectChange } from '@angular/material/select';
 import { element } from 'protractor';
 import { HttpService } from './http.service';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
+  public circuitChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   public options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"];
   public inputFormat: string = "";
   public exportFormat: string = "";
@@ -182,17 +185,23 @@ qc.measure(2, 2)`,
         })
         let lineNumbers = [lineNumber]
         let operationIndex = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers)
+        let operationIndexControl = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers, false, true)
         let placeholder = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers, true)
         // fill operations at index
-        let numCtrlBits = operation.numberOfQubits
+        let numCtrlBits = operation.numberOfCtrlBits;
         qubits.forEach((qubit, index) => {
-          console.log(index)
           if (lastIndex > operationsAtBit[qubit].length - 1) {
             for (let i = operationsAtBit[qubit].length; i <= lastIndex; i++) {
               operationsAtBit[qubit].push(placeholder)
             }
           }
-          operationsAtBit[qubit][lastIndex] = operationIndex;
+          // control qubit
+          if (numCtrlBits > index) {
+            operationsAtBit[qubit][lastIndex] = operationIndexControl;
+          // target qubit
+          } else {
+            operationsAtBit[qubit][lastIndex] = operationIndex;
+          }    
         })
       }
     })
@@ -208,6 +217,9 @@ qc.measure(2, 2)`,
     this.currentIndexCl = currentIndexCl;
     this.operationsAtBit = operationsAtBit;
     this.firstOperationAt = firstOperationAt;
+
+    //fire event to notify components
+    this.circuitChanged.next(true);
   }
 
   moveOperation(qubitIndex: number, previousIndex: number, currentIndex: number) {
