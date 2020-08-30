@@ -276,6 +276,14 @@ qc.measure(2, 2)`,
     this.parseCircuit()
   }
 
+  public editOperation(operationIndex: OperationIndex) {
+    let lines = this.circuits["internal"].split('\n');
+    let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];    
+    lines[lineToInsert] = `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`;
+    this.circuits["internal"] = lines.join('\n');
+    this.parseCircuit()
+  }
+
 
   private generateStringFromArguments(operationIndex: OperationIndex): string {
     let string = "";

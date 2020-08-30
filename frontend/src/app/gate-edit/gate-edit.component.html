@@ -1,22 +1,28 @@
 <h4>{{gate.operation.name}} Gate</h4>
 <div class="pl-4 row matList">
-    <div class="col-4">
+    <div class="col-3">
         <div mat-subheader>Control Qubits</div>
         <div class="col" *ngFor="let qubit of gate.qubits; index as index">
-            <input *ngIf="(index < gate.operation.numberOfCtrlBits)" [ngModel]="qubit">
+            <input *ngIf="(index < gate.operation.numberOfCtrlBits)" [ngModel]="qubit" (ngModelChange)="editedQubit(index, $event)">
         </div>
 
     </div>
-    <div class="col">
+    <div class="col-3">
         <div mat-subheader>Target Qubits</div>
         <div class="col" *ngFor="let qubit of gate.qubits; index as index">
-            <input *ngIf="(index < gate.operation.numberOfCtrlBits)" [ngModel]="qubit">
+            <input *ngIf="(index >= gate.operation.numberOfCtrlBits)" [ngModel]="qubit" (ngModelChange)="editedQubit(index, $event)">
         </div>
     </div>
-    <div class="col">
+    <div class="col-3">
+    <div mat-subheader>Classical Bits</div>
+        <div class="col" *ngFor="let clbit of gate.clbits; index as index">
+            <input [ngModel]="clbit" (ngModelChange)="editedClbit(index, $event)">
+        </div>
+    </div>
+    <div class="col-3">
         <div mat-subheader>Parameter</div>
         <div class="col" *ngFor="let parameter of gate.parameter; index as index">
-            <input [ngModel]="parameter">
+            <input [ngModel]="parameter" (ngModelChange)="editedParameter(index, $event)">
         </div>
     </div>
 </div>
