@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Inject, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { DataService } from '../services/data.service';
-import { Operation, operationList, OperationIndex } from '../services/Operation';
+import { Operation, operationList, OperationIndex, operationMap } from '../services/Operation';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { HttpService } from '../services/http.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -37,7 +37,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   }
 
   drop(event: CdkDragDrop<OperationIndex[]>) {
-    // change position of element
+    // change position of gate
     if (event.previousContainer === event.container) {
       if ((event.container.id === "gateList") || event.previousIndex == event.currentIndex) {
         console.log(event.previousIndex)
@@ -47,13 +47,20 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
       this.data.moveOperation(qubitIndex, event.previousIndex, event.currentIndex);
 
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      // remove element
+    // remove gate
     } else if (event.container.id === "gateList") {
       let id: string = event.item.element.nativeElement.id;
       let indices = id.split("-");
       let qubitIndex = parseInt(indices[0])
       let index = parseInt(indices[1])
       this.data.removeOperationAtIndex(index, qubitIndex)
+    // add new gate
+    } else if (event.previousContainer.id === "gateList") {
+      let qubitIndex: number = parseInt(event.container.id);
+      console.log(event)
+      let operation: Operation = operationMap[event.item.element.nativeElement.id.toLowerCase()]          
+      this.data.addOperation(operation, event.currentIndex, qubitIndex)
+      
     } else {
       // transferArrayItem(event.previousContainer.data,
       //   event.container.data,

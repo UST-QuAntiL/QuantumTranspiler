@@ -1,4 +1,4 @@
-<div cdkDropListGroup class="tab-content">
+<div cdkDropListGroup cdkDropListOrientation="horizontal" class="tab-content">
     <div class="container-fluid">
         <div class="row">
             <div>
@@ -7,7 +7,7 @@
                     [cdkDropListData]="operationList" cdkDropListOrientation="horizontal"
                     (cdkDropListDropped)="drop($event)">
                     <div class="col" *ngFor="let item of operationList">
-                        <div class="gate" cdkDrag>
+                        <div class="gate" id="{{item.name}}" cdkDrag>
                             {{item.name}}
                         </div>
                     </div>

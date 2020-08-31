@@ -74,6 +74,7 @@ qc.measure(2, 2)`,
 
   public operationsAtBit: OperationIndex[][] = [];
   public firstOperationAt: number = 0;
+  public numberOfLines: number = 0;
 
   constructor() {
     this.parseCircuit()
@@ -114,6 +115,7 @@ qc.measure(2, 2)`,
     let firstOperationAt = -1;
     let circuit = this.circuits["internal"]
     let arrayOfLines = circuit.split("\n");
+    let numberOfLines = arrayOfLines.length
     arrayOfLines.forEach((line, lineNumber) => {
       if (line.includes("QuantumCircuit")) {
         let afterBracket = line.split("(")[1].replace(")", "");
@@ -219,8 +221,9 @@ qc.measure(2, 2)`,
     this.currentIndexCl = currentIndexCl;
     this.operationsAtBit = operationsAtBit;
     this.firstOperationAt = firstOperationAt;
+    this.numberOfLines = numberOfLines;
 
-    //fire event to notify components
+    // fire event to notify components
     this.circuitChanged.next(true);
   }
 
@@ -252,8 +255,7 @@ qc.measure(2, 2)`,
     if (lineNumbersRemove[0] < lineToInsert) {
       lineToInsert -= lineNumbersRemove.length
     }
-    // lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
-    lines = insert(lines, lineToInsert, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
+    lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
   }
@@ -274,16 +276,35 @@ qc.measure(2, 2)`,
 
   }
 
-  addOperation(operationIndex: OperationIndex, index: number, qubitIndex: number) {
+  addOperation(operation: Operation, index: number, qubitIndex: number) {
+    let line = this.getLinesToInsert(index, qubitIndex)
+    let parameter = []
+      for (let i = 0; i < operation.numberOfParameter; i++) {
+        parameter.push(0)
+      }
+    let operationIndex: OperationIndex = new OperationIndex(index , operation, parameter, [qubitIndex], [], [line])
+    this.addOperationIndex(operationIndex)
+  }
+
+  addOperationIndex(operationIndex: OperationIndex) {
     let lines = this.circuits["internal"].split('\n');
-    let lineToInsert: number = this.firstOperationAt;
-    if (this.operationsAtBit[qubitIndex].length > 0) {
-      let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
-      lineToInsert = lineNumbersInCircuit[0];
-    }
-    lines.splice(lineToInsert + 1, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
+    let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];    
+    lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
+  }
+
+  private getLinesToInsert(index: number, qubitIndex: number): number {
+    let lineToInsert: number = this.firstOperationAt;
+    if (index < this.operationsAtBit[qubitIndex].length ) {
+      console.log(this.operationsAtBit[qubitIndex][index])
+      let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
+      lineToInsert = lineNumbersInCircuit[0]
+    } else {
+      lineToInsert = this.numberOfLines
+    }  
+    console.log(lineToInsert)
+    return lineToInsert
   }
 
   public editOperation(operationIndex: OperationIndex) {
