@@ -4,6 +4,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { element } from 'protractor';
 import { HttpService } from './http.service';
 import { BehaviorSubject } from 'rxjs';
+import { insert } from './Utility';
 
 
 @Injectable({
@@ -227,10 +228,12 @@ qc.measure(2, 2)`,
     let operationIndex = this.operationsAtBit[qubitIndex][previousIndex];
     // remove
     let lineNumbersRemove = operationIndex.lineNumbersInCircuit;
+    // console.log(lineNumbersRemove)
     let lines = this.circuits["internal"].split('\n');
 
     lineNumbersRemove.forEach(lineNumber => {
       lines.splice(lineNumber, 1);
+      // delete lines[lineNumber]
     })
     
     // add
@@ -244,13 +247,13 @@ qc.measure(2, 2)`,
       } else {
         lineToInsert = lineNumbersInCircuit[0]
       }
-    }
-
-
+    }  
+    
     if (lineNumbersRemove[0] < lineToInsert) {
       lineToInsert -= lineNumbersRemove.length
     }
-    lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
+    // lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
+    lines = insert(lines, lineToInsert, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
   }

@@ -40,6 +40,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     // change position of element
     if (event.previousContainer === event.container) {
       if ((event.container.id === "gateList") || event.previousIndex == event.currentIndex) {
+        console.log(event.previousIndex)
         return;
       }
       let qubitIndex: number = parseInt(event.container.id);
