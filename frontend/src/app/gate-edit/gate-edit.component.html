@@ -10,7 +10,7 @@
     <div class="col-3">
         <div mat-subheader>Target Qubits</div>
         <div class="col" *ngFor="let qubit of gate.qubits; index as index">
-            <input matInput type="number" *ngIf="(index >= gate.operation.numberOfCtrlBits)" [ngModel]="gate.qubits[index]" (ngModelChange)="change()">
+            <input matInput type="number" *ngIf="(index >= gate.operation.numberOfCtrlBits)" [(ngModel)]="gate.qubits[index]" (ngModelChange)="change()">
         </div>
     </div>
     <div class="col-3">
