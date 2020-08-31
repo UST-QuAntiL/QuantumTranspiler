@@ -253,15 +253,20 @@ qc.measure(2, 2)`,
     this.parseCircuit()
   }
 
-  removeOperation(index: number, qubitIndex: number) {
-    let operation = this.operationsAtBit[qubitIndex][index];
-    let lineNumbers = operation.lineNumbersInCircuit;
+  removeOperationAtIndex(index: number, qubitIndex: number) {
+    let operationIndex = this.operationsAtBit[qubitIndex][index];
+    this.removeOperation(operationIndex);
+  }
+
+  removeOperation(operationIndex: OperationIndex) {
+    let lineNumbers = operationIndex.lineNumbersInCircuit;
     let lines = this.circuits["internal"].split('\n');
     lineNumbers.forEach(lineNumber => {
       lines.splice(lineNumber, 1);
     })
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
+
   }
 
   addOperation(operationIndex: OperationIndex, index: number, qubitIndex: number) {

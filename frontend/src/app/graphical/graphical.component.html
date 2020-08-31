@@ -33,7 +33,8 @@
                                 *ngFor="let operationIndex of data.operationsAtBit[qubitIndex]; index as index">
                                 <div id="{{qubitIndex}}-{{index}}" class="box" cdkDrag (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
                                     *ngIf="(!operationIndex.placeholder && !operationIndex.control)"
-                                    matTooltip="{{getTooltip(operationIndex)}}">
+                                    matTooltip="{{getTooltip(operationIndex)}}"
+                                    >
                                     <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
                                     </mat-icon>
                                     {{operationIndex.operation.name}}

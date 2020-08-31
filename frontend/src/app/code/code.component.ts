@@ -30,6 +30,11 @@ export class CodeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+  }
+
+  onInit(editor) {
+    this.editor = editor;
     if (this.circuitRef === "internal") {
       this.data.highlightLines.subscribe((lines: number[]) => {        
         if (lines.length > 0) {        
@@ -39,10 +44,6 @@ export class CodeComponent implements OnInit {
         }
       })
     }
-  }
-
-  onInit(editor) {
-    this.editor = editor;
   }
 
   ngAfterViewInit(): void {
