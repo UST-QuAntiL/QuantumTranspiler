@@ -1,9 +1,13 @@
+<form [formGroup]="form">
 <mat-nav-list>
     <div mat-list-item>
         <span mat-line mat-subheader *ngIf="qubits.length > 0">Qubits</span>
         <div class="row">
             <mat-form-field class="col" appearance="outline" *ngFor="let qubit of qubits; index as index; trackBy: trackByFn">
-                <input type="number" matInput placeholder="Qubit {{index}}" [(ngModel)]="qubits[index]">
+                <input type="number" matInput placeholder="Qubit {{index}}" [(ngModel)]="qubits[index]" formControlName="{{index}}">
+                <!-- <mat-error *ngIf="signInForm.hasError('email', 'emailSignIn')">
+                    Bitte geben Sie eine valide E-Mail Adresse ein.
+                  </mat-error> -->
             </mat-form-field>
         </div>
     </div>
@@ -12,7 +16,7 @@
         <span mat-line mat-subheader *ngIf="clbits.length > 0">Classical Bit</span>
         <div class="row">
             <mat-form-field class="col" appearance="outline" *ngFor="let clbit of clbits; index as index; trackBy: trackByFn">
-                <input type="number" matInput placeholder="Classical Bit {{index}}" [(ngModel)]="clbits[index]">
+                <input type="number" matInput placeholder="Classical Bit {{index}}" [(ngModel)]="clbits[index]" formControlName="{{index + qubits.length}}">
             </mat-form-field>
         </div>
     </div>
@@ -21,9 +25,10 @@
         <span mat-line mat-subheader *ngIf="params.length > 0">Parameter</span>
         <div class="row">
             <mat-form-field class="col" appearance="outline" *ngFor="let parameter of params; index as index; trackBy: trackByFn">
-                <input type="number" matInput  placeholder="Parameter {{index}}" [(ngModel)]="params[index]">
+                <input type="number" matInput  placeholder="Parameter {{index}}" [(ngModel)]="params[index]" formControlName="{{index + qubits.length + clbits.length}}">
             </mat-form-field>
         </div>
     </div>
-    <button mat-raised-button color="primary" class="w-100" (click)="valuesSelected($event)">Values selected.</button>
+    <button [disabled]="!form.valid" mat-raised-button color="primary" class="w-100" (click)="valuesSelected($event)">Values selected.</button>
 </mat-nav-list>
+</form>
