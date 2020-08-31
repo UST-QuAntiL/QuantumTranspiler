@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="box emptyBox" *ngIf="operationIndex.placeholder">
                                 </div>
-                                <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
+                                <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" cdkDrag (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
                                     matTooltip="{{getTooltip(operationIndex)}}">
                                     <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
                                     </mat-icon>
