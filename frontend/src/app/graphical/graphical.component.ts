@@ -89,6 +89,9 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
             let line = new ConnectorAttributes()
             operation.qubits.forEach(qubit => {
               let element = document.getElementById(`${qubit}-${index}`)
+              if (element == null) {
+                return;
+              }
               let rects = element.getClientRects()[0]
               let xLeft = rects.x;
               let xRight = rects.x + rects.width;

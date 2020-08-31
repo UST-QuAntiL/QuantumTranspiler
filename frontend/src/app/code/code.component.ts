@@ -10,6 +10,7 @@ import { MonacoEditorModule, NgxEditorModel } from 'ngx-monaco-editor';
 export class CodeComponent implements OnInit {
   @Input() circuitRef: string;
   editor: any;
+  decorations: any[] = [];
 
   editorOptions = {
     theme: 'vs-light', language: 'python', automaticLayout: true, scrollbar: {
@@ -55,11 +56,7 @@ export class CodeComponent implements OnInit {
   
 
   markLine(startLine: number, endLine: number) {
-    let decorations = this.editor.model.getAllDecorations();
-    decorations.forEach(decoration => {
-      this.editor.deltaDecorations([decoration.id], []);
-    });
-    this.editor.deltaDecorations([], [
+    this.decorations = this.editor.deltaDecorations(this.decorations, [
       { range: new monaco.Range(startLine,1,endLine,1), options: { isWholeLine: true, linesDecorationsClassName: 'myLineDecoration' }},
     ]);
   }
