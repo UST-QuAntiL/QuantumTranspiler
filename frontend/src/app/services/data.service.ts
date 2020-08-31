@@ -292,14 +292,14 @@ qc.measure(2, 2)`,
 
   private generateStringFromArguments(operationIndex: OperationIndex): string {
     let string = "";
-    string += this.listToString(operationIndex.qubits)
-    let nextString = this.listToString(operationIndex.clbits)
+    string += this.listToString(operationIndex.parameter)
+    let nextString = this.listToString(operationIndex.qubits)
     if (string != "" && nextString != "") {
       string += ","
     }
     string += nextString;
 
-    nextString = this.listToString(operationIndex.parameter)
+    nextString = this.listToString(operationIndex.clbits)
     if (string != "" && nextString != "") {
       string += ","
     }
