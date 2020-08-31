@@ -228,9 +228,11 @@ qc.measure(2, 2)`,
     // remove
     let lineNumbersRemove = operationIndex.lineNumbersInCircuit;
     let lines = this.circuits["internal"].split('\n');
+
     lineNumbersRemove.forEach(lineNumber => {
       lines.splice(lineNumber, 1);
     })
+    
     // add
     let lineToInsert: number = this.firstOperationAt;
     if (this.operationsAtBit[qubitIndex].length > 0) {

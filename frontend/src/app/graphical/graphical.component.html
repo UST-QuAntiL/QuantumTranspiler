@@ -39,7 +39,7 @@
                                     </mat-icon>
                                     {{operationIndex.operation.name}}
                                 </div>
-                                <div class="box emptyBox" *ngIf="operationIndex.placeholder">
+                                <div class="box emptyBox" cdkDrag *ngIf="operationIndex.placeholder">
                                 </div>
                                 <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" cdkDrag (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
                                     matTooltip="{{getTooltip(operationIndex)}}">
