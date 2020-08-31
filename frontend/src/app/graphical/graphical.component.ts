@@ -8,6 +8,8 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DOCUMENT } from '@angular/common';
 import { ConnectorAttributes, delay } from '../services/Utility'
 import { BehaviorSubject } from 'rxjs';
+import { MatBottomSheetRef, MatBottomSheet } from '@angular/material/bottom-sheet';
+import { BottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
 
 @Component({
   selector: 'app-graphical',
@@ -21,7 +23,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   public selectedGate: OperationIndex;
   public oldSelectedGate: OperationIndex;
 
-  constructor(public data: DataService, private http: HttpService, private _elementRef: ElementRef, private snackbar: MatSnackBar, @Inject(DOCUMENT) document, private cdRef: ChangeDetectorRef) {
+  constructor(public data: DataService, private http: HttpService, private _elementRef: ElementRef, private snackbar: MatSnackBar, @Inject(DOCUMENT) document, private cdRef: ChangeDetectorRef, private _bottomSheet: MatBottomSheet) {
   }
 
   ngOnInit(): void {
@@ -45,28 +47,51 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
       }
       let qubitIndex: number = parseInt(event.container.id);
       this.data.moveOperation(qubitIndex, event.previousIndex, event.currentIndex);
-
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    // remove gate
+      // remove gate
     } else if (event.container.id === "gateList") {
       let id: string = event.item.element.nativeElement.id;
       let indices = id.split("-");
       let qubitIndex = parseInt(indices[0])
       let index = parseInt(indices[1])
       this.data.removeOperationAtIndex(index, qubitIndex)
-    // add new gate
+      // add new gate
     } else if (event.previousContainer.id === "gateList") {
       let qubitIndex: number = parseInt(event.container.id);
-      console.log(event)
-      let operation: Operation = operationMap[event.item.element.nativeElement.id.toLowerCase()]          
-      this.data.addOperation(operation, event.currentIndex, qubitIndex)
+      let operation: Operation = operationMap[event.item.element.nativeElement.id.toLowerCase()]
+      if (operation.numberOfQubits > 1 || operation.numberOfParameter > 0 || operation.numberOfClbits > 0) {
+        this.openBottomSheet(operation, qubitIndex)
+      } else {
+        this.data.addOperation(operation, event.currentIndex, qubitIndex)
+      }
+      return
       
+
     } else {
       // transferArrayItem(event.previousContainer.data,
       //   event.container.data,
       //   event.previousIndex,
       //   event.currentIndex);
     }
+  }
+
+  openBottomSheet(operation: Operation, qubitIndex: number): void {
+    let qubits = [qubitIndex].concat(operation.generateList(operation.numberOfQubits - 1))
+    let params = operation.generateList(operation.numberOfParameter)
+    let clbits = operation.generateList(operation.numberOfClbits)    
+    const bottomSheetRef = this._bottomSheet.open(BottomSheetComponent, {
+      data: { qubits: qubits, params: params, clbits: clbits },
+    });
+
+    bottomSheetRef.afterDismissed().subscribe((data) => {
+      if (data) {
+        let qubits = data.qubits;
+        let params = data.params;
+        let clbits = data.clbits;
+        console.log(data)
+        console.log('Bottom sheet has been dismissed.');
+      }      
+    });
+    
   }
 
   private getLineNumbersIncreasedByOne(operationIndex: OperationIndex) {

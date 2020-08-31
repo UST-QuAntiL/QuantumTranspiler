@@ -37,6 +37,8 @@ import { TabComponent } from './tab/tab.component';
 import { SimulateComponent } from './simulate/simulate.component';
 import { AnalyzeComponent } from './analyze/analyze.component';
 import { GateEditComponent } from './gate-edit/gate-edit.component';
+import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import { BottomSheetComponent } from './bottom-sheet/bottom-sheet.component';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -60,7 +62,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     TabComponent,
     SimulateComponent,
     AnalyzeComponent,
-    GateEditComponent
+    GateEditComponent,
+    BottomSheetComponent
   ],
   imports: [
     BrowserModule,
@@ -86,7 +89,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     DragDropModule,
     MatCheckboxModule,
     MDBBootstrapModule.forRoot(),
-    MatListModule
+    MatListModule,
+    MatBottomSheetModule
 
   ],
   providers: [

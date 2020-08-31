@@ -1,0 +1,29 @@
+<mat-nav-list>
+    <div mat-list-item>
+        <span mat-line mat-subheader *ngIf="qubits.length > 0">Qubits</span>
+        <div class="row">
+            <mat-form-field class="col" appearance="outline" *ngFor="let qubit of qubits; index as index">
+                <input matInput placeholder="Qubit {{index}}" [(ngModel)]="qubits[index]">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div mat-list-item>
+        <span mat-line mat-subheader *ngIf="clbits.length > 0">Classical Bit</span>
+        <div class="row">
+            <mat-form-field class="col" appearance="outline" *ngFor="let qubit of clbits; index as index">
+                <input matInput placeholder="Qubit {{index}}" [(ngModel)]="clbits[index]">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div mat-list-item>
+        <span mat-line mat-subheader *ngIf="params.length > 0">Parameter</span>
+        <div class="row">
+            <mat-form-field class="col" appearance="outline" *ngFor="let parameter of params; index as index">
+                <input matInput placeholder="Qubit {{index}}" [(ngModel)]="params[index]">
+            </mat-form-field>
+        </div>
+    </div>
+    <button mat-raised-button color="primary" class="w-100" (click)="valuesSelected($event)">Values selected.</button>
+</mat-nav-list>

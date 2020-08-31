@@ -12,6 +12,14 @@ export class Operation {
         this.numberOfClbits = numberOfClbits;
         this.numberOfCtrlBits = numberOfCtrlBits;
     }
+
+    generateList(number: number): any[] {
+        let list = []
+        for (let i = 0; i < number; i++) {
+            list.push(null)
+        }
+        return list
+    }
 }
 
 
@@ -23,7 +31,7 @@ export class OperationIndex {
     parameter: number[];
     qubits: number[];
     clbits: number[];
-    lineNumbersInCircuit: number[];
+    lineNumbersInCircuit: number[];    
 
     constructor(index, operation, parameter, qubits, clbits, lineNumbersInCircuit, placeholder = false, control = false) {
         this.index = index;
