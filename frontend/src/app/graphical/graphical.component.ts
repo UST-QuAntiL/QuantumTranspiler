@@ -62,9 +62,9 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
       if (operation.numberOfQubits > 1 || operation.numberOfParameter > 0 || operation.numberOfClbits > 0) {
         this.openBottomSheet(operation, qubitIndex, index)
       } else {
-        let operationIndex: OperationIndex = new OperationIndex(index , operation, [], [qubitIndex], [], [this.data.getLinesToInsert(index, qubitIndex)])
+        let operationIndex: OperationIndex = new OperationIndex(index, operation, [], [qubitIndex], [], [this.data.getLinesToInsert(index, qubitIndex)])
         this.data.addOperationIndex(operationIndex)
-      }     
+      }
 
     } else {
       // transferArrayItem(event.previousContainer.data,
@@ -77,7 +77,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   openBottomSheet(operation: Operation, qubitIndex: number, index: number): void {
     let qubits = [qubitIndex].concat(operation.generateList(operation.numberOfQubits - 1))
     let params = operation.generateList(operation.numberOfParameter)
-    let clbits = operation.generateList(operation.numberOfClbits)    
+    let clbits = operation.generateList(operation.numberOfClbits)
     const bottomSheetRef = this._bottomSheet.open(BottomSheetComponent, {
       data: { qubits: qubits, params: params, clbits: clbits },
     });
@@ -87,11 +87,11 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
         let qubits = data.qubits;
         let params = data.params;
         let clbits = data.clbits;
-        let operationIndex: OperationIndex = new OperationIndex(index , operation, params, qubits, clbits, [this.data.getLinesToInsert(index, qubits[0])]);
+        let operationIndex: OperationIndex = new OperationIndex(index, operation, params, qubits, clbits, [this.data.getLinesToInsert(index, qubits[0])]);
         this.data.addOperationIndex(operationIndex)
-      }      
+      }
     });
-    
+
   }
 
   private getLineNumbersIncreasedByOne(operationIndex: OperationIndex) {
@@ -114,12 +114,13 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   private async computeGateConnections() {
     // hacky solution: without delay the new elements with their new coordinates might not be in the view
     await delay(10)
+
     let lineList: ConnectorAttributes[] = [];
     this.data.operationsAtBit.forEach((operationsAtIndex, qubitIndex) => {
       operationsAtIndex.forEach((operation: OperationIndex, index) => {
         if (!operation.placeholder && !operation.control) {
           if (operation.operation.numberOfQubits > 1) {
-            let line = new ConnectorAttributes()
+            let line = new ConnectorAttributes(false)
             operation.qubits.forEach(qubit => {
               let element = document.getElementById(`${qubit}-${index}`)
               if (element == null) {
@@ -136,26 +137,44 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
               line.setXRight(xRight)
             })
             lineList.push(line)
+          } else if (operation.operation.numberOfClbits > 0) {
+            let line = new ConnectorAttributes(true)
+            let element = document.getElementById(`${operation.qubits[0]}-${index}`)
+            let element2 = document.getElementById(`${operation.clbits[0] + this.data.qubitNames.length}-${index}`)
+            if (element == null || element2 == null) {
+              return;
+            }
+            let rects = element.getClientRects()[0]
+            let rects2 = element2.getClientRects()[0]
+            line.setYTop(rects.y)
+            line.setYBot(rects2.y + rects2.height)
+            line.setYLeft(rects.x)
+            line.setXRight(rects.x + rects.width)
+            lineList.push(line)
           }
         }
 
       })
     })
     this.lineList = lineList;
-    this.cdRef.detectChanges()
-
+    this.cdRef.detectChanges();
   }
 
   public setStyle(line: ConnectorAttributes) {
     let styles = {
       'top': line.yTop + "px",
       'left': line.xLeft + "px",
-      // "right": line.xRight,
-      // "bottom": line.yBot,
       "width": line.getWidth() + "px",
-      "height": line.getHeight() + "px",
-      // 'display': 'none'
+      "height": line.getHeight() + "px",      
     };
+
+    if (line.measure) {
+      styles['background-image'] = "linear-gradient(to bottom right, #4b830d, #aee571)"
+      styles['opacity'] = "15%"
+    } else {
+      styles['background-image'] = "linear-gradient(to bottom right, #005cb2, #6ab7ff)"
+    }    
+    
     return styles;
   }
 

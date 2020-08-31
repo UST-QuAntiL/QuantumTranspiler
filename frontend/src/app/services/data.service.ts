@@ -130,7 +130,6 @@ qc.measure(2, 2)`,
           qubitNames.push(i)
         }
 
-        let clbitNames = []
         for (let i = 0; i < numClbits; i++) {
           clbitNames.push(i)
         }
@@ -158,10 +157,10 @@ qc.measure(2, 2)`,
           paramsWithoutBits.push(parameters[i].trim())
         }
         for (let i = operation.numberOfParameter; i < (operation.numberOfParameter + operation.numberOfQubits); i++) {
-          qubits.push(parameters[i].trim())
+          qubits.push(parseInt(parameters[i].trim()))
         }
         for (let i = operation.numberOfParameter + operation.numberOfQubits; i < (operation.numberOfParameter + operation.numberOfQubits + operation.numberOfClbits); i++) {
-          clbits.push(parameters[i].trim())
+          clbits.push(parseInt(parameters[i].trim()))
         }
 
         // compute max index
@@ -194,6 +193,7 @@ qc.measure(2, 2)`,
         let placeholder = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers, true)
         // fill operations at index
         let numCtrlBits = operation.numberOfCtrlBits;
+      
         qubits.forEach((qubit, index) => {
           if (lastIndex > operationsAtBit[qubit].length - 1) {
             for (let i = operationsAtBit[qubit].length; i <= lastIndex; i++) {
@@ -203,10 +203,20 @@ qc.measure(2, 2)`,
           // control qubit
           if (numCtrlBits > index) {
             operationsAtBit[qubit][lastIndex] = operationIndexControl;
-          // target qubit
+            // target qubit
           } else {
             operationsAtBit[qubit][lastIndex] = operationIndex;
-          }    
+          }
+        })
+
+        clbits.forEach((clbit, index) => {
+          clbit = clbit + qubitNames.length
+          if (lastIndex > operationsAtBit[clbit].length - 1) {
+            for (let i = operationsAtBit[clbit].length; i <= lastIndex; i++) {
+              operationsAtBit[clbit].push(placeholder)
+            }
+          }
+          operationsAtBit[clbit][lastIndex] = operationIndex;
         })
       }
     })
@@ -239,7 +249,7 @@ qc.measure(2, 2)`,
       lines.splice(lineNumber, 1);
       // delete lines[lineNumber]
     })
-    
+
     // add
     let lineToInsert: number = this.firstOperationAt;
     if (this.operationsAtBit[qubitIndex].length > 0) {
@@ -251,8 +261,8 @@ qc.measure(2, 2)`,
       } else {
         lineToInsert = lineNumbersInCircuit[0]
       }
-    }  
-    
+    }
+
     if (lineNumbersRemove[0] < lineToInsert) {
       lineToInsert -= lineNumbersRemove.length
     }
@@ -279,28 +289,28 @@ qc.measure(2, 2)`,
 
   addOperationIndex(operationIndex: OperationIndex) {
     let lines = this.circuits["internal"].split('\n');
-    let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];    
+    let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];
     lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
-  }  
+  }
 
   public getLinesToInsert(index: number, qubitIndex: number): number {
     let lineToInsert: number = this.firstOperationAt;
-    if (index < this.operationsAtBit[qubitIndex].length ) {
+    if (index < this.operationsAtBit[qubitIndex].length) {
       console.log(this.operationsAtBit[qubitIndex][index])
       let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
       lineToInsert = lineNumbersInCircuit[0]
     } else {
       lineToInsert = this.numberOfLines
-    }  
+    }
     // console.log(lineToInsert)
     return lineToInsert
   }
 
   public editOperation(operationIndex: OperationIndex) {
     let lines = this.circuits["internal"].split('\n');
-    let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];    
+    let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];
     lines[lineToInsert] = `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`;
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()

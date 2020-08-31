@@ -3,9 +3,10 @@ export class ConnectorAttributes {
     yTop: number = Number.MAX_VALUE;
     xLeft: number = 0;
     xRight: number = 0;
+    measure: boolean = false;
 
-    constructor(){
-
+    constructor(measure: boolean = false){
+        this.measure = measure;
     }
 
     setYTop(yTop: number) {

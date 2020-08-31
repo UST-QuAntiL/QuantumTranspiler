@@ -27,7 +27,7 @@
                             |{{qubit}}>
                         </div>
                         <div [id]="qubit" cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList"
-                            [cdkDropListData]="data.operationsAtBit[0]" class="list"
+                            [cdkDropListData]="data.operationsAtBit[qubitIndex]" class="list"
                             (cdkDropListDropped)="drop($event)">
                             <div class="placeholder"
                                 *ngFor="let operationIndex of data.operationsAtBit[qubitIndex]; index as index">
@@ -42,6 +42,41 @@
                                 <div class="box emptyBox" cdkDrag *ngIf="operationIndex.placeholder">
                                 </div>
                                 <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" cdkDrag (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
+                                    matTooltip="{{getTooltip(operationIndex)}}">
+                                    <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
+                                    </mat-icon>
+                                    <div class="controlBox"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
+
+            <div *ngFor="let clbit of data.clbitNames; index as clbitIndex">
+                <div class="row">
+                    <div class="custom-container">
+                        <div class="qubitName">
+                            {{clbit}}
+                        </div>
+                        <div id="{{clbitIndex + data.qubitNames.length}}" cdkDropList cdkDropListOrientation="horizontal" #clbitList="cdkDropList"
+                            [cdkDropListData]="data.operationsAtBit[clbitIndex + data.qubitNames.length]" class="list"
+                            (cdkDropListDropped)="drop($event)">
+                            <div class="placeholder"
+                                *ngFor="let operationIndex of data.operationsAtBit[clbitIndex + data.qubitNames.length]; index as index">
+                                <div id="{{clbitIndex + data.qubitNames.length}}-{{index}}" class="box" cdkDrag (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
+                                    *ngIf="(!operationIndex.placeholder && !operationIndex.control)"
+                                    matTooltip="{{getTooltip(operationIndex)}}"
+                                    >
+                                    <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
+                                    </mat-icon>
+                                    {{operationIndex.operation.name}}
+                                </div>
+                                <div class="box emptyBox" cdkDrag *ngIf="operationIndex.placeholder">
+                                </div>
+                                <div id="CL{{clbitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" cdkDrag (mouseenter) ="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
                                     matTooltip="{{getTooltip(operationIndex)}}">
                                     <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
                                     </mat-icon>
