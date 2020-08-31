@@ -3,26 +3,26 @@
     <div class="col-3">
         <div mat-subheader>Control Qubits</div>
         <div class="col" *ngFor="let qubit of gate.qubits; index as index">
-            <input *ngIf="(index < gate.operation.numberOfCtrlBits)" [ngModel]="qubit" (ngModelChange)="editedQubit(index, $event)">
+            <input matInput type="number" *ngIf="(index < gate.operation.numberOfCtrlBits)" [(ngModel)]="gate.qubits[index]" (ngModelChange)="change()">
         </div>
 
     </div>
     <div class="col-3">
         <div mat-subheader>Target Qubits</div>
         <div class="col" *ngFor="let qubit of gate.qubits; index as index">
-            <input *ngIf="(index >= gate.operation.numberOfCtrlBits)" [ngModel]="qubit" (ngModelChange)="editedQubit(index, $event)">
+            <input matInput type="number" *ngIf="(index >= gate.operation.numberOfCtrlBits)" [ngModel]="gate.qubits[index]" (ngModelChange)="change()">
         </div>
     </div>
     <div class="col-3">
     <div mat-subheader>Classical Bits</div>
         <div class="col" *ngFor="let clbit of gate.clbits; index as index">
-            <input [ngModel]="clbit" (ngModelChange)="editedClbit(index, $event)">
+            <input matInput type="number" [(ngModel)]="gate.clbits[index]" (ngModelChange)="change()">
         </div>
     </div>
     <div class="col-3">
         <div mat-subheader>Parameter</div>
         <div class="col" *ngFor="let parameter of gate.parameter; index as index">
-            <input [ngModel]="parameter" (ngModelChange)="editedParameter(index, $event)">
+            <input matInput type="number" [(ngModel)]="gate.parameter[index]" (ngModelChange)="change()">
         </div>
     </div>
 </div>

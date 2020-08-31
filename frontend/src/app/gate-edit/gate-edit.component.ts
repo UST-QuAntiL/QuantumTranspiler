@@ -15,5 +15,8 @@ export class GateEditComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  change() {
+    this.data.editOperation(this.gate)
+  }
   
 }

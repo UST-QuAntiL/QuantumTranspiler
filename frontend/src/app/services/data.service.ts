@@ -5,6 +5,7 @@ import { element } from 'protractor';
 import { HttpService } from './http.service';
 import { BehaviorSubject } from 'rxjs';
 import { insert } from './Utility';
+import { partitionArray } from '@angular/compiler/src/util';
 
 
 @Injectable({
@@ -276,25 +277,15 @@ qc.measure(2, 2)`,
 
   }
 
-  addOperation(operation: Operation, index: number, qubitIndex: number) {
-    let line = this.getLinesToInsert(index, qubitIndex)
-    let parameter = []
-      for (let i = 0; i < operation.numberOfParameter; i++) {
-        parameter.push(0)
-      }
-    let operationIndex: OperationIndex = new OperationIndex(index , operation, parameter, [qubitIndex], [], [line])
-    this.addOperationIndex(operationIndex)
-  }
-
   addOperationIndex(operationIndex: OperationIndex) {
     let lines = this.circuits["internal"].split('\n');
     let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];    
     lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
-  }
+  }  
 
-  private getLinesToInsert(index: number, qubitIndex: number): number {
+  public getLinesToInsert(index: number, qubitIndex: number): number {
     let lineToInsert: number = this.firstOperationAt;
     if (index < this.operationsAtBit[qubitIndex].length ) {
       console.log(this.operationsAtBit[qubitIndex][index])
@@ -303,7 +294,7 @@ qc.measure(2, 2)`,
     } else {
       lineToInsert = this.numberOfLines
     }  
-    console.log(lineToInsert)
+    // console.log(lineToInsert)
     return lineToInsert
   }
 

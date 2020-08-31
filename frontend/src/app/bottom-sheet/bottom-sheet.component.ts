@@ -14,7 +14,6 @@ export class BottomSheetComponent implements OnInit {
     this.qubits = data.qubits;
     this.params = data.params;
     this.clbits = data.clbits;
-    console.log(data)
   }
   ngOnInit(): void {
   }
@@ -36,6 +35,10 @@ export class BottomSheetComponent implements OnInit {
     this._bottomSheetRef.dismiss(data);
     event.preventDefault();
 
+  }
+
+  trackByFn(item, id){
+    return item
   }
 
 }

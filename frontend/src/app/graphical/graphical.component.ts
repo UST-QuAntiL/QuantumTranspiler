@@ -57,14 +57,14 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
       // add new gate
     } else if (event.previousContainer.id === "gateList") {
       let qubitIndex: number = parseInt(event.container.id);
+      let index: number = event.currentIndex;
       let operation: Operation = operationMap[event.item.element.nativeElement.id.toLowerCase()]
       if (operation.numberOfQubits > 1 || operation.numberOfParameter > 0 || operation.numberOfClbits > 0) {
-        this.openBottomSheet(operation, qubitIndex)
+        this.openBottomSheet(operation, qubitIndex, index)
       } else {
-        this.data.addOperation(operation, event.currentIndex, qubitIndex)
-      }
-      return
-      
+        let operationIndex: OperationIndex = new OperationIndex(index , operation, [], [qubitIndex], [], [this.data.getLinesToInsert(index, qubitIndex)])
+        this.data.addOperationIndex(operationIndex)
+      }     
 
     } else {
       // transferArrayItem(event.previousContainer.data,
@@ -74,7 +74,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openBottomSheet(operation: Operation, qubitIndex: number): void {
+  openBottomSheet(operation: Operation, qubitIndex: number, index: number): void {
     let qubits = [qubitIndex].concat(operation.generateList(operation.numberOfQubits - 1))
     let params = operation.generateList(operation.numberOfParameter)
     let clbits = operation.generateList(operation.numberOfClbits)    
@@ -87,8 +87,8 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
         let qubits = data.qubits;
         let params = data.params;
         let clbits = data.clbits;
-        console.log(data)
-        console.log('Bottom sheet has been dismissed.');
+        let operationIndex: OperationIndex = new OperationIndex(index , operation, params, qubits, clbits, [this.data.getLinesToInsert(index, qubits[0])]);
+        this.data.addOperationIndex(operationIndex)
       }      
     });
     

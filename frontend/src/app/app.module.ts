@@ -69,7 +69,6 @@ const monacoConfig: NgxMonacoEditorConfig = {
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
     MatAutocompleteModule,
@@ -90,7 +89,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
     MatCheckboxModule,
     MDBBootstrapModule.forRoot(),
     MatListModule,
-    MatBottomSheetModule
+    MatBottomSheetModule,
+    MatFormFieldModule,
 
   ],
   providers: [
