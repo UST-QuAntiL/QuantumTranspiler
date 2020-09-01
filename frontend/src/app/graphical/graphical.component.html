@@ -17,7 +17,7 @@
 
 
             <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
-            <div class="circuit">
+            <div class="circuit" (scroll)="onScroll($event)">
                 <div *ngFor="let line of lineList" class="connector" [ngStyle]="setStyle(line)"></div>
                 <!-- <svg class="connector" width="" height="" *ngFor="let line of lineList"><line x1="line[xLeft]" y1="50" x2="350" y2="50" stroke="red"/></svg> -->
 

@@ -140,6 +140,11 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     return tooltip;
   }
 
+  onScroll(event) {
+    this.computeGateConnections()
+
+  }
+
   private async computeGateConnections() {
     // hacky solution: without delay the new elements with their new coordinates might not be in the view
     await delay(10)

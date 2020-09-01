@@ -59,6 +59,8 @@ export class CodeComponent implements OnInit {
     this.decorations = this.editor.deltaDecorations(this.decorations, [
       { range: new monaco.Range(startLine,1,endLine,1), options: { isWholeLine: true, linesDecorationsClassName: 'myLineDecoration' }},
     ]);
+
+    this.editor.revealLine(startLine);
   }
   
 
