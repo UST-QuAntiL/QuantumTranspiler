@@ -238,39 +238,6 @@ qc.measure(2, 2)`,
     this.circuitChanged.next(true);
   }
 
-  moveOperation(qubitIndex: number, previousIndex: number, currentIndex: number) {
-    let operationIndex = this.operationsAtBit[qubitIndex][previousIndex];
-    // remove
-    let lineNumbersRemove = operationIndex.lineNumbersInCircuit;
-    // console.log(lineNumbersRemove)
-    let lines = this.circuits["internal"].split('\n');
-
-    lineNumbersRemove.forEach(lineNumber => {
-      lines.splice(lineNumber, 1);
-      // delete lines[lineNumber]
-    })
-
-    // add
-    let lineToInsert: number = this.firstOperationAt;
-    if (this.operationsAtBit[qubitIndex].length > 0) {
-      let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][currentIndex].lineNumbersInCircuit
-      // get last line number + 1
-      if (previousIndex < currentIndex) {
-        lineToInsert = lineNumbersInCircuit[lineNumbersInCircuit.length - 1] + 1
-        // first line number
-      } else {
-        lineToInsert = lineNumbersInCircuit[0]
-      }
-    }
-
-    if (lineNumbersRemove[0] < lineToInsert) {
-      lineToInsert -= lineNumbersRemove.length
-    }
-    lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
-    this.circuits["internal"] = lines.join('\n');
-    this.parseCircuit()
-  }
-
   removeOperationAtIndex(index: number, qubitIndex: number) {
     let operationIndex = this.operationsAtBit[qubitIndex][index];
     this.removeOperation(operationIndex);
@@ -297,13 +264,32 @@ qc.measure(2, 2)`,
 
   public getLinesToInsert(index: number, qubitIndex: number): number {
     let lineToInsert: number = this.firstOperationAt;
+    console.log(index)
     if (index < this.operationsAtBit[qubitIndex].length) {
+      console.log(this.operationsAtBit[qubitIndex][index])
       let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
-      lineToInsert = lineNumbersInCircuit[0]
+      console.log(lineNumbersInCircuit)
+      lineToInsert = lineNumbersInCircuit[0] + 1
+      
     } else {
       lineToInsert = this.numberOfLines
     }
-    // console.log(lineToInsert)
+    console.log(lineToInsert)
+    return lineToInsert
+  }
+
+  public getLinesToInsertEvent(previousIndex: number, index: number, qubitIndex: number): number {
+    let lineToInsert: number = this.firstOperationAt;
+    if (index < this.operationsAtBit[qubitIndex].length) {
+      let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
+      lineToInsert = lineNumbersInCircuit[0];
+      // needed, because element should be placed after the existing element
+      if (previousIndex < index) {
+        lineToInsert = lineNumbersInCircuit[lineNumbersInCircuit.length - 1] + 1
+      }      
+    } else {
+      lineToInsert = this.numberOfLines
+    }
     return lineToInsert
   }
 
@@ -315,7 +301,6 @@ qc.measure(2, 2)`,
   }
 
   private editOperationLines(lines: string[], operationIndex: OperationIndex, linesToRemove: number[]): string[] {
-
     let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];
 
     // remove old lines

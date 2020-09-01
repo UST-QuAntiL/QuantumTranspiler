@@ -45,8 +45,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
         console.log(event.previousIndex)
         return;
       }
-      let qubitIndex: number = parseInt(event.container.id);
-      this.data.moveOperation(qubitIndex, event.previousIndex, event.currentIndex);
+      this.moveOperation(event)
       // remove gate
     } else if (event.container.id === "gateList") {
       let id: string = event.item.element.nativeElement.id;
@@ -65,44 +64,44 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
         let operationIndex: OperationIndex = new OperationIndex(index, operation, [], [qubitIndex], [], [this.data.getLinesToInsert(index, qubitIndex)])
         this.data.addOperationIndex(operationIndex)
       }
-
       // change qubitIndex and possibly index of gate
     } else {
-      let newQubitIndex: number = parseInt(event.container.id);
-      let newIndex: number = event.currentIndex;
-      let id: string = event.item.element.nativeElement.id;
-      let indices = id.split("-");
-      let qubitIndex = parseInt(indices[0])
-      let index = parseInt(indices[1])
-      let operationIndex: OperationIndex = this.data.operationsAtBit[qubitIndex][index];
-
-      let linesToRemove: number[] = null;
-      // change index
-      if (index != newIndex) {
-        linesToRemove = operationIndex.lineNumbersInCircuit
-        console.log(linesToRemove)
-        operationIndex.lineNumbersInCircuit = [this.data.getLinesToInsert(newIndex, newQubitIndex)]; 
-        console.log(linesToRemove)
-
-      } 
-
-      // change qubit 
-      for (let i = 0; i < operationIndex.qubits.length; i++) {
-        if (operationIndex.qubits[i] == qubitIndex) {
-          operationIndex.qubits[i] = newQubitIndex
-        }
-      }
-      // change clbit
-      // subtract number of qubits to the get clbit references
-      let clbitIndex =  qubitIndex - this.data.qubitNames.length
-      let newClbitIndex = newQubitIndex - this.data.qubitNames.length
-      for (let i = 0; i < operationIndex.clbits.length; i++) {
-        if ((operationIndex.clbits[i]) == clbitIndex) {
-          operationIndex.clbits[i] = newClbitIndex
-        }
-      }      
-      this.data.editOperation(operationIndex, linesToRemove);
+      this.moveOperation(event)
     }
+  }
+
+  moveOperation(event: CdkDragDrop<OperationIndex[]>) {
+    let newQubitIndex: number = parseInt(event.container.id);
+    let newIndex: number = event.currentIndex;
+    let id: string = event.item.element.nativeElement.id;
+    let indices = id.split("-");
+    let qubitIndex = parseInt(indices[0])
+    let index = parseInt(indices[1])
+    let operationIndex: OperationIndex = this.data.operationsAtBit[qubitIndex][index];
+
+    let linesToRemove: number[] = null;
+    // change index
+    if (index != newIndex) {
+      linesToRemove = operationIndex.lineNumbersInCircuit
+      operationIndex.lineNumbersInCircuit = [this.data.getLinesToInsertEvent(index, newIndex, newQubitIndex)];
+    }
+    // change qubit 
+    for (let i = 0; i < operationIndex.qubits.length; i++) {
+      if (operationIndex.qubits[i] == qubitIndex) {
+        operationIndex.qubits[i] = newQubitIndex
+      }
+    }
+    // change clbit
+    // subtract number of qubits to the get clbit references
+    let clbitIndex = qubitIndex - this.data.qubitNames.length
+    let newClbitIndex = newQubitIndex - this.data.qubitNames.length
+    for (let i = 0; i < operationIndex.clbits.length; i++) {
+      if ((operationIndex.clbits[i]) == clbitIndex) {
+        operationIndex.clbits[i] = newClbitIndex
+      }
+    }
+    this.data.editOperation(operationIndex, linesToRemove);
+
   }
 
   openBottomSheet(operation: Operation, qubitIndex: number, index: number): void {
