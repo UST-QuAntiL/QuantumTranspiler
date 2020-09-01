@@ -70,8 +70,7 @@ qc.measure(2, 2)`,
   public clbitNames: string[] = [];
   public bitNames: string[] = [];
   public maxIndexTotal: number = 0;
-  public currentIndexQ = Array(this.numQbits).fill(-1);
-  public currentIndexCl = Array(this.numQbits).fill(-1);
+  public currentIndex = Array(this.numBits).fill(-1);
 
   public operationsAtBit: OperationIndex[][] = [];
   public firstOperationAt: number = 0;
@@ -110,8 +109,7 @@ qc.measure(2, 2)`,
     let qubitNames = [];
     let clbitNames = [];
     let bitNames = [];
-    let currentIndexQ = Array(this.numQbits).fill(-1);
-    let currentIndexCl = Array(this.numQbits).fill(-1);
+    let currentIndex = Array(this.numBits).fill(-1);
     let operationsAtBit = [];
     let firstOperationAt = -1;
     let circuit = this.circuits["internal"]
@@ -166,13 +164,13 @@ qc.measure(2, 2)`,
         // compute max index
         let maxIndex = 0;
         qubits.forEach(qubit => {
-          if (currentIndexQ[qubit] > maxIndex) {
-            maxIndex = currentIndexQ[qubit]
+          if (currentIndex[qubit] > maxIndex) {
+            maxIndex = currentIndex[qubit]
           }
         })
         clbits.forEach(clbit => {
-          if (currentIndexQ[clbit] > maxIndex) {
-            maxIndex = currentIndexQ[clbit]
+          if (currentIndex[clbit + qubitNames.length] > maxIndex) {
+            maxIndex = currentIndex[clbit + qubitNames.length]
           }
         })
         let lastIndex = maxIndex;
@@ -180,13 +178,7 @@ qc.measure(2, 2)`,
         if (maxIndex > maxIndexTotal) {
           maxIndexTotal = maxIndex;
         }
-        // set max index in arrays
-        qubits.forEach(qubit => {
-          currentIndexQ[qubit] = maxIndex
-        })
-        clbits.forEach(clbit => {
-          currentIndexQ[clbit] = maxIndex
-        })
+        
         let lineNumbers = [lineNumber]
         let operationIndex = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers)
         let operationIndexControl = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers, false, true)
@@ -196,11 +188,21 @@ qc.measure(2, 2)`,
 
         if (operation.name == "Barrier") {
           for (let i = 0; i < bitNames.length; i++) {
-            this.fillPlaceholders(maxIndexTotal, i, operationsAtBit, placeholder)
+            this.fillPlaceholders(maxIndexTotal - 1, i, operationsAtBit, placeholder)
             operationsAtBit[i][maxIndexTotal] = operationIndex;
+            currentIndex[maxIndexTotal + 1]
           }
+          maxIndexTotal++;
           return;
         }
+
+        // set max index in arrays
+        qubits.forEach(qubit => {
+          currentIndex[qubit] = maxIndex
+        })
+        clbits.forEach(clbit => {
+          currentIndex[clbit + qubitNames.length] = maxIndex
+        })
 
         qubits.forEach((qubit, index) => {
           this.fillPlaceholders(lastIndex, qubit, operationsAtBit, placeholder)
@@ -230,8 +232,7 @@ qc.measure(2, 2)`,
     this.qubitNames = qubitNames;
     this.clbitNames = clbitNames;
     this.bitNames = bitNames;
-    this.currentIndexQ = currentIndexQ;
-    this.currentIndexCl = currentIndexCl;
+    this.currentIndex = currentIndex;
     this.operationsAtBit = operationsAtBit;
     this.firstOperationAt = firstOperationAt;
     this.numberOfLines = numberOfLines;

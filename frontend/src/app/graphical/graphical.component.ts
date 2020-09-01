@@ -170,6 +170,9 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
                 return;
               }
               let rects = element.getClientRects()[0]
+              if (rects == null) {
+                return;
+              }
               let xLeft = rects.x;
               let xRight = rects.x + rects.width;
               let yTop = rects.y
@@ -180,16 +183,18 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
               line.setXRight(xRight)
             })
             
-            
-          } else if (operation.operation.numberOfClbits > 0) {   
+          } else if (operation.operation.numberOfClbits > 0) {  
             line.measure = true;         
             let element = document.getElementById(`${operation.qubits[0]}-${index}`)
             let element2 = document.getElementById(`${operation.clbits[0] + this.data.qubitNames.length}-${index}`)
             if (element == null || element2 == null) {
-              return;
+              continue;
             }
             let rects = element.getClientRects()[0]
             let rects2 = element2.getClientRects()[0]
+            if (rects == null || rects2 == null) {
+              continue;
+            }
             line.setYTop(rects.y)
             line.setYBot(rects2.y + rects2.height)
             line.setYLeft(rects.x)
