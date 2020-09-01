@@ -18,10 +18,8 @@
          
             <div id="circuit" class="circuit">
                 <div *ngFor="let line of lineList" class="connector" [ngStyle]="setStyle(line)"></div>
-                <!-- <svg class="connector" width="" height="" *ngFor="let line of lineList"><line x1="line[xLeft]" y1="50" x2="350" y2="50" stroke="red"/></svg> -->
-
-                <div *ngFor="let qubit of data.qubitNames; index as qubitIndex">
-                    <div class="row">
+                <div *ngFor="let qubit of data.qubitNames; index as qubitIndex">                    
+                    <div class="row" *ngIf="data.operationsAtBit[qubitIndex].length > 0">
                         <div class="custom-container">
                             <div class="qubitName">
                                 |{{qubit}}>
@@ -54,7 +52,7 @@
                     </div>
                 </div>
 
-                <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
+                <mat-divider class="w-100 mb-3 mt-3" *ngIf="data.clbitNames.length > 0"></mat-divider>
 
                 <div *ngFor="let clbit of data.clbitNames; index as clbitIndex">
                     <div class="row">

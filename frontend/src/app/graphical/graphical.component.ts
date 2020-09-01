@@ -235,6 +235,8 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   }
 
   onMouseEnter(operationIndex: OperationIndex) {
+    //recompute gate connections because of new elements on site that can change the layout
+    this.computeGateConnections()
     this.highlightLines(operationIndex)
     if (!this.oldSelectedGate) {
       this.showGate(operationIndex);

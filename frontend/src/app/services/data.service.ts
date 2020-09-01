@@ -234,6 +234,7 @@ qc.measure(2, 2)`,
     this.firstOperationAt = firstOperationAt;
     this.numberOfLines = numberOfLines;
 
+    console.log(this.clbitNames)
     // fire event to notify components
     this.circuitChanged.next(true);
   }
