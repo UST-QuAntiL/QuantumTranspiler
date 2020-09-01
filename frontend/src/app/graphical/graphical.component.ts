@@ -39,7 +39,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   }
 
   drop(event: CdkDragDrop<OperationIndex[]>) {
-    // change position of gate
+    // change position of gate    
     if (event.previousContainer === event.container) {
       if ((event.container.id === "gateList") || event.previousIndex == event.currentIndex) {
         console.log(event.previousIndex)
@@ -66,11 +66,42 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
         this.data.addOperationIndex(operationIndex)
       }
 
+      // change qubitIndex and possibly index of gate
     } else {
-      // transferArrayItem(event.previousContainer.data,
-      //   event.container.data,
-      //   event.previousIndex,
-      //   event.currentIndex);
+      let newQubitIndex: number = parseInt(event.container.id);
+      let newIndex: number = event.currentIndex;
+      let id: string = event.item.element.nativeElement.id;
+      let indices = id.split("-");
+      let qubitIndex = parseInt(indices[0])
+      let index = parseInt(indices[1])
+      let operationIndex: OperationIndex = this.data.operationsAtBit[qubitIndex][index];
+
+      let linesToRemove: number[] = null;
+      // change index
+      if (index != newIndex) {
+        linesToRemove = operationIndex.lineNumbersInCircuit
+        console.log(linesToRemove)
+        operationIndex.lineNumbersInCircuit = [this.data.getLinesToInsert(newIndex, newQubitIndex)]; 
+        console.log(linesToRemove)
+
+      } 
+
+      // change qubit 
+      for (let i = 0; i < operationIndex.qubits.length; i++) {
+        if (operationIndex.qubits[i] == qubitIndex) {
+          operationIndex.qubits[i] = newQubitIndex
+        }
+      }
+      // change clbit
+      // subtract number of qubits to the get clbit references
+      let clbitIndex =  qubitIndex - this.data.qubitNames.length
+      let newClbitIndex = newQubitIndex - this.data.qubitNames.length
+      for (let i = 0; i < operationIndex.clbits.length; i++) {
+        if ((operationIndex.clbits[i]) == clbitIndex) {
+          operationIndex.clbits[i] = newClbitIndex
+        }
+      }      
+      this.data.editOperation(operationIndex, linesToRemove);
     }
   }
 
@@ -165,7 +196,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
       'top': line.yTop + "px",
       'left': line.xLeft + "px",
       "width": line.getWidth() + "px",
-      "height": line.getHeight() + "px",      
+      "height": line.getHeight() + "px",
     };
 
     if (line.measure) {
@@ -173,8 +204,8 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
       styles['opacity'] = "15%"
     } else {
       styles['background-image'] = "linear-gradient(to bottom right, #005cb2, #6ab7ff)"
-    }    
-    
+    }
+
     return styles;
   }
 

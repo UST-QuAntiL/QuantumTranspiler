@@ -193,7 +193,7 @@ qc.measure(2, 2)`,
         let placeholder = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers, true)
         // fill operations at index
         let numCtrlBits = operation.numberOfCtrlBits;
-      
+
         qubits.forEach((qubit, index) => {
           if (lastIndex > operationsAtBit[qubit].length - 1) {
             for (let i = operationsAtBit[qubit].length; i <= lastIndex; i++) {
@@ -298,7 +298,6 @@ qc.measure(2, 2)`,
   public getLinesToInsert(index: number, qubitIndex: number): number {
     let lineToInsert: number = this.firstOperationAt;
     if (index < this.operationsAtBit[qubitIndex].length) {
-      console.log(this.operationsAtBit[qubitIndex][index])
       let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
       lineToInsert = lineNumbersInCircuit[0]
     } else {
@@ -308,12 +307,32 @@ qc.measure(2, 2)`,
     return lineToInsert
   }
 
-  public editOperation(operationIndex: OperationIndex) {
+  public editOperation(operationIndex: OperationIndex, linesToRemove: number[]) {
     let lines = this.circuits["internal"].split('\n');
-    let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];
-    lines[lineToInsert] = `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`;
+    lines = this.editOperationLines(lines, operationIndex, linesToRemove)
     this.circuits["internal"] = lines.join('\n');
     this.parseCircuit()
+  }
+
+  private editOperationLines(lines: string[], operationIndex: OperationIndex, linesToRemove: number[]): string[] {
+
+    let lineToInsert: number = operationIndex.lineNumbersInCircuit[0];
+
+    // remove old lines
+    if (linesToRemove) {
+      linesToRemove.forEach(lineNumber => {
+        lines.splice(lineNumber, 1);
+      })
+      if (linesToRemove[0] < lineToInsert) {
+        lineToInsert -= linesToRemove.length
+      }
+      // add line
+      lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
+    // otherwise just edit the old line
+    } else {
+      lines[lineToInsert] = `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`;
+    }    
+    return lines;
   }
 
 
@@ -322,13 +341,13 @@ qc.measure(2, 2)`,
     string += this.listToString(operationIndex.parameter)
     let nextString = this.listToString(operationIndex.qubits)
     if (string != "" && nextString != "") {
-      string += ","
+      string += ", "
     }
     string += nextString;
 
     nextString = this.listToString(operationIndex.clbits)
     if (string != "" && nextString != "") {
-      string += ","
+      string += ", "
     }
     string += nextString;
 
@@ -339,7 +358,7 @@ qc.measure(2, 2)`,
     let string: string = "";
     for (let i = 0; i < list.length; i++) {
       if (i < list.length - 1) {
-        string += list[i] + ","
+        string += list[i] + ", "
       } else {
         string += list[i]
       }
