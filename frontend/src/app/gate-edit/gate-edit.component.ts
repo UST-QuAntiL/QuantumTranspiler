@@ -17,7 +17,7 @@ export class GateEditComponent implements OnInit {
 
   change() {
     console.log(this.gate)
-    this.data.editOperation(this.gate)
+    this.data.editOperation(this.gate, this.gate.lineNumbersInCircuit)
   }
   
 }

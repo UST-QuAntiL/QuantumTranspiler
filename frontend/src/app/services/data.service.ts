@@ -367,17 +367,11 @@ qc.measure(2, 2)`,
 
   setMaxIndex() {
     let max = -1;
-    this.currentIndexQ.forEach(index => {
+    this.currentIndex.forEach(index => {
       if (index > max) {
         max = index;
       }
     })
-    this.currentIndexCl.forEach(index => {
-      if (index > max) {
-        max = index;
-      }
-    })
-
     this.maxIndexTotal = max;
   }
 
