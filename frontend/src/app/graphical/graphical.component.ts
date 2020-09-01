@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef, Inject, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject, AfterViewInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { DataService } from '../services/data.service';
-import { Operation, operationList, OperationIndex, operationMap } from '../services/Operation';
+import { Operation, importantGatesList, OperationIndex, gateMap } from '../services/Operation';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { HttpService } from '../services/http.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -17,7 +17,7 @@ import { BottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
   styleUrls: ['./graphical.component.scss']
 })
 export class GraphicalComponent implements OnInit, AfterViewInit {
-  public operationList: Operation[] = operationList;;
+  public importantGatesList: Operation[] = importantGatesList;;
   public lineList: ConnectorAttributes[] = [];
   public isGateSelected: boolean = false;
   public selectedGate: OperationIndex;
@@ -57,7 +57,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     } else if (event.previousContainer.id === "gateList") {
       let qubitIndex: number = parseInt(event.container.id);
       let index: number = event.currentIndex;
-      let operation: Operation = operationMap[event.item.element.nativeElement.id.toLowerCase()]
+      let operation: Operation = gateMap[event.item.element.nativeElement.id.toLowerCase()]
       if (operation.numberOfQubits > 1 || operation.numberOfParameter > 0 || operation.numberOfClbits > 0) {
         this.openBottomSheet(operation, qubitIndex, index)
       } else {
@@ -140,9 +140,10 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     return tooltip;
   }
 
-  onScroll(event) {
+  @HostListener('window:resize', ['$event'])
+  @HostListener('window:scroll', ['$event'])
+  recomputeGateConnections(event) {
     this.computeGateConnections()
-
   }
 
   private async computeGateConnections() {
@@ -150,11 +151,17 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     await delay(10)
 
     let lineList: ConnectorAttributes[] = [];
+    let circuitElement = document.getElementById(`circuit`)
+    let circuitLeft = circuitElement.getClientRects()[0].x
+    let circuitRight = circuitElement.getClientRects()[0].x + circuitElement.getClientRects()[0].width;
+
     this.data.operationsAtBit.forEach((operationsAtIndex, qubitIndex) => {
-      operationsAtIndex.forEach((operation: OperationIndex, index) => {
+      for (let index = 0; index < operationsAtIndex.length; index++) {
+        let operation: OperationIndex = operationsAtIndex[index]
+        let line = new ConnectorAttributes()
+        // operationsAtIndex.forEach((operation: OperationIndex, index) => {
         if (!operation.placeholder && !operation.control) {
-          if (operation.operation.numberOfQubits > 1) {
-            let line = new ConnectorAttributes(false)
+          if (operation.operation.numberOfQubits > 1) {            
             operation.qubits.forEach(qubit => {
               let element = document.getElementById(`${qubit}-${index}`)
               if (element == null) {
@@ -170,9 +177,10 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
               line.setYLeft(xLeft)
               line.setXRight(xRight)
             })
-            lineList.push(line)
-          } else if (operation.operation.numberOfClbits > 0) {
-            let line = new ConnectorAttributes(true)
+            
+            
+          } else if (operation.operation.numberOfClbits > 0) {   
+            line.measure = true;         
             let element = document.getElementById(`${operation.qubits[0]}-${index}`)
             let element2 = document.getElementById(`${operation.clbits[0] + this.data.qubitNames.length}-${index}`)
             if (element == null || element2 == null) {
@@ -184,11 +192,17 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
             line.setYBot(rects2.y + rects2.height)
             line.setYLeft(rects.x)
             line.setXRight(rects.x + rects.width)
-            lineList.push(line)
           }
+          if (line.xLeft < circuitLeft) {
+            continue;
+          }
+          if (line.xRight > circuitRight) {
+            continue;
+          }
+          lineList.push(line)
         }
 
-      })
+      }
     })
     this.lineList = lineList;
     this.cdRef.detectChanges();
@@ -218,15 +232,20 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   }
 
   onMouseEnter(operationIndex: OperationIndex) {
+    this.highlightLines(operationIndex)
     if (!this.oldSelectedGate) {
       this.showGate(operationIndex);
     }
   }
 
   showGate(operationIndex: OperationIndex) {
-    this.data.highlightLines.next(this.getLineNumbersIncreasedByOne(operationIndex))
+    this.highlightLines(operationIndex)
     this.selectedGate = operationIndex;
     this.isGateSelected = true;
+  }
+
+  private highlightLines(operationIndex: OperationIndex) {
+    this.data.highlightLines.next(this.getLineNumbersIncreasedByOne(operationIndex))
   }
 
   onMouseLeave() {

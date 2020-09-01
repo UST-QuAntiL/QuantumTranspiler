@@ -4,9 +4,9 @@
             <div>
                 <h4>Possible Gates</h4>
                 <div cdkDropListSortingDisabled id="gateList" class="row" cdkDropList #gateList="cdkDropList"
-                    [cdkDropListData]="operationList" cdkDropListOrientation="horizontal"
+                    [cdkDropListData]="importantGatesList" cdkDropListOrientation="horizontal"
                     (cdkDropListDropped)="drop($event)">
-                    <div class="col" *ngFor="let item of operationList">
+                    <div class="col" *ngFor="let item of importantGatesList">
                         <div class="gate" id="{{item.name}}" cdkDrag>
                             {{item.name}}
                         </div>
@@ -14,10 +14,9 @@
                 </div>
             </div>
 
-
-
             <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
-            <div class="circuit" (scroll)="onScroll($event)">
+         
+            <div id="circuit" class="circuit">
                 <div *ngFor="let line of lineList" class="connector" [ngStyle]="setStyle(line)"></div>
                 <!-- <svg class="connector" width="" height="" *ngFor="let line of lineList"><line x1="line[xLeft]" y1="50" x2="350" y2="50" stroke="red"/></svg> -->
 

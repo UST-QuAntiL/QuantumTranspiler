@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Operation, operationMap, OperationIndex } from './Operation';
+import { Operation, gateMap, OperationIndex } from './Operation';
 import { MatSelectChange } from '@angular/material/select';
 import { element } from 'protractor';
 import { HttpService } from './http.service';
@@ -148,7 +148,7 @@ qc.measure(2, 2)`,
         let lineSplitted = lineTrimmed.split("(");
         let operationString = lineSplitted[0];
         let parameters = lineSplitted[1].replace(")", "").split(",");
-        let operation: Operation = operationMap[operationString];
+        let operation: Operation = gateMap[operationString];
 
         let paramsWithoutBits = []
         let qubits = []
