@@ -194,12 +194,16 @@ qc.measure(2, 2)`,
         // fill operations at index
         let numCtrlBits = operation.numberOfCtrlBits;
 
-        qubits.forEach((qubit, index) => {
-          if (lastIndex > operationsAtBit[qubit].length - 1) {
-            for (let i = operationsAtBit[qubit].length; i <= lastIndex; i++) {
-              operationsAtBit[qubit].push(placeholder)
-            }
+        if (operation.name == "Barrier") {
+          for (let i = 0; i < bitNames.length; i++) {
+            this.fillPlaceholders(maxIndexTotal, i, operationsAtBit, placeholder)
+            operationsAtBit[i][maxIndexTotal] = operationIndex;
           }
+          return;
+        }
+
+        qubits.forEach((qubit, index) => {
+          this.fillPlaceholders(lastIndex, qubit, operationsAtBit, placeholder)
           // control qubit
           if (numCtrlBits > index) {
             operationsAtBit[qubit][lastIndex] = operationIndexControl;
@@ -211,13 +215,11 @@ qc.measure(2, 2)`,
 
         clbits.forEach((clbit, index) => {
           clbit = clbit + qubitNames.length
-          if (lastIndex > operationsAtBit[clbit].length - 1) {
-            for (let i = operationsAtBit[clbit].length; i <= lastIndex; i++) {
-              operationsAtBit[clbit].push(placeholder)
-            }
-          }
+          this.fillPlaceholders(lastIndex, clbit, operationsAtBit, placeholder)
           operationsAtBit[clbit][lastIndex] = operationIndex;
         })
+
+
       }
     })
     // at the end if parsing errors occur, the data is not written partly
@@ -234,10 +236,18 @@ qc.measure(2, 2)`,
     this.firstOperationAt = firstOperationAt;
     this.numberOfLines = numberOfLines;
 
-    console.log(this.clbitNames)
     // fire event to notify components
     this.circuitChanged.next(true);
   }
+
+  private fillPlaceholders(lastIndex: number, bit: number, operationsAtBit: any[], placeholder: OperationIndex) {
+    if (lastIndex > operationsAtBit[bit].length - 1) {
+      for (let i = operationsAtBit[bit].length; i <= lastIndex; i++) {
+        operationsAtBit[bit].push(placeholder)
+      }
+    }
+  }
+
 
   removeOperationAtIndex(index: number, qubitIndex: number) {
     let operationIndex = this.operationsAtBit[qubitIndex][index];
@@ -265,17 +275,13 @@ qc.measure(2, 2)`,
 
   public getLinesToInsert(index: number, qubitIndex: number): number {
     let lineToInsert: number = this.firstOperationAt;
-    console.log(index)
     if (index < this.operationsAtBit[qubitIndex].length) {
-      console.log(this.operationsAtBit[qubitIndex][index])
       let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
-      console.log(lineNumbersInCircuit)
       lineToInsert = lineNumbersInCircuit[0] + 1
-      
+
     } else {
       lineToInsert = this.numberOfLines
     }
-    console.log(lineToInsert)
     return lineToInsert
   }
 
@@ -287,7 +293,7 @@ qc.measure(2, 2)`,
       // needed, because element should be placed after the existing element
       if (previousIndex < index) {
         lineToInsert = lineNumbersInCircuit[lineNumbersInCircuit.length - 1] + 1
-      }      
+      }
     } else {
       lineToInsert = this.numberOfLines
     }
@@ -314,15 +320,20 @@ qc.measure(2, 2)`,
       }
       // add line
       lines.splice(lineToInsert, 0, `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`);
-    // otherwise just edit the old line
+      // otherwise just edit the old line
     } else {
       lines[lineToInsert] = `qc.${operationIndex.operation.name.toLowerCase()}(${this.generateStringFromArguments(operationIndex)})`;
-    }    
+    }
     return lines;
   }
 
 
   private generateStringFromArguments(operationIndex: OperationIndex): string {
+    // barrier is applied to all qubits
+    if (operationIndex.operation.name == "Barrier") {
+      return "";
+    }
+
     let string = "";
     string += this.listToString(operationIndex.parameter)
     let nextString = this.listToString(operationIndex.qubits)

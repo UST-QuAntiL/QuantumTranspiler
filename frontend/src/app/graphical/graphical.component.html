@@ -66,6 +66,7 @@
                                 class="list" (cdkDropListDropped)="drop($event)">
                                 <div class="placeholder"
                                     *ngFor="let operationIndex of data.operationsAtBit[clbitIndex + data.qubitNames.length]; index as index">
+                                    <!-- usual operation -->
                                     <div id="{{clbitIndex + data.qubitNames.length}}-{{index}}" class="box" cdkDrag
                                         (mouseenter)="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
                                         *ngIf="(!operationIndex.placeholder && !operationIndex.control)"
@@ -74,8 +75,10 @@
                                         </mat-icon>
                                         {{operationIndex.operation.name}}
                                     </div>
-                                    <div class="box emptyBox" cdkDrag *ngIf="operationIndex.placeholder">
-                                    </div>
+                                    <!-- empty operaton -->
+                                    <div class="box emptyBox" cdkDrag *ngIf="operationIndex.placeholder && (!operationIndex.placeholder && !operationIndex.control)" >
+                                    </div>      
+                                    <!-- control operation -->
                                     <div id="CL{{clbitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control"
                                         cdkDrag (mouseenter)="onMouseEnter(operationIndex)"
                                         (mouseleave)="onMouseLeave()" matTooltip="{{getTooltip(operationIndex)}}">
@@ -83,6 +86,10 @@
                                         </mat-icon>
                                         <div class="controlBox"></div>
                                     </div>
+                                    <!-- barrier -->
+                                    <!-- <div class="box" cdkDrag *ngIf="operationIndex.operation.name == 'Barrier'">
+                                        he
+                                    </div> -->
                                 </div>
                             </div>
                         </div>

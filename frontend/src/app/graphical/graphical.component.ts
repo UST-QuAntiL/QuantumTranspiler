@@ -42,7 +42,6 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     // change position of gate    
     if (event.previousContainer === event.container) {
       if ((event.container.id === "gateList") || event.previousIndex == event.currentIndex) {
-        console.log(event.previousIndex)
         return;
       }
       this.moveOperation(event)
