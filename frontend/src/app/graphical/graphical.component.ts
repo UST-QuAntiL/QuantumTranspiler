@@ -152,6 +152,9 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
 
     let lineList: ConnectorAttributes[] = [];
     let circuitElement = document.getElementById(`circuit`)
+    if (circuitElement == null) {
+      return;
+    }
     let circuitLeft = circuitElement.getClientRects()[0].x
     let circuitRight = circuitElement.getClientRects()[0].x + circuitElement.getClientRects()[0].width;
 
