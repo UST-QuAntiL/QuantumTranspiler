@@ -101,7 +101,6 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
       }
     }
     this.data.editOperation(operationIndex, linesToRemove);
-
   }
 
   openBottomSheet(operation: Operation, qubitIndex: number, index: number): void {

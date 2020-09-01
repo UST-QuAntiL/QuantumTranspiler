@@ -1,5 +1,9 @@
 @import "../../styles.scss";
 
+// .container-fluid {
+  
+// }
+
 .gate {
   width: 50px;
   height: 50px;
@@ -24,10 +28,14 @@
 }
 
 .custom-container {
-  width: 95%;
-  // margin: 0 25px 25px 0;
+  width: 95%;  
   display: inline-block;
-  position: relative;
+  position: relative;  
+}
+
+.circuit {
+  overflow: auto;
+  overflow-y: hidden;
 }
 
 .list {
@@ -36,7 +44,6 @@
   flex-direction: row;
   background: white;
   border-radius: 4px;
-  overflow: hidden;
   z-index: -1;
   padding-left: 25px;
 }
@@ -48,7 +55,6 @@
   background: $dark;
   content: "";
   width: 100%;
-  display: block;
   z-index: 0;
 }
 
@@ -119,9 +125,6 @@
   z-index: 1;
   border-radius: 4px;
 }
-
-
-
 
 .cdk-drag-preview {
   box-sizing: border-box;
