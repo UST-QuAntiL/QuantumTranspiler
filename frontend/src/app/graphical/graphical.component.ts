@@ -228,6 +228,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
       styles['opacity'] = "15%"
     } else {
       styles['background-image'] = "linear-gradient(to bottom right, #005cb2, #6ab7ff)"
+      styles['opacity'] = "25%"
     }
 
     return styles;
