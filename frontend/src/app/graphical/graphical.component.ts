@@ -22,6 +22,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   public isGateSelected: boolean = false;
   public selectedGate: OperationIndex;
   public oldSelectedGate: OperationIndex;
+  public dragged: boolean = false;
 
   constructor(public data: DataService, private http: HttpService, private _elementRef: ElementRef, private snackbar: MatSnackBar, @Inject(DOCUMENT) document, private cdRef: ChangeDetectorRef, private _bottomSheet: MatBottomSheet) {
   }
@@ -39,6 +40,7 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
   }
 
   drop(event: CdkDragDrop<OperationIndex[]>) {
+    console.log(event.container.id)
     // change position of gate    
     if (event.previousContainer === event.container) {
       if ((event.container.id === "gateList") || event.previousIndex == event.currentIndex) {
@@ -262,5 +264,13 @@ export class GraphicalComponent implements OnInit, AfterViewInit {
     if (this.oldSelectedGate) {
       this.showGate(this.oldSelectedGate);
     }
+  }
+
+  dragStarted() {
+    this.dragged = true;
+  }
+
+  dragEnded() {
+    this.dragged = false;
   }
 }

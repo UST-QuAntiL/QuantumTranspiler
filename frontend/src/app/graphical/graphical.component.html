@@ -3,15 +3,23 @@
         <div class="row">
             <div>
                 <h4>Possible Gates</h4>
-                <div cdkDropListSortingDisabled id="gateList" class="row" cdkDropList #gateList="cdkDropList"
+                <div cdkDropListSortingDisabled id="gateList" cdkDropList #gateList="cdkDropList"
                     [cdkDropListData]="importantGatesList" cdkDropListOrientation="horizontal"
                     (cdkDropListDropped)="drop($event)">
-                    <div class="col" *ngFor="let item of importantGatesList">
-                        <div class="gate" id="{{item.name}}" cdkDrag>
-                            {{item.name}}
+                    <div class="deleteBox text-center" *ngIf="dragged">
+                        <p class="deleteText">Put the item here to remove it from the quantum circuit.</p>
+                    </div>
+                    <div class="row" *ngIf="!dragged">
+                        <div class="col" *ngFor="let item of importantGatesList">
+                            <div class="gate" id="{{item.name}}" cdkDrag>
+                                {{item.name}}
+                            </div>
                         </div>
                     </div>
+                    
                 </div>
+
+                
             </div>
 
             <mat-divider class="w-100 mb-3 mt-3"></mat-divider>
@@ -29,7 +37,7 @@
                                 (cdkDropListDropped)="drop($event)">
                                 <div class="placeholder"
                                     *ngFor="let operationIndex of data.operationsAtBit[qubitIndex]; index as index">
-                                    <div id="{{qubitIndex}}-{{index}}" class="box" cdkDrag
+                                    <div id="{{qubitIndex}}-{{index}}" class="box" cdkDrag (cdkDragStarted)="dragStarted()" (cdkDragEnded)="dragEnded()"
                                         (mouseenter)="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
                                         *ngIf="(!operationIndex.placeholder && !operationIndex.control)"
                                         matTooltip="{{getTooltip(operationIndex)}}">

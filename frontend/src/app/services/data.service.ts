@@ -278,7 +278,7 @@ qc.measure(2, 2)`,
     let lineToInsert: number = this.firstOperationAt;
     if (index < this.operationsAtBit[qubitIndex].length) {
       let lineNumbersInCircuit = this.operationsAtBit[qubitIndex][index].lineNumbersInCircuit
-      lineToInsert = lineNumbersInCircuit[0] + 1
+      lineToInsert = lineNumbersInCircuit[0]
 
     } else {
       lineToInsert = this.numberOfLines
