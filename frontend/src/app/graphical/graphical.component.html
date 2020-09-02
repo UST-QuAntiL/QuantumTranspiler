@@ -10,7 +10,7 @@
                         <p class="deleteText">Put the item here to remove it from the quantum circuit.</p>
                     </div>
                     <div class="row" *ngIf="!dragged">
-                        <div class="col" *ngFor="let item of importantGatesList">
+                        <div class="col mb-2" *ngFor="let item of importantGatesList">
                             <div class="gate" id="{{item.name}}" cdkDrag>
                                 {{item.name}}
                             </div>
@@ -47,7 +47,7 @@
                                     </div>
                                     <div class="box emptyBox" cdkDrag *ngIf="operationIndex.placeholder">
                                     </div>
-                                    <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control"
+                                    <div id="{{qubitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control" (cdkDragStarted)="dragStarted()" (cdkDragEnded)="dragEnded()"
                                         cdkDrag (mouseenter)="onMouseEnter(operationIndex)"
                                         (mouseleave)="onMouseLeave()" matTooltip="{{getTooltip(operationIndex)}}">
                                         <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
@@ -75,7 +75,7 @@
                                 <div class="placeholder"
                                     *ngFor="let operationIndex of data.operationsAtBit[clbitIndex + data.qubitNames.length]; index as index">
                                     <!-- usual operation -->
-                                    <div id="{{clbitIndex + data.qubitNames.length}}-{{index}}" class="box" cdkDrag
+                                    <div id="{{clbitIndex + data.qubitNames.length}}-{{index}}" class="box" cdkDrag (cdkDragStarted)="dragStarted()" (cdkDragEnded)="dragEnded()"
                                         (mouseenter)="onMouseEnter(operationIndex)" (mouseleave)="onMouseLeave()"
                                         *ngIf="(!operationIndex.placeholder && !operationIndex.control)"
                                         matTooltip="{{getTooltip(operationIndex)}}">
@@ -83,21 +83,9 @@
                                         </mat-icon>
                                         {{operationIndex.operation.name}}
                                     </div>
-                                    <!-- empty operaton -->
+                                    <!-- empty operation -->
                                     <div class="box emptyBox" cdkDrag *ngIf="operationIndex.placeholder && (!operationIndex.placeholder && !operationIndex.control)" >
-                                    </div>      
-                                    <!-- control operation -->
-                                    <div id="CL{{clbitIndex}}-{{index}}" class="box" *ngIf="operationIndex.control"
-                                        cdkDrag (mouseenter)="onMouseEnter(operationIndex)"
-                                        (mouseleave)="onMouseLeave()" matTooltip="{{getTooltip(operationIndex)}}">
-                                        <mat-icon class="editBox" color="primary" (click)="edit(operationIndex)">edit
-                                        </mat-icon>
-                                        <div class="controlBox"></div>
-                                    </div>
-                                    <!-- barrier -->
-                                    <!-- <div class="box" cdkDrag *ngIf="operationIndex.operation.name == 'Barrier'">
-                                        he
-                                    </div> -->
+                                    </div>     
                                 </div>
                             </div>
                         </div>
