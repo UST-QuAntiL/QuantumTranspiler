@@ -9,8 +9,8 @@
                     <div class="deleteBox text-center" *ngIf="dragged">
                         <p class="deleteText">Put the item here to remove it from the quantum circuit.</p>
                     </div>
-                    <div class="row" *ngIf="!dragged">
-                        <div class="col mb-2" *ngFor="let item of importantGatesList">
+                    <div class="row align-items-center" *ngIf="!dragged">
+                        <div class="col-1 mb-2" *ngFor="let item of importantGatesList">
                             <div class="gate" id="{{item.name}}" cdkDrag>
                                 {{item.name}}
                             </div>
@@ -32,7 +32,7 @@
                             <div class="qubitName">
                                 |{{qubit}}>
                             </div>
-                            <div [id]="qubit" cdkDropList cdkDropListOrientation="horizontal" #gateList="cdkDropList"
+                            <div [id]="qubit" cdkDropList cdkDropListOrientation="horizontal"  #gateList="cdkDropList"
                                 [cdkDropListData]="data.operationsAtBit[qubitIndex]" class="list"
                                 (cdkDropListDropped)="drop($event)">
                                 <div class="placeholder"
