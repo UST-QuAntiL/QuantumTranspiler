@@ -104,11 +104,11 @@ def unroll():
             return "Bad Request!", 400
 
         if isExpert:
-            if format == "qasm":
+            if format == "OpenQASM":
                 output= wrapper.export_qasm()
-            elif format == "quil":
+            elif format == "Quil":
                 output= wrapper.export_quil()
-            elif format == "qiskit":
+            elif format == "Qiskit":
                 output= wrapper.export_qiskit_commands()
             else:
                 return "Bad Request!", 400

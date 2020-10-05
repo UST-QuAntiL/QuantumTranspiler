@@ -2,13 +2,47 @@ import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../services/http.service';
 import { DataService } from '../services/data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+} from '@angular/animations';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-analyze',
+  animations: [
+    trigger('expert', [
+      state('open', style({
+        visibility: 'visible',
+        opacity: '1',
+        width: '*',
+      })),
+      state('closed', style({
+        visibility: 'hidden',
+        width: "0px",
+        opacity: '0',
+
+      })),
+      transition('open => closed', [
+        animate('0.5s')
+      ]),
+      transition('closed => open', [
+        animate('0.5s')
+      ]),
+    ]),
+  ],
   templateUrl: './analyze.component.html',
   styleUrls: ['./analyze.component.scss']
 })
 export class AnalyzeComponent implements OnInit {
+  isExpert = false;
+  formatOptions: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"]
+  selectedFormatOption: string;
+
+
   public depth = {
     "q_depth": 0,
     "q_gate_times": 0,
@@ -18,6 +52,7 @@ export class AnalyzeComponent implements OnInit {
     "r_two_qubit": 0
   };
 
+  architecture: string;
   formatUsed: string;
   
   constructor(private http: HttpService, private data: DataService, private snackbar: MatSnackBar) { }
@@ -37,24 +72,38 @@ export class AnalyzeComponent implements OnInit {
   }
 
   useQiskit() {
-    this.unroll("IBMQ")
-    this.formatUsed = "qasm"
+    this.architecture = "IBMQ"
+    this.unroll()
+    if (!this.isExpert) {
+      this.formatUsed = "qasm"
+    }    
   }
 
   useRigetti() {
-    this.unroll("Rigetti")
-    this.formatUsed = "quil"
+    this.architecture = "Rigetti"
+    this.unroll()
+    if (!this.isExpert) {
+      this.formatUsed = "quil"
+    }   
   }
 
-  private async unroll(option: string) {  
-    this.snackbar.open("Request sent to backend. Results will be available shortly.");
+  private async unroll() {  
+    if (this.isExpert) {
+      if (!(this.formatOptions.includes(this.selectedFormatOption))) {
+        this.snackbar.open("You must choose an output language/framework or disable expert mode.");
+        return
+      }
+    }  
 
+    this.snackbar.open("Request sent to backend. Results will be available shortly.");
     let object = {
-      "option": option,
+      "option": this.architecture,
       "circuit": this.data.circuits["internal"],
+      "isExpert": this.isExpert,
+      "format": this.selectedFormatOption,
     }
 
-    let circuit = await this.http.callBackend(object, "unrollToNativeFormat")
+    let circuit = await this.http.callBackend(object, "unroll")
     if (circuit) {
       this.data.setCircuit("export", circuit)
     }
@@ -66,12 +115,19 @@ export class AnalyzeComponent implements OnInit {
       return;
     }
     if (!this.formatUsed) {
-      this.snackbar.open("No valid format selected.");
+      this.snackbar.open("No valid format specified.");
       return;
     }
     var blob = new Blob([this.data.circuits["export"]], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "circuit." + this.formatUsed);
   }
 
+  changed(event: MatSelectChange) {
+    this.selectedFormatOption = event.value;
+    this.formatUsed = this.selectedFormatOption;
+    if (this.architecture) {
+      this.unroll()
+    }    
+  } 
 
 }

@@ -33,19 +33,49 @@
                 Depth:</div>
             <div class="col">{{depth['r_gate_times']}}</div>
             <div class="col"><button mat-mini-fab color="primary" class="col" (click)="useRigetti()">
-                <mat-icon>keyboard_arrow_right</mat-icon>
-            </button></div>
+                    <mat-icon>keyboard_arrow_right</mat-icon>
+                </button></div>
         </div>
     </mat-list>
 </div>
 
 <mat-divider class="mt-2 mb-2"></mat-divider>
+<div class="row ">
+    <div class="col float-left pl-5">
+        <mat-checkbox class="example-margin" [(ngModel)]="isExpert">Expert Mode</mat-checkbox>
+    </div>
+    <div class="col-4" [@expert]="isExpert ? 'open' : 'closed'">
+        <mat-form-field class="w-100">
+            <mat-label> Choose Export Language/Framework</mat-label>
+            <mat-select (selectionChange)="changed($event)">
+                <p class="pl-2 pt-2 selectionTitle">Languages</p>
+                <mat-option value="OpenQASM">
+                    OpenQASM
+                </mat-option>
+                <mat-option value="Quil">
+                    Quil
+                </mat-option>
+                <mat-divider></mat-divider>
+                <p class="pl-2 pt-2 selectionTitle">Frameworks</p>
+                <mat-option value="Qiskit">
+                    Qiskit
+                </mat-option>
+                <mat-option disabled
+                    matTooltip="Pyquil program can be exported in the backend. However, converting it to a string to show it in the frontend is not useful. Use Quil in this case."
+                    matTooltipClass="tooltip-large" value="Pyquil">
+                    Pyquil
+                </mat-option>
 
-<div class="row float-right pr-5">
-    <button (click)="download()" mat-mini-fab class="float-right"
-            matTooltip="Download Circuit." matTooltipClass="tooltip-large"
-            color="primary">
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="col float-right pr-5">
+        <button (click)="download()" mat-mini-fab class="float-right" matTooltip="Download Circuit."
+            matTooltipClass="tooltip-large" color="primary">
             <mat-icon>system_update</mat-icon>
         </button>
+    </div>
+
 </div>
 <app-code class="pt-5 row" circuitRef='export'></app-code>
