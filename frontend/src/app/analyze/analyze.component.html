@@ -4,22 +4,37 @@
         <div class="row justify-content-center">
             <div class="col" matTooltip="Length of the longest path of the unrolled circuit for IBM QX.">Depth:</div>
             <div class="col">{{depth['q_depth']}}</div>
-            <div class="col" matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for IBM QX.">Two-Qubit Depth:</div>
+            <div class="col"
+                matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for IBM QX.">
+                Two-Qubit Depth:</div>
             <div class="col">{{depth['q_two_qubit']}}</div>
-            <div class="col" matTooltip="Counts the number of pulses of the unrolled circuit for IBM QX.">X90 Pulses Depth:</div>
+            <div class="col" matTooltip="Counts the number of pulses of the unrolled circuit for IBM QX.">X90 Pulses
+                Depth:</div>
             <div class="col">{{depth['q_gate_times']}}</div>
+            <div class="col"><button mat-mini-fab color="primary" class="col" (click)="useQiskit()">
+                    <mat-icon>keyboard_arrow_right</mat-icon>
+                </button></div>
+
         </div>
+
+
         <mat-divider class="mt-2 mb-2"></mat-divider>
         <div mat-subheader>Rigetti</div>
         <div class="row">
-            <div class="col" matTooltip="Length of the longest path of the unrolled circuit for Rigetti architectures..">Depth:</div>
+            <div class="col"
+                matTooltip="Length of the longest path of the unrolled circuit for Rigetti architectures..">Depth:</div>
             <div class="col">{{depth['r_depth']}}</div>
-            <div class="col" matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for Rigetti architectures.">Two Qubit Depth:</div>
+            <div class="col"
+                matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for Rigetti architectures.">
+                Two Qubit Depth:</div>
             <div class="col">{{depth['r_two_qubit']}}</div>
-            <div class="col" matTooltip="Counts the number of pulses of the unrolled circuit for Rigetti architectures.">X90 Pulses Depth:</div>
+            <div class="col"
+                matTooltip="Counts the number of pulses of the unrolled circuit for Rigetti architectures.">X90 Pulses
+                Depth:</div>
             <div class="col">{{depth['r_gate_times']}}</div>
+            <div class="col"><button mat-mini-fab color="primary" class="col" (click)="useRigetti()">
+                <mat-icon>keyboard_arrow_right</mat-icon>
+            </button></div>
         </div>
     </mat-list>
 </div>
-
-<button mat-raised-button class="mt-1 pt-1 pb-1 redoButton" (click)="analyse()"><mat-icon>redo</mat-icon>Recompute</button>

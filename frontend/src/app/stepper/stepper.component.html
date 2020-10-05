@@ -1,21 +1,22 @@
 <div class="container-fluid">
-  <mat-horizontal-stepper #stepper>
+  <mat-horizontal-stepper  #stepper (selectionChange)="onStepChange($event)">
     <mat-step [stepControl]="firstFormGroup" state="input">
-      <ng-template matStepLabel>Input</ng-template>
+      <ng-template matStepLabel>Import</ng-template>
       <app-import></app-import>
     </mat-step>
     <mat-step [stepControl]="firstFormGroup" state="circuit">
-      <ng-template matStepLabel>Internal Representation</ng-template>
+      <ng-template matStepLabel>Visualize and Edit </ng-template>
       <app-circuit></app-circuit>
     </mat-step>
     <mat-step [stepControl]="firstFormGroup" state="circuit">
-      <ng-template matStepLabel>Unroll to Target Set</ng-template>
-      <app-unroll></app-unroll>
+      <ng-template matStepLabel>Transpile and Export</ng-template>
+      <app-analyze #analyze></app-analyze>
+
     </mat-step>
-    <mat-step [stepControl]="firstFormGroup" state="export">
+    <!-- <mat-step [stepControl]="firstFormGroup" state="export">
       <ng-template matStepLabel>Export</ng-template>
       <app-export></app-export>
-    </mat-step>
+    </mat-step> -->
   </mat-horizontal-stepper>
 </div>
 

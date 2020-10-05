@@ -33,5 +33,13 @@ export class AnalyzeComponent implements OnInit {
     }
   }
 
+  useQiskit() {
+
+  }
+
+  useRigetti() {
+    
+  }
+
 
 }
