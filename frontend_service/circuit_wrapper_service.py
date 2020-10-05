@@ -90,45 +90,41 @@ def convert():
 def unroll():
     data = request.json
     option = data["option"]
-    nativeGates = data["nativeGates"]
     circuit = data["circuit"]
+    isExpert = data["isExpert"]
+    format = data["format"]
+
     try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
         if option == "Rigetti":
             wrapper.unroll_rigetti()
         elif option == "IBMQ":
             wrapper.unroll_ibm()
-        elif option == "Custom":
-            wrapper.unroll(nativeGates)    
         else:
             return "Bad Request!", 400
-        output = wrapper.export_qiskit_commands()
 
-    except Exception as e:
-        print(str(e))
-        return str(e), 500
-    
-    return output
-
-@app.route('/unrollToNativeFormat', methods=['Post'])
-def unrollToNativeFormat():
-    data = request.json
-    option = data["option"]
-    circuit = data["circuit"]
-    try:
-        wrapper = CircuitWrapper(qiskit_instructions=circuit)
-        if option == "Rigetti":
-            wrapper.unroll_rigetti()
-            output = wrapper.export_quil()
-        elif option == "IBMQ":
-            wrapper.unroll_ibm()
-            output = wrapper.export_qasm()
+        if isExpert:
+            if format == "qasm":
+                output= wrapper.export_qasm()
+            elif format == "quil":
+                output= wrapper.export_quil()
+            elif format == "qiskit":
+                output= wrapper.export_qiskit_commands()
+            else:
+                return "Bad Request!", 400
         else:
-            return "Bad Request!", 400
+            if option == "Rigetti":
+                output = wrapper.export_quil()
+            elif option == "IBMQ":
+                output = wrapper.export_qasm()
+            else:
+                return "Bad Request!", 400
+
     except Exception as e:
         print(str(e))
         return str(e), 500    
     return output
+
 
 @app.route('/simulate', methods=['Post'])
 def simulate():
