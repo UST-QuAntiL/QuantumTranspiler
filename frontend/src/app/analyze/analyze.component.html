@@ -41,4 +41,11 @@
 
 <mat-divider class="mt-2 mb-2"></mat-divider>
 
-<app-code class="pt-5" circuitRef='unroll'></app-code>
+<div class="row float-right pr-5">
+    <button (click)="download()" mat-mini-fab class="float-right"
+            matTooltip="Download Circuit." matTooltipClass="tooltip-large"
+            color="primary">
+            <mat-icon>system_update</mat-icon>
+        </button>
+</div>
+<app-code class="pt-5 row" circuitRef='export'></app-code>
