@@ -34,11 +34,24 @@ export class AnalyzeComponent implements OnInit {
   }
 
   useQiskit() {
-
+    this.unroll("IBMQ")
   }
 
   useRigetti() {
-    
+    this.unroll("Rigetti")
+  }
+
+  private async unroll(option: string) {  
+    let object = {
+      "option": option,
+      "circuit": this.data.circuits["internal"],
+      "nativeGates": []
+    }
+
+    let circuit = await this.http.callBackend(object, "unroll")
+    if (circuit) {
+      this.data.setCircuit("unroll", circuit)
+    }
   }
 
 
