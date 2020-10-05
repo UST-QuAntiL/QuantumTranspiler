@@ -110,6 +110,26 @@ def unroll():
     
     return output
 
+@app.route('/unrollToNativeFormat', methods=['Post'])
+def unrollToNativeFormat():
+    data = request.json
+    option = data["option"]
+    circuit = data["circuit"]
+    try:
+        wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        if option == "Rigetti":
+            wrapper.unroll_rigetti()
+            output = wrapper.export_quil()
+        elif option == "IBMQ":
+            wrapper.unroll_ibm()
+            output = wrapper.export_qasm()
+        else:
+            return "Bad Request!", 400
+    except Exception as e:
+        print(str(e))
+        return str(e), 500    
+    return output
+
 @app.route('/simulate', methods=['Post'])
 def simulate():
     data = request.json
