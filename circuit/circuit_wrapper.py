@@ -1,3 +1,5 @@
+from qiskit.transpiler.coupling import CouplingMap
+from transpilation.topology_mapping import swap
 from circuit.qiskit_utility import count_gate_times, count_two_qubit_gates
 from qiskit.execute import execute
 from conversion.converter.command_converter import circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit
@@ -12,6 +14,7 @@ from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
 from typing import List, Tuple
 from qiskit.providers.aer import QasmSimulator
+
 
 class CircuitWrapper:
     def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None, qasm: str = None, pyquil_instructions: str = None, qiskit_instructions: str = None):
@@ -98,10 +101,12 @@ class CircuitWrapper:
         instructions = circuit_to_qiskit_commands(circuit)
         return instructions
 
-    def export_pyquil_commands(self) -> str :
+    def export_pyquil_commands(self) -> str:
         (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
-        raise NotImplementedError("Conversion to Pyquil Commands is not implemented. Export export_pyquil or export_quil should be used.")
+        raise NotImplementedError(
+            "Conversion to Pyquil Commands is not implemented. Export export_pyquil or export_quil should be used.")
 
+    #  decomposing and unrolling functionality
     def decompose_to_standard_gates(self) -> None:
         (self.circuit, self.dag) = self.decompose_to_standard_gates_return()
 
@@ -133,17 +138,22 @@ class CircuitWrapper:
         self.circuit = dag_to_circuit(self.dag)
         return self.circuit
 
-    def simulate(self, shots=1000):        
+    # topology mapping
+    def topology_mapping(self, coupling: CouplingMap):
+        self.dag = swap(self.dag, coupling)
+        self.circuit = dag_to_circuit(self.dag)
+
+    def simulate(self, shots=1000):
         simulator = QasmSimulator()
         result = execute(self.circuit, simulator, shots=shots).result()
         counts = result.get_counts(self.circuit)
         return counts
 
     # analysis
-    def depth(self): 
+    def depth(self):
         return self.dag.depth()
 
-    def depth_gate_times(self): 
+    def depth_gate_times(self):
         """
         considers the number of frame changes needed to implement a specific operation
         e.g. U1: 0
@@ -153,12 +163,28 @@ class CircuitWrapper:
         ops_path = self.dag.count_ops_longest_path()
         count = count_gate_times(ops_path)
         return count
-    
-    def depth_two_qubit_gates(self): 
+
+    def depth_two_qubit_gates(self):
         """
         considers the number of the two qubit gates: cz, cx and cy (which include the native two qubit gates from rigetti -cz- and ibm -cx-)
         """
         ops_path = self.dag.count_ops_longest_path()
         count = count_two_qubit_gates(ops_path)
         return count
-        
+
+    def compare_depth_topology(self, coupling: CouplingMap, depth_method, ibm: bool = True):
+        if ibm:
+            self.unroll_ibm()
+        else:
+            self.unroll_rigetti()
+
+        depth = depth_method()
+        self.topology_mapping(coupling)
+        if ibm:
+            self.unroll_ibm()
+        else:
+            self.unroll_rigetti()
+        depth_mapped = depth_method()
+        print("Depth before topology mapping: " + str(depth))
+        print("Depth after topology mapping: " + str(depth_mapped))
+        print("Increase: " + str(depth_mapped/depth))

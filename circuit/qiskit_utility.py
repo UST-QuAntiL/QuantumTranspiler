@@ -61,8 +61,6 @@ def count_gate_times(gates: Dict[str, int]):
 def count_two_qubit_gates(gates: Dict[str, int]):
     count = 0
     for (key, value) in gates.items():
-        print(key)
-        print(value)
         if key == "cx" or key == "cz" or key == "cy":
             count += value     
     return count

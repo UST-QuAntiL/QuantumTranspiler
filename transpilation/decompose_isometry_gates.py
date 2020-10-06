@@ -22,7 +22,6 @@ from qiskit.exceptions import QiskitError
 from transpilation.Utility import isometry_gates
 
 class DecomposeIsometryGates():
-
     def run(self, dag):
         """
         Args:
@@ -32,6 +31,7 @@ class DecomposeIsometryGates():
         Raises:
             QiskitError: if a 3q+ gate is not decomposable
         """
+        # only change to Qiskit code is iteration over isometry gates instead of all gate nodes
         for node in isometry_gates(dag):
             # TODO: allow choosing other possible decompositions
             rule = node.op.definition

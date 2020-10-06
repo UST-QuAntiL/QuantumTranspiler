@@ -69,8 +69,18 @@ class TestCircuitWrapper:
         # print(wrapper.depth())
         # print(wrapper.depth_gate_times())
         print(wrapper.depth_two_qubit_gates())
+
+    def test_topology_mapping(self):
+        wrapper = CircuitWrapper(qiskit_circuit=shor_15())
+        wrapper.unroll_ibm()
+        print(wrapper.circuit)
+        wrapper.topology_mapping(ibmq_london())
+        print(wrapper.circuit)
         
+    def test_compare_depth_topology(self):
+        wrapper = CircuitWrapper(qiskit_circuit=shor_15())
+        wrapper.compare_depth_topology(ibmq_16_melbourne(), wrapper.depth_two_qubit_gates)
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_analysis()
+    test.test_compare_depth_topology()
