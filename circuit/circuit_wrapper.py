@@ -1,5 +1,5 @@
 from qiskit.transpiler.coupling import CouplingMap
-from transpilation.topology_mapping import swap
+from transpilation.topology_mapping import swap, swap_direction
 from circuit.qiskit_utility import count_gate_times, count_two_qubit_gates
 from qiskit.execute import execute
 from conversion.converter.command_converter import circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit
@@ -142,6 +142,13 @@ class CircuitWrapper:
     def topology_mapping(self, coupling: CouplingMap):
         self.circuit = swap(self.circuit, coupling)
         self.dag = circuit_to_dag(self.circuit)
+        # needed to swap direction of the gates if the coupling_map is not symmetric        
+        if not coupling.is_symmetric:
+            # rigetti's coupling_maps are symmetric because of cz as native gate instead of cx
+            self.unroll_ibm()
+            self.circuit = swap_direction(self.circuit, coupling)
+            self.dag = circuit_to_dag(self.circuit)
+        
 
     def simulate(self, shots=1000):
         simulator = QasmSimulator()
