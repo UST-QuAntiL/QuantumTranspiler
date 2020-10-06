@@ -140,8 +140,8 @@ class CircuitWrapper:
 
     # topology mapping
     def topology_mapping(self, coupling: CouplingMap):
-        self.dag = swap(self.dag, coupling)
-        self.circuit = dag_to_circuit(self.dag)
+        self.circuit = swap(self.circuit, coupling)
+        self.dag = circuit_to_dag(self.circuit)
 
     def simulate(self, shots=1000):
         simulator = QasmSimulator()

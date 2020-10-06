@@ -46,7 +46,8 @@ def draw(circuit: QuantumCircuit):
 def analyze_circuit(circuit: QuantumCircuit):
     provider = IBMQ.load_account()
     backend = provider.get_backend("ibmq_ourense")
-    mapped_circuit = transpile(circuit, backend=backend)
+    print(circuit)
+    mapped_circuit = transpile(circuit, backend=backend, optimization_level=0)
     qobj = assemble(mapped_circuit, backend=backend, shots=8192)
     print(mapped_circuit)
     print(qobj)
@@ -68,10 +69,10 @@ if __name__ == "__main__":
     qc.h(0)
     qc.h(1)
     qc.cnot(0,1)
-    draw(qc)
+    analyze_circuit(qc)   
     # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
     # circuit = bernstein_vazirani_general_qiskit_binary_string("010000110")
     # circuit = iden_circuit(False)
     # simulate_circuit(circuit)
-    # analyze_circuit(circuit)    
+     
 

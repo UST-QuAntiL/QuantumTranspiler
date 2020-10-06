@@ -6,6 +6,7 @@
     "configurations": [
 
 
+
         {
             "name": "Python: Module Test Circuit Wrapper",
             "type": "python",
@@ -33,6 +34,13 @@
             "request": "launch",
             "justMyCode": false,
             "module": "conversion.test_circuit_converter"
+        },
+        {
+            "name": "Python: Module Test id_comparison",
+            "type": "python",
+            "request": "launch",
+            "justMyCode": false,
+            "module": "test.id_comparison"
         },
         {
             "name": "Python: Current File",
