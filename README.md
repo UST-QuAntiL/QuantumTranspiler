@@ -1,6 +1,6 @@
 # Vendor-Independent Quantum Transpiler
 
-The Vendor-Independent Quantum Transpiler is a quantum transpiler written in Python3 that compiles quantum circuits for several QPUs. The transpiler supports importing and exporting circuits from various quantum platforms and quantum instruction languages.
+The Vendor-Independent Quantum Transpiler is a quantum transpiling and analyzing framework written in Python3 that compiles quantum circuits for several QPUs. The user is guided through the whole process of importing, visualizing, editing, simulating and exporting quantum circuits. Additionally, the quantum circuit is analyzed regarding various QPUs and the transpiled, executable quantum circuit can be exported in the respective quantum instruction language. 
 
 ## Dependencies
 
@@ -14,6 +14,8 @@ pip install flask
 pip install flask-cors
 pip install pydot
 ```
+
+To access the coupling maps of the IBM QPUs an [IBM QX Token](https://quantum-computing.ibm.com/account) is needed. This must be saved in the environment to access the services (see [Access IBM Quantum Systems](https://qiskit.org/documentation/install.html#install-access-ibm-q-devices-label)).
 
 ### Frontend
 The fronted is developed with [Angular](https://angular.io/):
