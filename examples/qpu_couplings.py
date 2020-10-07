@@ -23,8 +23,7 @@ def aspen_4():
 
 
 # IBMQ
-def ibmq(qpu_name: str):
-    provider = IBMQ.load_account()
+def ibmq(qpu_name: str):    
     backend = provider.get_backend(qpu_name)
     return CouplingMap(backend.configuration().coupling_map)
 
@@ -50,6 +49,22 @@ def ibmq_burlington():
 def ibmq_santiago():
     return ibmq("ibmq_santiago")
 
+def qpus():
+    qpus = {
+        "aspen_4": ["r", 3, aspen_4()],
+        "ibmqx2": ["q", 3, ibmqx2()],
+        "ibmq_16_melbourne": ["q", 3, ibmq_16_melbourne()],
+        "ibmq_vigo": ["q", 3, ibmq_vigo()],
+        "ibmq_ourense": ["q", 3, ibmq_ourense()],
+        "ibmq_valencia": ["q", 3, ibmq_valencia()],
+        "ibmq_london": ["q", 3, ibmq_london()],
+        "ibmq_essex": ["q", 3, ibmq_essex()],
+        "ibmq_burlington": ["q", 3, ibmq_burlington()],
+        "ibmq_santiago": ["q", 3, ibmq_santiago()],
+    }
+    return qpus
+
+provider = IBMQ.load_account()
 if __name__ == "__main__":
     # map = ibmq_ourense()
     map = aspen_4()

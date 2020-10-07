@@ -1,3 +1,4 @@
+from examples.qpu_couplings import qpus
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
@@ -142,8 +143,8 @@ def simulate():
 def depth():
     data = request.json
     circuit = data["circuit"]
-    try:
-        depth = {}
+    depth = {}
+    try:        
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
         wrapper.unroll_ibm()
         depth["q_depth"] = wrapper.depth()
@@ -155,6 +156,44 @@ def depth():
         depth["r_depth"] = wrapper.depth()
         depth["r_two_qubit"] = wrapper.depth_two_qubit_gates()
         depth["r_gate_times"] = wrapper.depth_gate_times()
+        output = depth
+    except Exception as e:
+        print(str(e))
+        return str(e), 500
+    return output
+
+
+@app.route('/depth_comparison_qpu', methods=['Post'])
+def depth_comparison_qpu():
+    data = request.json
+    circuit = data["circuit"]
+    depth = {}
+    try: 
+        wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        circuit = wrapper.circuit
+        qpu_map = qpus()
+        for qpu_name in qpu_map:      
+            wrapper = CircuitWrapper(qiskit_circuit=circuit)      
+            is_ibm = False
+            qpu = qpu_map[qpu_name]
+            if qpu[1] == "q":
+                is_ibm = True
+            qpu_multiplier = qpu[1]
+            qpu_coupling = qpu[2]
+            if len(wrapper.dag.qubits) > len(qpu_coupling.physical_qubits):
+                continue
+            if is_ibm:
+                wrapper.unroll_ibm()
+                depth["q_depth"] = wrapper.depth() * qpu_multiplier
+                depth["q_two_qubit"] = wrapper.depth_two_qubit_gates() * qpu_multiplier
+                depth["q_gate_times"] = wrapper.depth_gate_times() * qpu_multiplier
+            
+            else:
+
+                wrapper.unroll_rigetti()
+                depth["r_depth"] = wrapper.depth()
+                depth["r_two_qubit"] = wrapper.depth_two_qubit_gates()
+                depth["r_gate_times"] = wrapper.depth_gate_times()
         output = depth
     except Exception as e:
         print(str(e))

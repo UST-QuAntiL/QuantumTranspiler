@@ -195,3 +195,4 @@ class CircuitWrapper:
         print("Depth before topology mapping: " + str(depth))
         print("Depth after topology mapping: " + str(depth_mapped))
         print("Increase: " + str(depth_mapped/depth))
+
