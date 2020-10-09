@@ -5,7 +5,7 @@ The Vendor-Independent Quantum Transpiler is a quantum transpiling and analyzing
 ## Dependencies
 
 There are several dependencies that need to be installed on the system. Some of the dependencies (e.g Qiskit and Pyquil) need gcc to be installed on the system. Furthermore, Python dev must be installed (e.g. sudo dnf install python3-devel).
-It is recommended to install them with [Pip](https://pip.pypa.io/en/stable/). 
+It is recommended to install the following dependencies with [Pip](https://pip.pypa.io/en/stable/). 
 
 ```bash
 pip install qiskit
