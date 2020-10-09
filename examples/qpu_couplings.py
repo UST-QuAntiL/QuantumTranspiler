@@ -23,7 +23,8 @@ def aspen_4():
 
 
 # IBMQ
-def ibmq(qpu_name: str):    
+def ibmq(qpu_name: str):  
+    provider = IBMQ.load_account()  
     backend = provider.get_backend(qpu_name)
     return CouplingMap(backend.configuration().coupling_map)
 
@@ -64,7 +65,6 @@ def qpus():
     }
     return qpus
 
-provider = IBMQ.load_account()
 if __name__ == "__main__":
     # map = ibmq_ourense()
     map = aspen_4()
