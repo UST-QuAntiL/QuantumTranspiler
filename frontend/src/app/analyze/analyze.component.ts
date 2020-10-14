@@ -73,6 +73,7 @@ export class AnalyzeComponent implements OnInit {
 
   useQiskit() {
     this.architecture = "IBMQ"
+    this.selectedFormatOption = "OpenQASM"
     this.unroll()
     if (!this.isExpert) {
       this.formatUsed = "qasm"
@@ -81,6 +82,7 @@ export class AnalyzeComponent implements OnInit {
 
   useRigetti() {
     this.architecture = "Rigetti"
+    this.selectedFormatOption = "Quil"
     this.unroll()
     if (!this.isExpert) {
       this.formatUsed = "quil"
