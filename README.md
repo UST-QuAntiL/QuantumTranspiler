@@ -13,6 +13,7 @@ pip install pyquil
 pip install flask
 pip install flask-cors
 pip install pydot
+pip install IPython
 ```
 
 To access the coupling maps of the IBM QPUs an [IBM QX Token](https://quantum-computing.ibm.com/account) is needed. This must be saved in the environment to access the services (see [Access IBM Quantum Systems](https://qiskit.org/documentation/install.html#install-access-ibm-q-devices-label)).
