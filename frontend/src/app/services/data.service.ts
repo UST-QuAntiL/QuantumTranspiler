@@ -37,27 +37,7 @@ MEASURE 0 ro[0]
 MEASURE 1 ro[1]
 MEASURE 2 ro[2]
 `,
-    "internal":
-      //       `qc = QuantumCircuit(5,3)
-      // qc.h(0)
-      // qc.x(0)
-      // qc.y(0)
-      // `,
-      `qc = QuantumCircuit(5,3)
-qc.h(0)
-qc.h(1)
-qc.h(2)
-qc.h(1)
-qc.cx(2, 3)
-qc.cu1(0, 1, 0)
-qc.cx(2, 4)
-qc.h(0)
-qc.cu1(0, 1, 2)
-qc.cu1(0, 0, 2)
-qc.h(2)
-qc.measure(0, 0)
-qc.measure(1, 1)
-qc.measure(2, 2)`,
+    "internal": "",
     "unroll": "",
     "export": ""
   };
