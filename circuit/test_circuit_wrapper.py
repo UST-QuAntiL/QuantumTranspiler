@@ -84,4 +84,4 @@ class TestCircuitWrapper:
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()
-    test.test_compare_depth_topology()
+    test.test_unroll()

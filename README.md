@@ -13,6 +13,7 @@ pip install pyquil
 pip install flask
 pip install flask-cors
 pip install pydot
+pip install IPython
 ```
 
 To access the coupling maps of the IBM QPUs an [IBM QX Token](https://quantum-computing.ibm.com/account) is needed. This must be saved in the environment to access the services (see [Access IBM Quantum Systems](https://qiskit.org/documentation/install.html#install-access-ibm-q-devices-label)).
@@ -41,5 +42,13 @@ Test Examples:
 ```bash
 python3 -m conversion.test_circuit_converter   
 python3 -m circuit.test_circuit_wrapper   
-python3 -m test.2.2_test
+python3 -m test.e2e_test
 ```
+
+The file e2e_test can be used to test the convert and unroll functionality of the transpiler. The results are compared with results from the Qiskit and Quil Transpiler (quilc). For this purpose the qvm and the quilc must be installed (see [PyQuil Docs](https://pyquil-docs.rigetti.com/en/stable/start.html)).
+
+To use the transpiler within another application, the methods of the circuit_wrapper provide the functionality toimport, transpile and export quantum circuits.
+
+## Issues
+The Drag and Drop tool has some minor bugs. Custom gates cannot and quantum circuits consisting of several quantum/classical registers cannot be properly displayed in the graphical quantum circuit.
+

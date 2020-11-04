@@ -39,26 +39,12 @@ class TestCircuitConverter:
         show_figure(QuantumCircuit.from_qasm_str(qasm))
 
         # pyquil = QuantasticaConverter.qasm_to_pyquil(ExampleCircuits.qiskit_custom().qasm())
-        # print(pyquil)
-
-    def test_pyquil_own_import(self):
-        converter = PyquilConverter()
-        handler = ConversionHandler(converter)
-        qiskit = handler.import_circuit(pyquil_custom())
-        show_figure(qiskit[0])
-
-    def test_pyquil_own_export(self):
-        converter = PyquilConverter()
-        handler = ConversionHandler(converter)
-        program = handler.export_circuit(qc)[0]
-        print(program)
-        # latex = to_latex(program)
-        # print(latex)
+        # print(pyquil)   
     
     def test_pyquil(self):
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
-        program = handler.export_circuit(qiskit_custom())[0]
+        program = handler.export_circuit(shor_15())[0]
         print(program)
         # program = handler.export_circuit(qiskit_custom())[0]
         # print(program)
@@ -69,4 +55,4 @@ class TestCircuitConverter:
 
 if __name__ == "__main__":
     test= TestCircuitConverter()    
-    test.test_pyquil_own_export()    
+    test.test_pyquil()    

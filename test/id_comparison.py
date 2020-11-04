@@ -36,7 +36,7 @@ def run_circuit(circuit: QuantumCircuit):
 
 def draw(circuit: QuantumCircuit):
     # circuit.draw(output='latex_source', filename="./test/results/circuit.tex")
-    circuit.draw(output='mpl', filename="./test/results/circuit.pdf")
+    circuit.draw(output='mpl', filename="./test/results/circuit.png")
 
 def analyze_circuit(circuit: QuantumCircuit):
     provider = IBMQ.load_account()
@@ -57,8 +57,15 @@ def simulate_circuit(circuit: QuantumCircuit):
 
 if __name__ == "__main__":
     qc = QuantumCircuit(5)
-    qc.cnot(0,2)
+    qc.barrier()
+    qc.swap(0,1)
+    qc.cnot(1,2)
+    qc.swap(0,1)
+    qc.barrier()
+    qc.swap(2,3)
     qc.cnot(2,4)
+    qc.swap(2,3)
+    qc.barrier()
     draw(qc)   
     # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
     # circuit = bernstein_vazirani_general_qiskit_binary_string("010000110")

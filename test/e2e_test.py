@@ -113,7 +113,7 @@ class TestTranspilation():
 
 if __name__ == "__main__":
     # working:
-    # circuit = shor_15()
+    circuit = shor_15()
     # circuit = qiskit_custom()
     # circuit = grover_fix_qiskit()
     # circuit = grover_fix_SAT_qiskit()
@@ -122,7 +122,6 @@ if __name__ == "__main__":
     # circuit = bernstein_vazirani_general_qiskit_binary_string(9, "010000110") 
     # circuit = grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)")
     # circuit = grover_general_truthtable_qiskit("10100000")     
-    circuit = shor_general(3)    
      
 
     # print(circuit)
