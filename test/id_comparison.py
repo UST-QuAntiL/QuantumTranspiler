@@ -72,4 +72,3 @@ if __name__ == "__main__":
     # circuit = iden_circuit(False)
     # simulate_circuit(circuit)
      
-
