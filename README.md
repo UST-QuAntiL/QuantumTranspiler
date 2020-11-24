@@ -47,7 +47,33 @@ python3 -m test.e2e_test
 
 The file e2e_test can be used to test the convert and unroll functionality of the transpiler. The results are compared with results from the Qiskit and Quil Transpiler (quilc). For this purpose the qvm and the quilc must be installed (see [PyQuil Docs](https://pyquil-docs.rigetti.com/en/stable/start.html)).
 
-To use the transpiler within another application, the methods of the circuit_wrapper provide the functionality to import, transpile, analyze, and export quantum circuits.
+To use the transpiler within another application, the methods of the CircuitWrapper in circuit/circuit_wrapper.py provide the functionality to import, transpile, analyze, and export quantum circuits.
+
+## Structure
+In the following the structure of the directories and python files is explained.
+
+### /circuit
+The CircuitWrapper class defines the methods to interact with the implemented framework.
+
+### /conversion
+Contains the functionality for the import and export of quantum cirucits from Quil and PyQuil to Qiskit quantum circuits. /conversion/converter contains the classes for the iteration of the quantum circuits and the creation of the individual instructions. /conversion/mappings contains the mapping of quantum gates.
+
+### /transpilation 
+Contains the functionality to unroll a quantum circuit for a specific native gate set (in unroll.py). decompose.py can be used to decompose non standard gates to the Qiskit standard gates without specifying a native gate set. topology_mapping.py executes the mapping to physical qubits of the Qiskit library. equivalence_library.py contains the equivalent gates of the Qiskit gates U2 and U3, as well as, the gate CX for the unrolling step if the Rigetti native gate set is chosen.
+
+### /examples
+Contains example quantum circuits written in OpenQASM, Qiskit, Quil, and pyQuil. Furthermore, common QPU architectures from Rigetti and IBM QX are specified with their coupling maps.
+
+### /frontend
+Contains the Angular Webapp.
+
+### /frontend_service
+Contains the HTTP backend server (flask) that provides the functionality of the developed framework to other services like the frontend.
+
+### /test
+The TestTranspilation class in e2e_test.py can be used to test the transpilation and conversion functionality of the framework by comparing the simulation results of quantum circuits that are imported, transpiled, and exported with the developed framework with results that are achieved by directly executing the quantum circuit on Rigetti or Qiskit simulators.
+
+/test/third_party_converter contains classes to interoperate with the frameworks Pennylane, Pytket, Quantastica, and Staq to test their functionality.
 
 ## Issues
 The Drag and Drop tool has some minor bugs. Custom gates and quantum circuits consisting of several quantum/classical registers cannot be properly displayed in the graphical quantum circuit. Furthermore, the dragging of gates behaves incosistent in some cases.
