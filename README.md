@@ -30,7 +30,7 @@ npm install
 The framework can be started in different ways that are explained in the following.
 
 ### Docker
-The recommended way to setup the framework is by using docker_compose. 
+The recommended way to setup the framework is by using docker_compose to start the webapp on port 8080. 
 ```bash
 docker-compose up
 ```
