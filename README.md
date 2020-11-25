@@ -27,7 +27,7 @@ npm install
 ```
 
 ## Usage
-To start the server run:
+To start the server run (the default port is 5000):
 ```bash
 python -m frontend_service.circuit_wrapper_service
 ```
