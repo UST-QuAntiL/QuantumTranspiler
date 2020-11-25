@@ -27,16 +27,26 @@ npm install
 ```
 
 ## Usage
+The framework can be started in different ways that are explained in the following.
+
+### Docker
+The recommended way to setup the framework is by using docker_compose. 
+```bash
+docker-compose up
+```
+
+To start only the backend run
+```bash
+docker build --tag backend .
+docker run --publish 5000:5000 --detach --name b backend
+```
+
+### Python Module
+Alternatively
 To start the server run (the default port is 5000):
 ```bash
 python -m frontend_service.circuit_wrapper_service
 ```
-
-To start the frontend run:
-```bash
-ng serve --open
-```
-
 The library is executed as a module.
 Test Examples:
 ```bash
@@ -48,6 +58,12 @@ python3 -m test.e2e_test
 The file e2e_test can be used to test the convert and unroll functionality of the transpiler. The results are compared with results from the Qiskit and Quil Transpiler (quilc). For this purpose the qvm and the quilc must be installed (see [PyQuil Docs](https://pyquil-docs.rigetti.com/en/stable/start.html)).
 
 To use the transpiler within another application, the methods of the CircuitWrapper in circuit/circuit_wrapper.py provide the functionality to import, transpile, analyze, and export quantum circuits.
+
+### Frontend
+To start the frontend run:
+```bash
+ng serve --open
+```
 
 ## Structure
 In the following the structure of the directories and python files is explained.
