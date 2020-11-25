@@ -1,0 +1,7 @@
+qiskit
+pyquil
+numpy
+flask
+flask-cors
+pydot
+IPython
