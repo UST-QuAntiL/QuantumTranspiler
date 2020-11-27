@@ -2,11 +2,11 @@ from conversion.converter.command_utility import create_matrix_params, create_pa
 from pyquil.gates import *
 from pyquil import Program, get_qc
 from circuit.qiskit_utility import standard_instructions
-from qiskit import QuantumCircuit
 import numpy as np
+from qiskit import QuantumCircuit
 from qiskit.circuit.classicalregister import ClassicalRegister
-from qiskit.circuit.library.standard_gates import *
 from qiskit.circuit.quantumregister import QuantumRegister
+from qiskit.circuit.library.standard_gates import *
 import pyquil.quilbase as pyquil_circuit_library
 from pyquil.gates import NOP, MEASURE
 
@@ -20,8 +20,14 @@ def qiskit_commands_to_circuit(commands: str) -> QuantumCircuit:
     val = eval("qc")     
     return val   
 
-def circuit_to_qiskit_commands(circuit: QuantumCircuit):
+def circuit_to_qiskit_commands(circuit: QuantumCircuit, include_imports = False):
     commands = ""
+    if include_imports:
+        commands = '''from qiskit import QuantumCircuit
+from qiskit.circuit.classicalregister import ClassicalRegister
+from qiskit.circuit.quantumregister import QuantumRegister
+from qiskit.circuit.library.standard_gates import *\n\n'''
+
     (reg_str, simple_registers) = _handle_regs(circuit)
     commands += reg_str
     commands += _handle_instructions(circuit, simple_registers)

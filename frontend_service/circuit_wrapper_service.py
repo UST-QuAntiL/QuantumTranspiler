@@ -110,7 +110,7 @@ def unroll():
             elif format == "Quil":
                 output= wrapper.export_quil()
             elif format == "Qiskit":
-                output= wrapper.export_qiskit_commands()
+                output= wrapper.export_qiskit_commands(include_imports=True)
             elif format == "Pyquil":
                 output= wrapper.export_pyquil_commands()
             else:

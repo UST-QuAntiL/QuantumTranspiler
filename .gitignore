@@ -8,7 +8,6 @@ __pycache__/
 !.vscode/extensions.json
 .history/*
 # compiled output
-/dist
 /tmp
 /out-tsc
 # Only exists if Bazel was run

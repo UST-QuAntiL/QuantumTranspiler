@@ -3,14 +3,12 @@ version: "3.8"
 services:
   backend:
     build: .
-    image: backend_com
+    image: b_comp
     ports:
       - "5000:5000"
   frontend:
-    build: 
-      dockerfile: .
-      context: ./frontend
-    image: frontend_com
+    build: ./frontend
+    image: f_comp
     ports:
       - "8080:80"
     depends_on:

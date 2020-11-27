@@ -1,7 +1,7 @@
-qiskit
-pyquil
-numpy
-flask
-flask-cors
+qiskit==0.23.1
+pyquil==2.25.0
+numpy==1.19.4
+flask==1.1.2
+flask-cors==3.0.9
 pydot
 IPython
