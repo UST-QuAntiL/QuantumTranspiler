@@ -2,7 +2,7 @@ from qiskit.transpiler.coupling import CouplingMap
 from transpilation.topology_mapping import swap, swap_direction
 from circuit.qiskit_utility import count_gate_times, count_two_qubit_gates
 from qiskit.execute import execute
-from conversion.converter.command_converter import circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit
+from conversion.converter.command_converter import circuit_to_pyquil_commands, circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.dagcircuit.dagcircuit import DAGCircuit
 from qiskit.transpiler.passes.basis import decompose
@@ -97,14 +97,14 @@ class CircuitWrapper:
 
     def export_qiskit_commands(self) -> str:
         (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
-        # print(circuit)
         instructions = circuit_to_qiskit_commands(circuit)
         return instructions
 
     def export_pyquil_commands(self) -> str:
         (circuit, dag) = self.decompose_non_standard_non_unitary_gates_return()
-        raise NotImplementedError(
-            "Conversion to Pyquil Commands is not implemented. Export export_pyquil or export_quil should be used.")
+        program = self.export_pyquil()
+        instructions = circuit_to_pyquil_commands(program)
+        return instructions
 
     #  decomposing and unrolling functionality
     def decompose_to_standard_gates(self) -> None:

@@ -61,7 +61,6 @@ class PyquilConverter(ConverterInterface):
                 continue
             elif isinstance(instr, pyquil_circuit_library.Halt):
                 break
-            # TODO classical operations http://docs.rigetti.com/en/stable/apidocs/gates.html
             else:
                 raise NotImplementedError(
                     "Unsupported instruction: " + str(instr))

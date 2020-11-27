@@ -1,4 +1,4 @@
-def create_param_string(params, param_str):
+def create_param_string(params, param_str = ""):
     for param in params:            
         if param_str != "":
             param_str += ", "

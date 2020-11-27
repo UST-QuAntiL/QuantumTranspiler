@@ -111,6 +111,8 @@ def unroll():
                 output= wrapper.export_quil()
             elif format == "Qiskit":
                 output= wrapper.export_qiskit_commands()
+            elif format == "Pyquil":
+                output= wrapper.export_pyquil_commands()
             else:
                 return "Bad Request!", 400
         else:

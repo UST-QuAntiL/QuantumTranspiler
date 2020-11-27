@@ -1,12 +1,14 @@
 from conversion.converter.command_utility import create_matrix_params, create_param_string, create_reg_string
 from pyquil.gates import *
-from pyquil.quil import Program
+from pyquil import Program, get_qc
 from circuit.qiskit_utility import standard_instructions
 from qiskit import QuantumCircuit
 import numpy as np
 from qiskit.circuit.classicalregister import ClassicalRegister
 from qiskit.circuit.library.standard_gates import *
 from qiskit.circuit.quantumregister import QuantumRegister
+import pyquil.quilbase as pyquil_circuit_library
+from pyquil.gates import NOP, MEASURE
 
 def pyquil_commands_to_program(commands: str) -> QuantumCircuit:    
     exec(commands)
@@ -23,6 +25,44 @@ def circuit_to_qiskit_commands(circuit: QuantumCircuit):
     (reg_str, simple_registers) = _handle_regs(circuit)
     commands += reg_str
     commands += _handle_instructions(circuit, simple_registers)
+    return commands
+
+def circuit_to_pyquil_commands(program: Program):
+    commands = '''from pyquil import Program, get_qc
+from pyquil.gates import *
+import numpy as np
+p = Program()\n'''
+
+    for instr in program.instructions:
+            if isinstance(instr, pyquil_circuit_library.Declare):
+                if instr.memory_type != "BIT":
+                    raise NotImplementedError(
+                        "Unsupported memory type:" + str(instr.memory_type))
+
+                commands += f"{instr.name} = p.declare('{instr.name}', 'BIT', {instr.memory_size}\n"
+                
+
+            elif isinstance(instr, pyquil_circuit_library.Gate):
+                name = instr.name
+                params = instr.params
+                qubits = instr.qubits
+                param_str = create_param_string(params)
+                param_str = create_param_string(qubits, param_str)
+                commands += f"p += {instr.name}({param_str})\n"
+
+            elif isinstance(instr, pyquil_circuit_library.Measurement):
+                commands += f"p += MEASURE({instr.qubit.index}, {instr.classical_reg.name}[{instr.classical_reg.offset}])\n"
+
+            elif isinstance(instr, pyquil_circuit_library.Pragma):                
+                continue
+            elif isinstance(instr, NOP):                
+                continue
+            elif isinstance(instr, pyquil_circuit_library.Halt):
+                break
+            else:
+                raise NotImplementedError(
+                    "Unsupported instruction: " + str(instr))
+    
     return commands
 
 def _handle_regs(circuit: QuantumCircuit):
