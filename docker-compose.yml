@@ -3,12 +3,12 @@ version: "3.8"
 services:
   backend:
     build: .
-    image: b_comp
+    image: backend
     ports:
       - "5000:5000"
   frontend:
     build: ./frontend
-    image: f_comp
+    image: frontend
     ports:
       - "8080:80"
     depends_on:

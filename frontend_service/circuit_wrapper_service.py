@@ -74,11 +74,11 @@ def convert():
         if option_output == "Quil":
             output = wrapper.export_quil()
         elif option_output == "Pyquil":
-            output = wrapper.export_pyquil()
+            output = wrapper.export_pyquil_commands()
         elif option_output == "OpenQASM":
             output = wrapper.export_qasm()
         elif option_output == "Qiskit":
-            output = wrapper.export_qiskit_commands()
+            output = wrapper.export_qiskit_commands(include_imports=True)
         else:
             return "Bad Request!", 400
     except Exception as e:
