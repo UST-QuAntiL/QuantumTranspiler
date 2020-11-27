@@ -45,7 +45,7 @@ p = Program()\n'''
                     raise NotImplementedError(
                         "Unsupported memory type:" + str(instr.memory_type))
 
-                commands += f"{instr.name} = p.declare('{instr.name}', 'BIT', {instr.memory_size}\n"
+                commands += f"{instr.name} = p.declare('{instr.name}', 'BIT', {instr.memory_size})\n"
                 
 
             elif isinstance(instr, pyquil_circuit_library.Gate):
