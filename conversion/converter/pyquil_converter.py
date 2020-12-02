@@ -25,11 +25,12 @@ class PyquilConverter(ConverterInterface):
         program = circuit
         qubit_set = program.get_qubits()
         qreg_mapping = {}
-        creg_mapping = {}        
-
-        qr = QuantumRegister(len(qubit_set), "q")
+        creg_mapping = {} 
+        print("qubit set")       
+        print(max(qubit_set))
+        qr = QuantumRegister(max(qubit_set) + 1, "q")
         for counter, qubit in enumerate(qubit_set):
-            qreg_mapping[qubit] = qr[counter]
+            qreg_mapping[qubit] = qr[qubit]
         circuit = QuantumCircuit(qr)
 
         for instr in program.instructions:
