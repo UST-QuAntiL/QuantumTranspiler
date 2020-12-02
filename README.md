@@ -95,3 +95,5 @@ The TestTranspilation class in e2e_test.py can be used to test the transpilation
 ## Issues
 The Drag and Drop tool has some minor bugs. Custom gates and quantum circuits consisting of several quantum/classical registers cannot be properly displayed in the graphical quantum circuit. Furthermore, the dragging of gates behaves incosistent in some cases.
 
+## Include new SDK
+For the inclusion of a new SDK, a python class must be written that inherits from ConverterInterface (see e.g. conversion/converter/pyquil_converter.py). Furthermore, the respective equivalent gates must be specified in conversion/mappings/gate_mappings.py. If concepts or gates do not need to be supported, they can be omitted and a warning (warnings.warn() should be thrown instead.
