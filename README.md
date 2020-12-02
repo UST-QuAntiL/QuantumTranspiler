@@ -64,6 +64,7 @@ To start the frontend run:
 ```bash
 ng serve --open
 ```
+The frontend needs the URL of the Backend as input. This can be set via the apiUrl variable in frontend/src/environments/environment.ts (default 5000).
 
 ## Structure
 In the following the structure of the directories and python files is explained.
