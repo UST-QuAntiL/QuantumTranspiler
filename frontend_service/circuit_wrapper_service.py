@@ -16,13 +16,13 @@ def circuit_to_internal():
     option = data["option"]
     circuit = data["circuit"]
     try:
-        if option == "Quil":
+        if option.lower() == "quil":
             wrapper = CircuitWrapper(quil_str=circuit)
-        elif option == "Pyquil":
+        elif option.lower() == "pyquil":
             wrapper = CircuitWrapper(pyquil_instructions=circuit)
-        elif option == "OpenQASM":
+        elif option.lower() == "openqasm":
             wrapper = CircuitWrapper(qasm=circuit)
-        elif option == "Qiskit":
+        elif option.lower() == "qiskit":
             wrapper = CircuitWrapper(qiskit_instructions=circuit)
         else:
             return "Bad Request!", 400
@@ -39,13 +39,13 @@ def export_circuit():
     circuit = data["circuit"]
     try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit) 
-        if option == "Quil":
+        if option.lower() == "quil":
             output = wrapper.export_quil()
-        elif option == "Pyquil":
+        elif option.lower() == "pyquil":
             output = wrapper.export_pyquil()
-        elif option == "OpenQASM":
+        elif option.lower() == "openqasm":
             output = wrapper.export_qasm()
-        elif option == "Qiskit":
+        elif option.lower() == "qiskit":
             output = wrapper.export_qiskit_commands()
         else:
             return "Bad Request!", 400
@@ -61,24 +61,24 @@ def convert():
     option_output = data["optionOutput"]
     circuit = data["circuit"]
     try:
-        if option == "Quil":
+        if option.lower() == "quil":
             wrapper = CircuitWrapper(quil_str=circuit)
-        elif option == "Pyquil":
+        elif option.lower() == "pyquil":
             wrapper = CircuitWrapper(pyquil_instructions=circuit)
-        elif option == "OpenQASM":
+        elif option.lower() == "openqasm":
             wrapper = CircuitWrapper(qasm=circuit)
-        elif option == "Qiskit":
+        elif option.lower() == "qiskit":
             wrapper = CircuitWrapper(qiskit_instructions=circuit)
         else:
             return "Bad Request!", 400
 
-        if option_output == "Quil":
+        if option_output.lower() == "quil":
             output = wrapper.export_quil()
-        elif option_output == "Pyquil":
+        elif option_output.lower() == "pyquil":
             output = wrapper.export_pyquil_commands()
-        elif option_output == "OpenQASM":
+        elif option_output.lower() == "openqasm":
             output = wrapper.export_qasm()
-        elif option_output == "Qiskit":
+        elif option_output.lower() == "qiskit":
             output = wrapper.export_qiskit_commands(include_imports=True)
         else:
             return "Bad Request!", 400
