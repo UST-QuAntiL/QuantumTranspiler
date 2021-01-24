@@ -52,9 +52,18 @@ p = Program()\n'''
                 name = instr.name
                 params = instr.params
                 qubits = instr.qubits
+
+                if "CONTROLLED" in instr.modifiers:
+                    control_qubits = [qubits[0]]
+                    qubits.pop(0)
+
                 param_str = create_param_string(params)
                 param_str = create_param_string(qubits, param_str)
-                commands += f"p += {instr.name}({param_str})\n"
+
+                commands += f"p += {name}({param_str})"
+                if "CONTROLLED" in instr.modifiers:
+                    commands += f".controlled({create_param_string(control_qubits)})"
+                commands += "\n"
 
             elif isinstance(instr, pyquil_circuit_library.Measurement):
                 commands += f"p += MEASURE({instr.qubit.index}, {instr.classical_reg.name}[{instr.classical_reg.offset}])\n"
