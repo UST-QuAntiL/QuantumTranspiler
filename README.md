@@ -38,12 +38,12 @@ docker-compose up
 To start only the backend run
 ```bash
 docker build --tag backend .
-docker run --publish 5000:5000 --detach --name b backend
+docker run --publish 5012:5012 --detach --name b backend
 ```
 
 ### Python Module
 Alternatively
-To start the server run (the default port is 5000):
+To start the server run (the default port is 5012):
 ```bash
 python -m frontend_service.circuit_wrapper_service
 ```
@@ -64,7 +64,7 @@ To start the frontend run:
 ```bash
 ng serve --open
 ```
-The frontend needs the URL of the Backend as input. This can be set via the apiUrl variable in frontend/src/environments/environment.ts (default 5000).
+The frontend needs the URL of the Backend as input. This can be set via the apiUrl variable in frontend/src/environments/environment.ts (default 5012).
 
 ## Structure
 In the following the structure of the directories and python files is explained.
