@@ -5,7 +5,7 @@ WORKDIR /code
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
-EXPOSE 5000
+EXPOSE 5012
 
 
 CMD [ "python", "-m","frontend_service.circuit_wrapper_service" ]
