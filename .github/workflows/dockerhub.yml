@@ -52,7 +52,7 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: planqk/quantum-transpiler-frontend:latest
-      - name: Build and push QuantumTranspiler Frontend
+      - name: Build and push version of QuantumTranspiler Frontend
         if: ${{ steps.vars.outputs.tag }} != 'master'
         uses: docker/build-push-action@v2
         with:
