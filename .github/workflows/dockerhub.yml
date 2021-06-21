@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build and push latest QuantumTranspiler Backend
-        if: ${{ steps.vars.outputs.tag }} == 'master'
+        if: ${{ steps.vars.outputs.tag == 'master' }}
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -36,7 +36,7 @@ jobs:
           push: true
           tags: planqk/quantum-transpiler-backend:latest
       - name: Build and push version of QuantumTranspiler Backend
-        if: ${{ steps.vars.outputs.tag }} != 'master'
+        if: ${{ steps.vars.outputs.tag != 'master' }}
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -45,7 +45,7 @@ jobs:
           tags: planqk/quantum-transpiler-backend:${{ steps.vars.outputs.tag }}
 
       - name: Build and push latest QuantumTranspiler Frontend
-        if: ${{ steps.vars.outputs.tag }} == 'master'
+        if: ${{ steps.vars.outputs.tag == 'master' }}
         uses: docker/build-push-action@v2
         with:
           context: ./frontend/
@@ -53,7 +53,7 @@ jobs:
           push: true
           tags: planqk/quantum-transpiler-frontend:latest
       - name: Build and push version of QuantumTranspiler Frontend
-        if: ${{ steps.vars.outputs.tag }} != 'master'
+        if: ${{ steps.vars.outputs.tag != 'master' }}
         uses: docker/build-push-action@v2
         with:
           context: ./frontend/
