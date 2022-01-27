@@ -5,9 +5,10 @@ from pytket.extensions.qiskit import tk_to_qiskit
 from pytket.extensions.cirq import tk_to_cirq
 from pytket.extensions.cirq import cirq_to_tk
 from translation.translators.translator import Translator
+from translation.translator_names import TranslatorNames
 
 class CirqTranslator(Translator):
-    name= "cirq_translator"
+    name= TranslatorNames.CIRQ
 
     def from_language(self, text: str) -> QuantumCircuit:
         circuit = cirq.read_json(text)

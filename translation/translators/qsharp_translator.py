@@ -5,12 +5,13 @@ from qiskit import QuantumCircuit
 from pytket.extensions.qiskit import qiskit_to_tk
 from pytket.extensions.qsharp import tk_to_qsharp
 from translation.translators.translator import Translator
+from translation.translator_names import TranslatorNames
 from conversion.mappings.gate_mappings import gate_mapping_qsharp
 from qiskit.circuit import Parameter as qiskit_Parameter
 
 
 class QsharpTranslator(Translator):
-    name = "qsharp_translator"
+    name = TranslatorNames.QSHARP
 
     def from_language(self, text: str) -> QuantumCircuit:
         compiled = qsharp.compile(text)

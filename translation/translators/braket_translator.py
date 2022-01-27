@@ -1,16 +1,18 @@
 import numpy as np
+
 from qiskit import QuantumCircuit
 from pytket.extensions.qiskit import qiskit_to_tk
 from pytket.extensions.qiskit import tk_to_qiskit
 from pytket.extensions.braket import tk_to_braket
 from pytket.extensions.braket import braket_to_tk
 from translation.translators.translator import Translator
+from translation.translator_names import TranslatorNames
 from braket.ir.jaqcd import Program
 from braket.circuits import Circuit
 from braket.circuits import Observable
 
 class BraketTranslator(Translator):
-    name= "braket_translator"
+    name= TranslatorNames.BRAKET
 
     def from_language(self, text: str) -> QuantumCircuit:
         program = Program.parse_raw(text)
@@ -70,8 +72,6 @@ class BraketTranslator(Translator):
 
                 command = command[:len(command)-2] + ")"
 
-            print(command)
-
             exec(command)
 
 
@@ -79,7 +79,6 @@ class BraketTranslator(Translator):
 
         #Adding of resulttypes
         for result in results:
-            print(result)
             if(result.type=="statevector"):
                 circuit.state_vector()
             else:
@@ -93,10 +92,7 @@ class BraketTranslator(Translator):
                 if hasattr(result, "targets"):
                     command += f"target={result.targets}, "
 
-
                 command = command[:len(command) - 2] + ")"
-
-                print(command)
 
                 exec(command)
                 

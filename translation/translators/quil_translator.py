@@ -4,9 +4,10 @@ from qiskit import QuantumCircuit
 from pytket.extensions.qiskit import qiskit_to_tk
 from pytket.extensions.pyquil import tk_to_pyquil
 from translation.translators.translator import Translator
+from translation.translator_names import TranslatorNames
 
 class QuilTranslator(Translator):
-    name= "quil_translator"
+    name= TranslatorNames.QUIL
     converter = PyquilConverter()
 
     def from_language(self, text: str) -> QuantumCircuit:
