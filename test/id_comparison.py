@@ -56,7 +56,8 @@ def simulate_circuit(circuit: QuantumCircuit):
     figure.savefig("./test/results/plot.pdf")
 
 if __name__ == "__main__":
-    # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True) 
+    pass
+    # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True)
     # circuit = bernstein_vazirani_general_qiskit_binary_string("010000110")
     # circuit = iden_circuit(False)
     # simulate_circuit(circuit)
