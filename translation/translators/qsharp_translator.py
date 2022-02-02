@@ -47,12 +47,10 @@ class QsharpTranslator(Translator):
     def gatelist_to_circuit(self, gates: list, qubits: int) -> QuantumCircuit:
         circuit = QuantumCircuit(qubits, 1)
         for gate in gates:
-            print(gate)
             gate_name = gate["gate"]
             if gate["isControlled"]:
                 for i in enumerate(gate["controls"]):
                     gate_name = "C" + gate_name
-            print(gate_name)
             if gate_name in gate_mapping_qsharp:
                 if "g" in gate_mapping_qsharp[gate_name]:
                     instr_qiskit_class = gate_mapping_qsharp[gate_name]["g"]

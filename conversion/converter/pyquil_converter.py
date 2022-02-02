@@ -3,7 +3,6 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from pyquil import Program
 from pyquil.quilatom import Parameter as pyquil_Parameter
 import pyquil.quilbase as pyquil_circuit_library
-from circuit.qiskit_utility import show_figure
 from conversion.mappings.gate_mappings import gate_mapping_qiskit, gate_mapping_pyquil
 from qiskit.extensions import UnitaryGate
 from qiskit.circuit import Qubit, Clbit
