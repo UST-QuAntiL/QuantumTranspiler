@@ -3,12 +3,14 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
 from circuit.circuit_wrapper import CircuitWrapper
+from translation.translation_handler import TranslationHandler
 import json
 import sys
 import os
 
 app = Flask(__name__)
 cors = CORS(app)
+thandler = TranslationHandler()
 
 @app.route('/circuit_to_internal', methods=['Post'])
 def circuit_to_internal():
@@ -202,6 +204,29 @@ def depth_comparison_qpu():
         print(str(e))
         return str(e), 500
     return output
+
+
+@app.route('/translate', methods=['Post'])
+def translate():
+    if request.headers.get("Content-Type") == "application/json":
+        try:
+            request_json = request.json
+            circuit_string = request_json["circuit"]
+            circuit_list = circuit_string.split("\n")
+            circuit = "\n".join(circuit_list)
+            lg_from = request_json["from"]
+            lg_to = request_json["to"]
+            return thandler.translate(circuit, lg_from, lg_to), 200
+        except ValueError as ve:
+            print(ve)
+            return f"Error with the values passed for translation: {str(ve)}", 400
+        except Exception as e:
+            print(e)
+            return f"Error with the formatting of the json: {str(e)}", 400
+
+    else:
+        return "Only JSON requests are supported!", 415
+
 
 
 if __name__ == '__main__':

@@ -17,9 +17,11 @@ class TranslationHandler():
         self.translators.append(OpenQasmTranslator())
 
     def translate(self, circuit: str, lg_from: str, lg_to: str) -> str:
-        from_translator: Translator = [trans for trans in self.translators if trans.name == lg_from][0]
-        to_translator: Translator = [trans for trans in self.translators if trans.name == lg_to][0]
-        if from_translator and to_translator:
+        from_translators = [trans for trans in self.translators if trans.name.value == lg_from]
+        to_translators = [trans for trans in self.translators if trans.name.value == lg_to]
+        if from_translators and to_translators:
+            from_translator: Translator = from_translators[0]
+            to_translator: Translator = to_translators[0]
             return to_translator.to_language(from_translator.from_language(circuit))
         else:
             raise ValueError("Unsupported translator")

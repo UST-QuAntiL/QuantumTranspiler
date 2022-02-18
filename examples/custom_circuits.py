@@ -1,5 +1,4 @@
 from pyquil import Program
-from circuit.qiskit_utility import show_figure
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from pyquil.gates import *
 import numpy as np

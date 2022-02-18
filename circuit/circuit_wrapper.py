@@ -1,7 +1,7 @@
 from qiskit.transpiler.coupling import CouplingMap
 from transpilation.topology_mapping import swap, swap_direction
 from circuit.qiskit_utility import count_gate_times, count_two_qubit_gates
-from qiskit.execute import execute
+from qiskit.execute_function import execute
 from conversion.converter.command_converter import circuit_to_pyquil_commands, circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.dagcircuit.dagcircuit import DAGCircuit

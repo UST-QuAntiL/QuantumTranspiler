@@ -71,4 +71,3 @@ def test_qsharp():
     }
     """)
 
-test_braket()
