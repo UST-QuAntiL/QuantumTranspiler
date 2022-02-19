@@ -8,16 +8,19 @@ from qiskit.dagcircuit.dagcircuit import DAGCircuit
 from qiskit.transpiler.passes.basis import decompose
 from conversion.conversion_handler import ConversionHandler
 from conversion.converter.pyquil_converter import PyquilConverter
+from conversion.converter.cirq_converter import CirqConverter
 from pyquil import Program
 from qiskit.converters import circuit_to_dag, dag_to_circuit
 from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
 from typing import List, Tuple
 from qiskit.providers.aer import QasmSimulator
+from translation.translation_handler import TranslationHandler
+from translation.translator_names import TranslatorNames
 
 
 class CircuitWrapper:
-    def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None, qasm: str = None, pyquil_instructions: str = None, qiskit_instructions: str = None):
+    def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None, qasm: str = None, pyquil_instructions: str = None, qiskit_instructions: str = None, cirq_str: str= None):
         if pyquil_program:
             self.import_pyquil(pyquil_program)
         elif quil_str:
@@ -31,12 +34,17 @@ class CircuitWrapper:
             self.import_pyquil(program)
         elif qiskit_instructions:
             self._set_circuit(qiskit_commands_to_circuit(qiskit_instructions))
+        elif cirq_str:
+            print(cirq_str)
+            self.import_cirq(cirq_str)
         else:
             self._set_circuit(QuantumCircuit())
             self.qreg_mapping_import = {}
             self.creg_mapping_import = {}
             self.qreg_mapping_export = {}
             self.creg_mapping_export = {}
+
+        self.translation_handler = TranslationHandler()
 
     def _import(self, handler: ConversionHandler, circuit, is_language: bool):
         if is_language:
@@ -64,6 +72,11 @@ class CircuitWrapper:
         converter = PyquilConverter()
         handler = ConversionHandler(converter)
         self._import(handler, quil, True)
+
+    def import_cirq(self, cirq: str) -> None:
+        converter = CirqConverter()
+        handler = ConversionHandler(converter)
+        self._import(handler, cirq, False)
 
     def _export(self, handler: ConversionHandler, circuit: DAGCircuit, is_language: bool):
         if is_language:
@@ -105,6 +118,9 @@ class CircuitWrapper:
         program = self.export_pyquil()
         instructions = circuit_to_pyquil_commands(program)
         return instructions
+
+    def export_cirq_json(self) -> str:
+        return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.CIRQ.value)
 
     #  decomposing and unrolling functionality
     def decompose_to_standard_gates(self) -> None:

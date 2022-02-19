@@ -16,6 +16,7 @@ from typing import Tuple, Dict, List
 import numpy as np
 import warnings
 
+
 class PyquilConverter(ConverterInterface):  
     name = "pyquil"
     is_control_capable = True

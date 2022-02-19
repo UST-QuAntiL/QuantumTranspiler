@@ -1,20 +1,17 @@
 import cirq
+from cirq import Circuit
 from qiskit import QuantumCircuit
-from pytket.extensions.qiskit import qiskit_to_tk
-from pytket.extensions.qiskit import tk_to_qiskit
-from pytket.extensions.cirq import tk_to_cirq
-from pytket.extensions.cirq import cirq_to_tk
 from translation.translators.translator import Translator
 from translation.translator_names import TranslatorNames
+from cirq.contrib.qasm_import import circuit_from_qasm
 
 class CirqTranslator(Translator):
-    name= TranslatorNames.CIRQ
+    name = TranslatorNames.CIRQ
 
     def from_language(self, text: str) -> QuantumCircuit:
-        circuit = cirq.read_json(text)
-        return tk_to_qiskit(cirq_to_tk(self.ir_to_circuit(circuit)))
-
+        circuit: Circuit = cirq.read_json(json_text=text)
+        return QuantumCircuit.from_qasm_str(circuit.to_qasm())
 
     def to_language(self, circuit: QuantumCircuit) -> str:
-        circuit = tk_to_cirq(qiskit_to_tk(circuit))
+        circuit: Circuit = circuit_from_qasm(circuit.qasm())
         return cirq.to_json(circuit)

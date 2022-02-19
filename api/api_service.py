@@ -26,6 +26,8 @@ def circuit_to_internal():
             wrapper = CircuitWrapper(qasm=circuit)
         elif option.lower() == "qiskit":
             wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        elif option.lower() == "cirq":
+            wrapper = CircuitWrapper(cirq_str=circuit)
         else:
             return "Bad Request!", 400
         output = wrapper.export_qiskit_commands()    
@@ -49,6 +51,8 @@ def export_circuit():
             output = wrapper.export_qasm()
         elif option.lower() == "qiskit":
             output = wrapper.export_qiskit_commands()
+        elif option.lower() == "cirq":
+            output = wrapper.export_cirq_json()
         else:
             return "Bad Request!", 400
     except Exception as e:
@@ -71,6 +75,8 @@ def convert():
             wrapper = CircuitWrapper(qasm=circuit)
         elif option.lower() == "qiskit":
             wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        elif option.lower() == "cirq":
+            wrapper = CircuitWrapper(cirq_str=circuit)
         else:
             return "Bad Request!", 400
 
@@ -82,6 +88,8 @@ def convert():
             output = wrapper.export_qasm()
         elif option_output.lower() == "qiskit":
             output = wrapper.export_qiskit_commands(include_imports=True)
+        elif option_output.lower() == "cirq":
+            output = wrapper.export_cirq_json()
         else:
             return "Bad Request!", 400
     except Exception as e:

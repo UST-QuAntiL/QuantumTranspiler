@@ -15,7 +15,7 @@ export class DataService {
   public circuitChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public highlightLines: BehaviorSubject<number[]> = new BehaviorSubject([]);
 
-  public options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"];
+  public options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil", "Cirq"];
   public inputFormat: string = "";
   public exportFormat: string = "";
 
@@ -74,7 +74,7 @@ MEASURE 2 ro[2]
     } catch (e) {
       // happens when a user is changing the circuit (and data is just partly changed), but should not happen otherwise
       console.log("Circuit data cannot be parsed.")
-      // console.log(e)
+      console.log(e)
     }
 
   }
@@ -96,6 +96,7 @@ MEASURE 2 ro[2]
     let arrayOfLines = circuit.split("\n");
     let numberOfLines = arrayOfLines.length
     arrayOfLines.forEach((line, lineNumber) => {
+      console.log(line)
       if (line.includes("QuantumCircuit")) {
         let afterBracket = line.split("(")[1].replace(")", "");
         let numbers = afterBracket.split(",")
@@ -158,7 +159,7 @@ MEASURE 2 ro[2]
         if (maxIndex > maxIndexTotal) {
           maxIndexTotal = maxIndex;
         }
-        
+
         let lineNumbers = [lineNumber]
         let operationIndex = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers)
         let operationIndexControl = new OperationIndex(maxIndex, operation, paramsWithoutBits, qubits, clbits, lineNumbers, false, true)

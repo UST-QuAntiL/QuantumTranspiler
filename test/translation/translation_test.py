@@ -2,6 +2,7 @@ import numpy as np
 from translation.translators.quil_translator import QuilTranslator
 from translation.translators.braket_translator import BraketTranslator
 from translation.translators.qsharp_translator import QsharpTranslator
+from translation.translators.criq_translator import CirqTranslator
 from pyquil import Program
 from pyquil.gates import *
 from qiskit import QuantumCircuit
@@ -70,4 +71,42 @@ def test_qsharp():
         return MResetZ(q);
     }
     """)
+
+def test_cirq():
+    circuit = QuantumCircuit(3, 1)
+    circuit.h(0)
+    circuit.cx(1, 2)
+    circuit.rz(1 / 4, 0)
+    circuit.measure(0, 0)
+    trans = CirqTranslator()
+    cirq = trans.to_language(circuit)
+    print(cirq)
+    qsk = trans.from_language(cirq)
+    print(qsk.qasm())
+
+def test_cirq2():
+    transC = CirqTranslator()
+    circu = QuantumCircuit.from_qasm_str("""OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[5];
+creg ro[3];
+h q[0];
+h q[1];
+h q[1];
+cu1(0) q[1],q[0];
+h q[0];
+h q[2];
+cx q[2],q[3];
+cx q[2],q[4];
+h q[2];
+measure q[0] -> ro[0];
+measure q[1] -> ro[1];
+measure q[2] -> ro[2];""")
+    transl = transC.to_language(circu)
+    print(transl)
+
+
+
+test_cirq2()
+
 

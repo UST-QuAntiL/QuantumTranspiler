@@ -45,7 +45,7 @@ docker run --publish 5012:5012 --detach --name b backend
 Alternatively
 To start the server run (the default port is 5012):
 ```bash
-python -m frontend_service.circuit_wrapper_service
+python -m api.api_service
 ```
 The library is executed as a module.
 Test Examples:
