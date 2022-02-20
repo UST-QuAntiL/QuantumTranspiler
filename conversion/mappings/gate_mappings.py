@@ -1,4 +1,5 @@
 import qiskit.circuit.library.standard_gates as qiskit
+import qiskit.circuit as directives
 import pyquil.gates as pyquil
 import numpy as np
 from qiskit import QuantumCircuit
@@ -43,6 +44,7 @@ gate_mapping = {
     "CPHASE01": {"qiskit": {"r": qiskit_replacement.cphase01_replacement}, "pyquil": {"g": pyquil.CPHASE01}, "qsharp": {"r": "-"}},
     "CPHASE10": {"qiskit": {"r": qiskit_replacement.cphase10_replacement}, "pyquil": {"g": pyquil.CPHASE10}, "qsharp": {"r": "-"}},
     "PSWAP": {"qiskit": {"r": qiskit_replacement.pswap_replacement}, "pyquil": {"g": pyquil.PSWAP}, "qsharp": {"r": "-"}},
+    "MEASURE": {"qiskit": {"g": directives.Measure}, "pyquil": {"r": "-"}, "qsharp": {"g": "M"}},
     
     # unnecessary with controlled modifier (for pyquil)
     # "CRX": {"qiskit": {"g": qiskit.CRXGate}, "pyquil": {"r": pyquil_replacement.crx_replacement}},

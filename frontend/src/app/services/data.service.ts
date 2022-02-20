@@ -15,7 +15,7 @@ export class DataService {
   public circuitChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public highlightLines: BehaviorSubject<number[]> = new BehaviorSubject([]);
 
-  public options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil", "Cirq"];
+  public options: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil", "Cirq", "CirqSDK", "Qsharp", "Braket", "BraketSDK"];
   public inputFormat: string = "";
   public exportFormat: string = "";
 

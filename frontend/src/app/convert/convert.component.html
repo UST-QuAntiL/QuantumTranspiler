@@ -12,6 +12,9 @@
                     <mat-option value="Quil">
                         Quil
                     </mat-option>
+                    <mat-option value="Braket">
+                        Braket(IR)
+                    </mat-option>
                     <mat-option value="Cirq">
                         Cirq(JSON)
                     </mat-option>
@@ -26,6 +29,21 @@
                         matTooltip="Name of the program must be p. All occurences can be changed with CTRL + F2."
                         matTooltipClass="tooltip-large" value="Pyquil">
                         Pyquil
+                    </mat-option>
+                    <mat-option
+                        matTooltip="Name of the circuit must be c. All occurences can be changed with CTRL + F2."
+                        matTooltipClass="tooltip-large" value="CirqSDK">
+                        Cirq(SDK)
+                    </mat-option>
+                    <mat-option
+                        matTooltip="Name of the circuit must be c. All occurences can be changed with CTRL + F2."
+                        matTooltipClass="tooltip-large" value="BraketSDK">
+                        Braket(SDK)
+                    </mat-option>
+                    <mat-option
+                        matTooltip="Support only for..."
+                        matTooltipClass="tooltip-large" value="Qsharp">
+                        QSharp
                     </mat-option>
 
                 </mat-select>
@@ -48,7 +66,13 @@
                     <mat-option value="Quil">
                         Quil
                     </mat-option>
-                    <mat-option value="Cirq">
+                    <mat-option
+                    matTooltip="No export of measurements"
+                        matTooltipClass="tooltip-large" value="Braket">
+                        Braket(IR)
+                    </mat-option>
+                    <mat-option  matTooltip="No custom gates, barriers resets and Conditionals; No CRZ, CU1, CU3, RZZ"
+                        matTooltipClass="tooltip-large" value="Cirq">
                         Cirq(JSON)
                     </mat-option>
                     <mat-divider></mat-divider>
@@ -62,7 +86,9 @@
                         matTooltipClass="tooltip-large" value="Pyquil">
                         Pyquil
                     </mat-option>
-
+                    <mat-option value="Qsharp">
+                        QSharp
+                    </mat-option>
                 </mat-select>
             </mat-form-field>
         </div>

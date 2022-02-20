@@ -1,3 +1,5 @@
+import traceback
+
 from examples.qpu_couplings import qpus
 from flask import Flask
 from flask import request
@@ -28,10 +30,15 @@ def circuit_to_internal():
             wrapper = CircuitWrapper(qiskit_instructions=circuit)
         elif option.lower() == "cirq":
             wrapper = CircuitWrapper(cirq_str=circuit)
+        elif option.lower() == "braket":
+            wrapper = CircuitWrapper(braket_str=circuit)
+        elif option.lower() == "qsharp":
+            wrapper = CircuitWrapper(qsharp_instructions=circuit)
         else:
             return "Bad Request!", 400
         output = wrapper.export_qiskit_commands()    
     except Exception as e:
+        traceback.print_exc()
         print(str(e))
         return str(e), 500    
     return output
@@ -53,9 +60,14 @@ def export_circuit():
             output = wrapper.export_qiskit_commands()
         elif option.lower() == "cirq":
             output = wrapper.export_cirq_json()
+        elif option.lower() == "braket":
+            wrapper = CircuitWrapper(braket_str=circuit)
+        elif option.lower() == "qsharp":
+            wrapper = CircuitWrapper(qsharp_instructions=circuit)
         else:
             return "Bad Request!", 400
     except Exception as e:
+        traceback.print_exc()
         print(str(e))
         return str(e), 500
     return output
@@ -77,6 +89,14 @@ def convert():
             wrapper = CircuitWrapper(qiskit_instructions=circuit)
         elif option.lower() == "cirq":
             wrapper = CircuitWrapper(cirq_str=circuit)
+        elif option.lower() == "cirqsdk":
+            wrapper = CircuitWrapper(cirq_instructions=circuit)
+        elif option.lower() == "braket":
+            wrapper = CircuitWrapper(braket_str=circuit)
+        elif option.lower() == "braketsdk":
+            wrapper = CircuitWrapper(braket_instructions=circuit)
+        elif option.lower() == "qsharp":
+            wrapper = CircuitWrapper(qsharp_instructions=circuit)
         else:
             return "Bad Request!", 400
 
@@ -90,9 +110,14 @@ def convert():
             output = wrapper.export_qiskit_commands(include_imports=True)
         elif option_output.lower() == "cirq":
             output = wrapper.export_cirq_json()
+        elif option_output.lower() == "braket":
+            output = wrapper.export_braket_ir()
+        elif option_output.lower() == "qsharp":
+            output = wrapper.export_qsharp()
         else:
             return "Bad Request!", 400
     except Exception as e:
+        traceback.print_exc()
         print(str(e))
         return str(e), 500
 
@@ -135,6 +160,7 @@ def unroll():
                 return "Bad Request!", 400
 
     except Exception as e:
+        traceback.print_exc()
         print(str(e))
         return str(e), 500    
     return output
@@ -148,6 +174,7 @@ def simulate():
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
         output = wrapper.simulate()
     except Exception as e:
+        traceback.print_exc()
         print(str(e))
         return str(e), 500
     return output
@@ -171,6 +198,7 @@ def depth():
         depth["r_gate_times"] = wrapper.depth_gate_times()
         output = depth
     except Exception as e:
+        traceback.print_exc()
         print(str(e))
         return str(e), 500
     return output
@@ -209,6 +237,7 @@ def depth_comparison_qpu():
                 depth["r_gate_times"] = wrapper.depth_gate_times()
         output = depth
     except Exception as e:
+        traceback.print_exc()
         print(str(e))
         return str(e), 500
     return output

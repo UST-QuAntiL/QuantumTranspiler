@@ -53,22 +53,37 @@ def test_braket():
     print(f"Braket: +{transl.ir_to_circuit(BProgram.parse_raw(hback))}")
 
 def test_qsharp():
-    circuit = QuantumCircuit(3, 1)
-    circuit.h(0)
-    circuit.cx(1, 2)
-    circuit.rx(1/4, 0)
-    circuit.swap(0, 1)
-    print(circuit)
+    #circuit = QuantumCircuit(3, 1)
+    #circuit.h(0)
+    #circuit.cx(1, 2)
+    #circuit.rx(1/4, 0)
+    #circuit.swap(0, 1)
+    #print(circuit)
     trans = QsharpTranslator()
-    sharp = trans.to_language(circuit)
-    print(sharp)
-    print(trans.from_language(sharp))
+    #sharp = trans.to_language(circuit)
+    #print(sharp)
+    #print(trans.from_language(sharp))
 
     trans.from_language("""
-    operation Qrng() : Result {
-        use q = Qubit();
-        H(q);
-        return MResetZ(q);
+    open Microsoft.Quantum.Intrinsic;
+    open Microsoft.Quantum.Measurement;
+    open Microsoft.Quantum.Canon;
+    operation TketCircuit() : Result[] {
+        mutable r = [Zero, Zero, Zero];
+        use q = Qubit[4] {
+            ResetAll(q);
+            H(q[0]);
+            H(q[1]);
+            H(q[2]);
+            CNOT(q[2], q[3]);
+            set r w/= 0 <- M(q[0]);
+            set r w/= 1 <- M(q[1]);
+            CNOT(q[1], q[3]);
+            H(q[2]);
+            set r w/= 2 <- M(q[2]);
+            ResetAll(q);
+            return r;
+        }
     }
     """)
 
@@ -107,6 +122,6 @@ measure q[2] -> ro[2];""")
 
 
 
-test_cirq2()
+test_qsharp()
 
 

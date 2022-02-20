@@ -9,16 +9,31 @@ from qiskit.circuit.quantumregister import QuantumRegister
 from qiskit.circuit.library.standard_gates import *
 import pyquil.quilbase as pyquil_circuit_library
 from pyquil.gates import NOP, MEASURE
+from braket.circuits import Circuit as BraketCircuit
+from braket.ir.jaqcd import Program as BraketProgram
+import cirq
+from cirq import Circuit as CirqCircuit
 
 def pyquil_commands_to_program(commands: str) -> QuantumCircuit:    
     exec(commands)
     val = eval("p")
-    return val   
+    return val
+
+def braket_commands_to_ir(commands: str) -> str:
+    exec(commands)
+    val: BraketCircuit = eval("c")
+    program: BraketProgram = val.to_ir()
+    return program.json(indent=4)
+
+def cirq_commands_to_json(commands: str) -> str:
+    exec(commands)
+    circuit: CirqCircuit = eval("c")
+    return cirq.to_json(circuit)
 
 def qiskit_commands_to_circuit(commands: str) -> QuantumCircuit:
     exec(commands)
-    val = eval("qc")     
-    return val   
+    val = eval("qc")
+    return val
 
 def circuit_to_qiskit_commands(circuit: QuantumCircuit, include_imports = False):
     commands = ""
@@ -128,7 +143,7 @@ def _handle_instructions(circuit, simple_registers):
                 param_str = create_param_string(params, param_str)
                 param_str = create_reg_string(qubits, param_str, simple_registers)
                 param_str = create_reg_string(clbits, param_str, simple_registers)  
-                commands += f"qc.{operation.name}({param_str})\n" 
+                commands += f"qc.{operation.name}({param_str})\n"
             # non standard non unitary gates
             else:
                 param_str = create_param_string(params, param_str)

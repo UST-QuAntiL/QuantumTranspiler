@@ -8,10 +8,13 @@ from translation.translators.translator import Translator
 from translation.translator_names import TranslatorNames
 from conversion.mappings.gate_mappings import gate_mapping_qsharp
 from qiskit.circuit import Parameter as qiskit_Parameter
+from qiskit import ClassicalRegister
+from qiskit.circuit import Clbit
 
 
 class QsharpTranslator(Translator):
     name = TranslatorNames.QSHARP
+    reg_counter = {}
 
     def from_language(self, text: str) -> QuantumCircuit:
         compiled = qsharp.compile(text)
@@ -23,29 +26,46 @@ class QsharpTranslator(Translator):
     # Converts a compiled qsharp circuit into a qiskit quantum circuit
     def compiled_to_circuit(self, compiled: QSharpCallable) -> QuantumCircuit:
         traced = compiled.trace()
-        # print(json.dumps(traced, indent=4))
-        # print(traced["qubits"])
+        #print(compiled.estimate_resources())
+        #print(json.dumps(traced, indent=4))
+        #print(traced["qubits"])
         operations = traced["operations"]
         base_gates = []
         for operation in operations:
             base_gates.extend(self.get_gates(operation))
-        # print(json.dumps(base_gates, indent=4))
+        #print(json.dumps(base_gates, indent=4))
         return self.gatelist_to_circuit(base_gates, len(traced["qubits"]))
 
     # extracts the list of base gates from the trace of a QSharpCallable which is a tree,
     # by getting called recursively until either a leaf node or a node that has a mapping is reached
     def get_gates(self, operation):
         if "children" not in operation or len(operation["children"]) == 0 or operation["gate"] in gate_mapping_qsharp:
+            if operation["isMeasurement"]:
+                self.create_cregs(operation)
             return [operation]
         else:
             lst = []
-            for child in operation["children"]:
-                lst.extend(self.get_gates(child))
+            if not operation["gate"] == "Reset":
+                for child in operation["children"]:
+                    lst.extend(self.get_gates(child))
             return lst
+        
+    #Creates a dictionary of cregs and clbits to initiate the ciruit with later
+    def create_cregs(self, gate):
+        for target in gate["targets"]:
+            if not target["cId"] in self.reg_counter or target["qId"] > self.reg_counter[target["cId"]]:
+                self.reg_counter[target["cId"]] = target["qId"]
+
 
     # Builds a Qiskit Quantum circuit from a list of QSharp Gates
     def gatelist_to_circuit(self, gates: list, qubits: int) -> QuantumCircuit:
-        circuit = QuantumCircuit(qubits, 1)
+        circuit = QuantumCircuit(qubits)
+        cregs = {}
+        for reg in self.reg_counter:
+            creg = ClassicalRegister(size=self.reg_counter[reg]+1)
+            cregs[reg]=creg
+            circuit.add_register(creg)
+        #print(cregs)
         for gate in gates:
             gate_name = gate["gate"]
             if gate["isControlled"]:
@@ -67,17 +87,27 @@ class QsharpTranslator(Translator):
                         params.append(float(arg))
                     except ValueError:
                         params.append(arg)
+                #print(instr_qiskit_class)
 
                 instr_qiskit = instr_qiskit_class(*params)
 
                 qargs = []
+                cargs = []
                 for control in gate["controls"]:
                     qargs.append(control["qId"])
                 for target in gate["targets"]:
-                    qargs.append(target["qId"])
-                print(instr_qiskit)
-                print(qargs)
-                print(circuit)
-                circuit.append(instr_qiskit, qargs=qargs)
+                    if not gate["isMeasurement"]:
+                        qargs.append(target["qId"])
+                    else:
+                        #print(target["cId"])
+                        #print(cregs[target["cId"]])
+                        #print(target["qId"])
+                        cargs.append(cregs[target["cId"]][target["qId"]])
+                #print(instr_qiskit)
+                #print(qargs)
+                #print(cargs)
+                circuit.append(instr_qiskit, qargs=qargs, cargs=cargs)
+                #print(circuit)
 
+        self.reg_counter = {}
         return circuit

@@ -21,7 +21,7 @@ class BraketTranslator(Translator):
 
     def to_language(self, circuit: QuantumCircuit) -> str:
         program: Circuit = tk_to_braket(qiskit_to_tk(circuit))
-        return program.to_ir().json()
+        return program.to_ir().json(indent=4)
 
     # Converts an intermediate representation of Braket back into a Circuit
     def ir_to_circuit(self, ir: Program) -> Circuit:

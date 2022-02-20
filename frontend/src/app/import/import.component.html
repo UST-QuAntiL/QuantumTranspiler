@@ -14,6 +14,9 @@
                     <mat-option value="Cirq">
                         Cirq(JSON)
                     </mat-option>
+                    <mat-option value="Braket">
+                        Braket(IR)
+                    </mat-option>
                     <mat-divider></mat-divider>
                     <p class="pl-2 pt-2 selectionTitle">Frameworks</p>
                     <mat-option
@@ -25,6 +28,21 @@
                         matTooltip="Name of the program must be p. All occurences can be changed with CTRL + F2."
                         matTooltipClass="tooltip-large" value="Pyquil">
                         Pyquil
+                    </mat-option>
+                    <mat-option
+                        matTooltip="Name of the circuit must be c. All occurences can be changed with CTRL + F2."
+                        matTooltipClass="tooltip-large" value="CirqSDK">
+                        Cirq(SDK)
+                    </mat-option>
+                    <mat-option
+                        matTooltip="Name of the circuit must be c. All occurences can be changed with CTRL + F2."
+                        matTooltipClass="tooltip-large" value="BraketSDK">
+                        Braket(SDK)
+                    </mat-option>
+                    <mat-option
+                        matTooltip="Support only for..."
+                        matTooltipClass="tooltip-large" value="Qsharp">
+                        QSharp
                     </mat-option>
 
                 </mat-select>
