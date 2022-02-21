@@ -1,3 +1,4 @@
+import traceback
 import numpy as np
 from translation.translators.quil_translator import QuilTranslator
 from translation.translators.braket_translator import BraketTranslator
@@ -120,8 +121,16 @@ measure q[2] -> ro[2];""")
     transl = transC.to_language(circu)
     print(transl)
 
+def test_qsharp2():
+    trans = QsharpTranslator()
+    try:
+        c = QuantumCircuit(2)
+        c.id(0)
+        c.h(1)
+        trans.to_language(c)
+    except Exception:
+        traceback.print_exc()
 
-
-test_qsharp()
+test_qsharp2()
 
 

@@ -14,3 +14,7 @@ pydot
 qsharp
 cirq
 IPython
+pennylane
+pennylane-qsharp
+pennylane-qiskit
+amazon-braket-pennylane-plugin

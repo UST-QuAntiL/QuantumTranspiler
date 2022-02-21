@@ -243,7 +243,7 @@ def depth_comparison_qpu():
     return output
 
 
-@app.route('/translate', methods=['Post'])
+""""@app.route('/translate', methods=['Post'])
 def translate():
     if request.headers.get("Content-Type") == "application/json":
         try:
@@ -262,7 +262,7 @@ def translate():
             return f"Error with the formatting of the json: {str(e)}", 400
 
     else:
-        return "Only JSON requests are supported!", 415
+        return "Only JSON requests are supported!", 415"""
 
 
 

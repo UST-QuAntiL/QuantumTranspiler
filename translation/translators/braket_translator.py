@@ -1,5 +1,4 @@
 import numpy as np
-
 from qiskit import QuantumCircuit
 from pytket.extensions.qiskit import qiskit_to_tk
 from pytket.extensions.qiskit import tk_to_qiskit
@@ -10,6 +9,7 @@ from translation.translator_names import TranslatorNames
 from braket.ir.jaqcd import Program
 from braket.circuits import Circuit
 from braket.circuits import Observable
+import pennylane as qml
 
 class BraketTranslator(Translator):
     name= TranslatorNames.BRAKET
@@ -18,8 +18,21 @@ class BraketTranslator(Translator):
         program = Program.parse_raw(text)
         return tk_to_qiskit(braket_to_tk(self.ir_to_circuit(program)))
 
-
     def to_language(self, circuit: QuantumCircuit) -> str:
+        circuit.data = [gate for gate in circuit.data if not gate[0].name == "id"]
+        wires = range(circuit.num_qubits)
+        dev = qml.device('braket.local.qubit', wires=wires)
+        circ = qml.from_qiskit(circuit)
+        @qml.qnode(dev)
+        def new_circuit():
+            # Add your old circuit
+            circ(wires=wires)
+            return qml.expval(qml.PauliZ(0))
+        new_circuit()
+        program = dev.circuit
+        return program.to_ir().json(indent=4)
+
+    def to_language_tk(self, circuit: QuantumCircuit) -> str:
         program: Circuit = tk_to_braket(qiskit_to_tk(circuit))
         return program.to_ir().json(indent=4)
 
@@ -41,6 +54,12 @@ class BraketTranslator(Translator):
                 for matrix in matrices:
                     command += f"np.array({matrix}), "
                 command = command[:len(command) - 2] + "])"
+            elif inst.type == "unitary":
+                matrix = inst.matrix.copy()
+                for row in matrix:
+                    for i in range(len(row)):
+                        row[i] = np.complex(row[i][0], row[i][1])
+                command += f"{inst.targets}, np.array({matrix}))"
             else:
                 #Adding of parameters
                 if hasattr(inst, "control"):

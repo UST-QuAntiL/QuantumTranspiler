@@ -45,6 +45,7 @@ gate_mapping = {
     "CPHASE10": {"qiskit": {"r": qiskit_replacement.cphase10_replacement}, "pyquil": {"g": pyquil.CPHASE10}, "qsharp": {"r": "-"}},
     "PSWAP": {"qiskit": {"r": qiskit_replacement.pswap_replacement}, "pyquil": {"g": pyquil.PSWAP}, "qsharp": {"r": "-"}},
     "MEASURE": {"qiskit": {"g": directives.Measure}, "pyquil": {"r": "-"}, "qsharp": {"g": "M"}},
+    "R1": {"qiskit": {"r": qiskit_replacement.r1_replacement}, "pyquil": {"r": "-"}, "qsharp": {"g": "R1"}},
     
     # unnecessary with controlled modifier (for pyquil)
     # "CRX": {"qiskit": {"g": qiskit.CRXGate}, "pyquil": {"r": pyquil_replacement.crx_replacement}},
@@ -72,7 +73,6 @@ for key, value in gate_mapping.items():
         if "g" in pyquil_dict:
             pyquil_gate = pyquil_dict["g"]
             gate_mapping_pyquil[pyquil_gate.__name__] = qiskit_dict
-
 
     if qsharp_dict:
         if "g" in qsharp_dict:

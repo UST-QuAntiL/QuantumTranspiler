@@ -51,3 +51,10 @@ def pswap_replacement(phi: float) -> QuantumCircuit:
 
     gate = UnitaryGate(matrix, label="PSWAP")
     return gate
+
+def r1_replacement(phi: float) -> QuantumCircuit:
+    matrix = np.array([
+        [1, 0],
+        [0, np.e**(1j * phi)]], dtype=complex)
+    gate = UnitaryGate(matrix, label=f"R1({phi})")
+    return gate
