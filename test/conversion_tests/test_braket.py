@@ -68,15 +68,14 @@ class TestBraket(unittest.TestCase):
                     unsupported_gates["to"][gate] += 1
                 else:
                     unsupported_gates["to"][gate] = 1
-            except NotImplementedError as e:
-                gate = re.findall(r'(?:convert )(.*?)(?: |\()', str(e))[0]
+            except NotImplementedError as e2:
+                gate = re.findall(r'(?:convert )(.*?)(?: |\()', str(e2))[0]
                 if gate in unsupported_gates["from"]:
                     unsupported_gates["from"][gate] += 1
                 else:
                     unsupported_gates["from"][gate] = 1
             except Exception as ex:
                 traceback.print_exc()
-
         dict_str = json.dumps(unsupported_gates, indent=4)
         with open(JSON_PATH, "w") as unsupported_gates_json:
             unsupported_gates_json.write(dict_str)

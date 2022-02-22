@@ -1,19 +1,19 @@
 import unittest
 import json
 import re
-from qiskit.circuit.random import random_circuit
+from qiskit.circuit.random import random_circuit as random_circuit_qk
 from circuit.circuit_wrapper import CircuitWrapper
 import traceback
 import random
 from cirq.contrib.qasm_import.exception import QasmException
-from cirq.testing import random_circuit
+from cirq.testing import random_circuit as random_circuit_cq
 import cirq
 
 JSON_PATH = "results/gates_cirq.json"
 
 
 class TestCirq(unittest.TestCase):
-    def test_to_cirq_random(self, n=0, max_depth=4, max_qbits=4):
+    def test_to_cirq_random(self, n=50, max_depth=4, max_qbits=4):
         success_counter = 0
         with open(JSON_PATH, "r") as unsupported_gates_json:
             gates_data = unsupported_gates_json.read()
@@ -22,7 +22,7 @@ class TestCirq(unittest.TestCase):
         for i in range(n):
             qbits = random.randint(1, max_qbits)
             depth = random.randint(1, max_depth)
-            circ_qk = random_circuit(qbits, depth)
+            circ_qk = random_circuit_qk(qbits, depth)
 
             try:
                 wrapper = CircuitWrapper(qiskit_circuit=circ_qk)
@@ -45,7 +45,7 @@ class TestCirq(unittest.TestCase):
             print(f"Successfully translated {success_counter}/{i + 1} circuits!")
             self.assertTrue(success_counter / i + 1 > 0.5)
 
-    def test_from_cirq_random(self, n=5, max_moments=6, max_qbits=5, density=0.9):
+    def test_from_cirq_random(self, n=50, max_moments=6, max_qbits=5, density=0.9):
         success_counter = 0
         with open(JSON_PATH, "r") as unsupported_gates_json:
             gates_data = unsupported_gates_json.read()
@@ -54,7 +54,7 @@ class TestCirq(unittest.TestCase):
         for i in range(n):
             qbits = random.randint(1, max_qbits)
             moments = random.randint(1, max_moments)
-            circ_cq = random_circuit(qbits, moments, density)
+            circ_cq = random_circuit_cq(qbits, moments, density)
             json_cq = cirq.to_json(circ_cq)
 
             try:

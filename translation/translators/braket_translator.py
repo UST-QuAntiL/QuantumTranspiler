@@ -43,79 +43,107 @@ class BraketTranslator(Translator):
         #adding of instructions
         for inst in instructions:
             instcall = getattr(circuit, f"{inst.type}")
-            command = "instcall("
+            args = []
+            kwargs = {}
+            # Special cases for kraus and unitary, since they interact with matrices and have special target syntax
             if inst.type == "kraus":
                 matrices = inst.matrices.copy()
+                reformed_matrices = []
                 for matrix in matrices:
                     for row in matrix:
                         for i in range(len(row)):
                             row[i] = np.complex(row[i][0], row[i][1])
-                command += f"{inst.targets}, ["
-                for matrix in matrices:
-                    command += f"np.array({matrix}), "
-                command = command[:len(command) - 2] + "])"
+                    reformed_matrices.append(np.array(matrix))
+                args.append(inst.targets)
+                kwargs["matrices"] = reformed_matrices
             elif inst.type == "unitary":
                 matrix = inst.matrix.copy()
                 for row in matrix:
                     for i in range(len(row)):
                         row[i] = np.complex(row[i][0], row[i][1])
-                command += f"{inst.targets}, np.array({matrix}))"
+                kwargs["matrix"] = np.array(matrix)
+                kwargs["targets"] = inst.targets
             else:
-                #Adding of parameters
+                # Adding of parameters to args and kwargs respectively
                 if hasattr(inst, "control"):
-                    command += f"{str(inst.control)}, "
+                    args.append(inst.control)
                 elif hasattr(inst, "controls"):
                     for control in inst.controls:
-                        command += f"{str(control)}, "
+                        args.append(control)
 
                 if hasattr(inst, "target"):
-                    command += f"{inst.target}, "
+                    args.append(inst.target)
                 elif hasattr(inst, "targets"):
                     for target in inst.targets:
-                        command += f"{str(target)}, "
+                        args.append(target)
 
                 if hasattr(inst, "angle"):
-                    command += f"{str(inst.angle)}, "
+                    args.append(inst.angle)
 
                 if hasattr(inst, "probability"):
-                    command += f"probability={str(inst.probability)}, "
+                    kwargs["probability"] = inst.probability
 
                 if hasattr(inst, "gamma"):
-                    command += f"gamma={str(inst.gamma)}, "
+                    kwargs["gamma"] = inst.gamma
 
                 if hasattr(inst, "matrix"):
-                    command += f"matrix={str(inst.matrix)}, "
-
+                    matrix = inst.matrix.copy()
+                    for row in matrix:
+                        for i in range(len(row)):
+                            row[i] = np.complex(row[i][0], row[i][1])
+                    kwargs["matrix"] = np.array(matrix)
+                    kwargs["targets"] = inst.targets
                 if hasattr(inst, "matrices"):
-                    command += f"matrices={str(inst.matrices)}, "
+                    matrices = inst.matrices.copy()
+                    reformed_matrices = []
+                    for matrix in matrices:
+                        for row in matrix:
+                            for i in range(len(row)):
+                                row[i] = np.complex(row[i][0], row[i][1])
+                        reformed_matrices.append(np.array(matrix))
+                    args.append(inst.targets)
+                    kwargs["matrices"] = reformed_matrices
 
-                command = command[:len(command)-2] + ")"
+            #Calls function using args and kwargs
+            instcall(*args, **kwargs)
 
-            exec(command)
-
-
+        #Get measurement operations from IR
         results = ir.results
 
         #Adding of resulttypes
         for result in results:
+            # Isolated cases for statevector and densitymatrix,
+            # since they don't have matching names in both representations
             if(result.type=="statevector"):
                 circuit.state_vector()
+            elif(result.type=="densitymatrix"):
+                circuit.density_matrix(target=result.targets)
             else:
+                #Get operation
                 instcall = getattr(circuit, f"{result.type}")
-                command = "instcall("
-                # Adding of parameters
+                kwargs= {}
+                # Adding of parameters to kwargs
                 if hasattr(result, "observable"):
-                    command += f"observable=Observable.{(str(result.observable[0])).upper()}(), "
+                    kwargs["observable"] = Observable(len(result.targets), f"{(str(result.observable[0])).upper()}")
                 if hasattr(result, "states"):
-                    command += f"state={result.states}, "
+                    kwargs["states"] = result.states
                 if hasattr(result, "targets"):
-                    command += f"target={result.targets}, "
+                    kwargs["target"] = result.targets
 
-                command = command[:len(command) - 2] + ")"
+                #Calls function with arguments
+                instcall(**kwargs)
 
-                exec(command)
-                
-            
         return circuit
 
 
+if __name__ == "__main__":
+    transl = BraketTranslator()
+    K0 = np.eye(4) * np.sqrt(0.9)
+    K1 = np.kron([[1., 0.], [0., 1.]], [[0., 1.], [1., 0.]]) * np.sqrt(0.1)
+    print(f"Matrices Original: [{K0}, {K1}")
+    h: Circuit = Circuit().cphaseshift(0, 1, 0.15).h(0).iswap(0, 2).rx(0, 0.15).expectation(
+        observable=Observable.H(), target=0).density_matrix(target=[0,1])
+    print(h)
+    prog = h.to_ir()
+    trans = BraketTranslator()
+    print(trans.ir_to_circuit(prog))
