@@ -36,6 +36,25 @@
                     <mat-icon>keyboard_arrow_right</mat-icon>
                 </button></div>
         </div>
+
+       <mat-divider class="mt-2 mb-2"></mat-divider>
+        <div mat-subheader>Google Syncamore</div>
+        <div class="row">
+            <div class="col"
+                matTooltip="Length of the longest path of the unrolled circuit for Google Syncamore architectures..">Depth:</div>
+            <div class="col">{{depth['s_depth']}}</div>
+            <div class="col"
+                matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for Google Syncamore architectures.">
+                Two Qubit Depth:</div>
+            <div class="col">{{depth['s_two_qubit']}}</div>
+            <div class="col"
+                matTooltip="Counts the number of pulses of the unrolled circuit for Google Syncamore architectures.">X90 Pulses
+                Depth:</div>
+            <div class="col">{{depth['s_gate_times']}}</div>
+            <div class="col"><button mat-mini-fab color="primary" class="col" (click)="useSyncamore()">
+                    <mat-icon>keyboard_arrow_right</mat-icon>
+                </button></div>
+        </div>
     </mat-list>
 </div>
 
@@ -49,34 +68,37 @@
             <mat-label> Choose Export Language/Framework</mat-label>
             <mat-select (selectionChange)="changed($event)">
                 <p class="pl-2 pt-2 selectionTitle">Languages</p>
-                <mat-option value="OpenQASM">
+               <mat-option value="OpenQASM">
                         OpenQASM
                     </mat-option>
                     <mat-option value="Quil">
                         Quil
                     </mat-option>
-                    <mat-option
-                    matTooltip="No export of measurements"
+                    <mat-option matTooltip="No support for Braket CPhaseShift00, CPhaseShift01, CPhaseShift10, PSwap; No export of measurements."
                         matTooltipClass="tooltip-large" value="Braket">
                         Braket(IR)
                     </mat-option>
-                    <mat-option value="Cirq">
+                    <mat-option  matTooltip="No custom gates, barriers resets and Conditionals; No CRZ, CU1, CU3, RZZ."
+                        matTooltipClass="tooltip-large" value="Cirq">
                         Cirq(JSON)
                     </mat-option>
-                    <mat-divider></mat-divider>
-                    <mat-option value="Quirk">
+                    <mat-option matTooltip="Via Cirq; No custom gates, barriers resets and Conditionals; No CRZ, CU1, CU3, RZZ, ISWAP."
+                        matTooltipClass="tooltip-large" value="Quirk">
                         Quirk(URL)
                     </mat-option>
-                    <p class="pl-2 pt-2 selectionTitle">Frameworks</p>
-                    <mat-option value="Qiskit">
+                    <mat-divider></mat-divider>
+                    <p class="pl-2 pt-2">Frameworks</p>
+                    <mat-option
+                        matTooltipClass="tooltip-large" value="Qiskit">
                         Qiskit
                     </mat-option>
                     <mat-option
-                    matTooltip="Pyquil program can be exported in the backend. The export of Pyquil skeleton code is experimential."
+                        matTooltip="Pyquil program can be exported in the backend. The export of Pyquil skeleton code is experimential."
                         matTooltipClass="tooltip-large" value="Pyquil">
                         Pyquil
                     </mat-option>
-                    <mat-option value="QSharp">
+                    <mat-option matTooltip="No support for measurements, a single dummy measurement will be added to the circuit for compilation reasons."
+                        matTooltipClass="tooltip-large"  value="Qsharp">
                         QSharp
                     </mat-option>
 

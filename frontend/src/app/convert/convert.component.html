@@ -9,16 +9,20 @@
                     <mat-option value="OpenQASM">
                         OpenQASM
                     </mat-option>
-                    <mat-option value="Quil">
+                    <mat-option matTooltip="Decomposes CPHASE00, CPHASE01, CPHASE10, PSWAP."
+                        matTooltipClass="tooltip-large" value="Quil">
                         Quil
                     </mat-option>
-                    <mat-option value="Braket">
+                    <mat-option matTooltip="No support for custom unitary gates."
+                        matTooltipClass="tooltip-large" value="Braket">
                         Braket(IR)
                     </mat-option>
-                    <mat-option value="Cirq">
+                    <mat-option matTooltip="Only via unitary rotation gates."
+                        matTooltipClass="tooltip-large" value="Cirq">
                         Cirq(JSON)
                     </mat-option>
-                    <mat-option value="Quirk">
+                    <mat-option matTooltip="Via Cirq; Only via unitary rotation gates."
+                        matTooltipClass="tooltip-large"  value="Quirk">
                         Quirk(URL)
                     </mat-option>
                     <mat-divider></mat-divider>
@@ -29,7 +33,8 @@
                         Qiskit
                     </mat-option>
                     <mat-option
-                        matTooltip="Name of the program must be p. All occurences can be changed with CTRL + F2."
+                        matTooltip="Name of the program must be p. All occurences can be changed with CTRL + F2;
+                        No parameterized custom gates; Decomposes U2, U3, Sdg, Tdg."
                         matTooltipClass="tooltip-large" value="Pyquil">
                         Pyquil
                     </mat-option>
@@ -44,7 +49,7 @@
                         Braket(SDK)
                     </mat-option>
                     <mat-option
-                        matTooltip="Support only for..."
+                        matTooltip="No support for resets and measurement resets."
                         matTooltipClass="tooltip-large" value="Qsharp">
                         QSharp
                     </mat-option>
@@ -69,16 +74,16 @@
                     <mat-option value="Quil">
                         Quil
                     </mat-option>
-                    <mat-option
-                    matTooltip="No export of measurements"
+                    <mat-option matTooltip="No support for Braket CPhaseShift00, CPhaseShift01, CPhaseShift10, PSwap; No export of measurements."
                         matTooltipClass="tooltip-large" value="Braket">
                         Braket(IR)
                     </mat-option>
-                    <mat-option  matTooltip="No custom gates, barriers resets and Conditionals; No CRZ, CU1, CU3, RZZ"
+                    <mat-option  matTooltip="No custom gates, barriers resets and Conditionals; No CRZ, CU1, CU3, RZZ."
                         matTooltipClass="tooltip-large" value="Cirq">
                         Cirq(JSON)
                     </mat-option>
-                    <mat-option value="Quirk">
+                    <mat-option matTooltip="Via Cirq; No custom gates, barriers resets and Conditionals; No CRZ, CU1, CU3, RZZ, ISWAP."
+                        matTooltipClass="tooltip-large" value="Quirk">
                         Quirk(URL)
                     </mat-option>
                     <mat-divider></mat-divider>
@@ -92,7 +97,8 @@
                         matTooltipClass="tooltip-large" value="Pyquil">
                         Pyquil
                     </mat-option>
-                    <mat-option value="Qsharp">
+                    <mat-option matTooltip="No support for measurements, a single dummy measurement will be added to the circuit for compilation reasons."
+                        matTooltipClass="tooltip-large"  value="Qsharp">
                         QSharp
                     </mat-option>
                 </mat-select>

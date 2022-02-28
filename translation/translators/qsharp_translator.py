@@ -1,5 +1,5 @@
 import qsharp
-import json
+import re
 from qsharp.loader import QSharpCallable
 from qiskit import QuantumCircuit
 from pytket.extensions.qiskit import qiskit_to_tk
@@ -32,7 +32,8 @@ class QsharpTranslator(Translator):
             circ(wires=wires)
             return qml.expval(qml.PauliZ(0))
         new_circuit()
-        return dev.source
+        source_str = dev.source
+        return source_str
     
 
         

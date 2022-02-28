@@ -29,8 +29,12 @@ class BraketTranslator(Translator):
             circ(wires=wires)
             return qml.expval(qml.PauliZ(0))
         new_circuit()
-        program = dev.circuit
-        return program.to_ir().json(indent=4)
+        program: Circuit = dev.circuit
+        #remove the measurement that was necessary for Pennylane
+        new_program: Circuit = Circuit()
+        for inst in program.instructions:
+            new_program.add_instruction(inst)
+        return new_program.to_ir().json(indent=4)
 
     def to_language_tk(self, circuit: QuantumCircuit) -> str:
         program: Circuit = tk_to_braket(qiskit_to_tk(circuit))
@@ -138,7 +142,7 @@ class BraketTranslator(Translator):
 
 if __name__ == "__main__":
     transl = BraketTranslator()
-    K0 = np.eye(4) * np.sqrt(0.9)
+    """ K0 = np.eye(4) * np.sqrt(0.9)
     K1 = np.kron([[1., 0.], [0., 1.]], [[0., 1.], [1., 0.]]) * np.sqrt(0.1)
     print(f"Matrices Original: [{K0}, {K1}")
     h: Circuit = Circuit().cphaseshift(0, 1, 0.15).h(0).iswap(0, 2).rx(0, 0.15).expectation(
@@ -146,4 +150,11 @@ if __name__ == "__main__":
     print(h)
     prog = h.to_ir()
     trans = BraketTranslator()
-    print(trans.ir_to_circuit(prog))
+    print(trans.ir_to_circuit(prog))"""
+    circ = QuantumCircuit(2,1)
+    circ.h(0)
+    circ.cx(0,1)
+    circ.measure(0,0)
+    print(transl.to_language(circ))
+
+

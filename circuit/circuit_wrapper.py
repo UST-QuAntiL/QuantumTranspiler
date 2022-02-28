@@ -20,6 +20,9 @@ from typing import List, Tuple
 from qiskit.providers.aer import QasmSimulator
 from translation.translation_handler import TranslationHandler
 from translation.translator_names import TranslatorNames
+import cirq
+import cirq_google as cg
+from cirq.contrib.qasm_import import circuit_from_qasm
 
 
 class CircuitWrapper:
@@ -188,6 +191,13 @@ class CircuitWrapper:
 
     def unroll_rigetti(self) -> QuantumCircuit:
         return self.unroll(["rx", "rz", "cz", "id"])
+
+    def unroll_syncamore(self) -> QuantumCircuit:
+        circ = circuit_from_qasm(self.circuit.qasm())
+        syncamore_circ = cg.optimized_for_sycamore(circ)
+        self.import_cirq_json(cirq.to_json(syncamore_circ))
+        return self.circuit
+
 
     def unroll(self, gates: List[str]) -> QuantumCircuit:
         unroll_pass = Unroller(gates)

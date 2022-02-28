@@ -1,5 +1,8 @@
 import traceback
 
+from cirq.contrib.qasm_import import QasmException
+from pennylane import DeviceError
+import re
 from examples.qpu_couplings import qpus
 from flask import Flask
 from flask import request
@@ -39,12 +42,25 @@ def circuit_to_internal():
             wrapper = CircuitWrapper(quirk_url=circuit)
         else:
             return "Bad Request!", 400
-        output = wrapper.export_qiskit_commands()    
+        output = wrapper.export_qiskit_commands()
+    except DeviceError as de:
+        gate = re.findall(r'(?:Gate )(.*?)(?: not)', str(de))[0]
+        return f"Importing {option} does not support '{gate}' gates", 500
+    except QasmException as qe:
+        gate = re.findall(r'"(.*?)"', qe.message)[0]
+        return f"Importing {option} does not support '{gate}' gates", 500
+    except NotImplementedError as nie:
+        gate = re.findall(r'(?:convert )(.*?)(?: |\()', str(nie))[0]
+        return f"Importing {option} does not support '{gate}' gates", 500
+    except SyntaxError as se:
+        line = re.findall(r'(line \d+)', str(se))[0]
+        return f"Invalid syntax of input in line {line}"
     except Exception as e:
         traceback.print_exc()
         print(str(e))
-        return str(e), 500    
+        return f"General error while importing {option}: {str(e)}", 500
     return output
+
 
 @app.route('/export_circuit', methods=['Post'])
 def export_circuit():
@@ -71,10 +87,22 @@ def export_circuit():
             output = wrapper.export_quirk()
         else:
             return "Bad Request!", 400
+    except DeviceError as de:
+        gate = re.findall(r'(?:Gate )(.*?)(?: not)', str(de))[0]
+        return f"Exporting {option} does not support '{gate}' gates", 500
+    except QasmException as qe:
+        gate = re.findall(r'"(.*?)"', qe.message)[0]
+        return f"Exporting {option} does not support '{gate}' gates", 500
+    except NotImplementedError as nie:
+        gate = re.findall(r'(?:convert )(.*?)(?: |\()', str(nie))[0]
+        return f"Exporting {option} does not support '{gate}' gates", 500
+    except SyntaxError as se:
+        line = re.findall(r'(line \d+)', str(se))[0]
+        return f"Invalid syntax of input in line {line}"
     except Exception as e:
         traceback.print_exc()
         print(str(e))
-        return str(e), 500
+        return f"General error while exporting {option}: {str(e)}", 500
     return output
 
 @app.route('/convert', methods=['Post'])
@@ -106,7 +134,24 @@ def convert():
             wrapper = CircuitWrapper(quirk_url=circuit)
         else:
             return "Bad Request!", 400
+    except DeviceError as de:
+        gate = re.findall(r'(?:Gate )(.*?)(?: not)', str(de))[0]
+        return f"Converting from {option} does not support '{gate}' gates", 500
+    except QasmException as qe:
+        gate = re.findall(r'"(.*?)"', qe.message)[0]
+        return f"Converting from {option} does not support '{gate}' gates", 500
+    except NotImplementedError as nie:
+        gate = re.findall(r'(?:convert )(.*?)(?: |\()', str(nie))[0]
+        return f"Converting from {option} does not support '{gate}' gates", 500
+    except SyntaxError as se:
+        line = re.findall(r'(line \d+)', str(se))[0]
+        return f"Invalid syntax of input in line {line}"
+    except Exception as e:
+        traceback.print_exc()
+        print(str(e))
+        return f"General error while converting from {option}: {str(e)}", 500
 
+    try:
         if option_output.lower() == "quil":
             output = wrapper.export_quil()
         elif option_output.lower() == "pyquil":
@@ -125,10 +170,19 @@ def convert():
             output = wrapper.export_quirk()
         else:
             return "Bad Request!", 400
+    except DeviceError as de:
+        gate = re.findall(r'(?:Gate )(.*?)(?: not)', str(de))[0]
+        return f"Converting to {option_output} does not support '{gate}' gates", 500
+    except QasmException as qe:
+        gate = re.findall(r'"(.*?)"', qe.message)[0]
+        return f"Converting to {option_output} does not support '{gate}' gates", 500
+    except NotImplementedError as nie:
+        gate = re.findall(r'(?:convert )(.*?)(?: |\()', str(nie))[0]
+        return f"Converting to {option_output} does not support '{gate}' gates", 500
     except Exception as e:
         traceback.print_exc()
         print(str(e))
-        return str(e), 500
+        return f"General error while converting to {option_output}: {str(e)}", 500
 
     return output
 
@@ -146,18 +200,28 @@ def unroll():
             wrapper.unroll_rigetti()
         elif option == "IBMQ":
             wrapper.unroll_ibm()
+        elif option == "Syncamore":
+            wrapper.unroll_syncamore()
         else:
             return "Bad Request!", 400
 
         if isExpert:
-            if format == "OpenQASM":
-                output= wrapper.export_qasm()
-            elif format == "Quil":
-                output= wrapper.export_quil()
-            elif format == "Qiskit":
-                output= wrapper.export_qiskit_commands(include_imports=True)
-            elif format == "Pyquil":
-                output= wrapper.export_pyquil_commands()
+            if format.lower() == "quil":
+                output = wrapper.export_quil()
+            elif format.lower() == "pyquil":
+                output = wrapper.export_pyquil()
+            elif format.lower() == "openqasm":
+                output = wrapper.export_qasm()
+            elif format.lower() == "qiskit":
+                output = wrapper.export_qiskit_commands()
+            elif format.lower() == "cirq":
+                output = wrapper.export_cirq_json()
+            elif format.lower() == "braket":
+                output = wrapper.export_braket_ir()
+            elif format.lower() == "qsharp":
+                output = wrapper.export_qsharp()
+            elif format.lower == "quirk":
+                output = wrapper.export_quirk()
             else:
                 return "Bad Request!", 400
         else:
@@ -165,13 +229,42 @@ def unroll():
                 output = wrapper.export_quil()
             elif option == "IBMQ":
                 output = wrapper.export_qasm()
+            elif option == "Syncamore":
+                output = wrapper.export_cirq_json()
             else:
                 return "Bad Request!", 400
 
+    except DeviceError as de:
+
+        gate = re.findall(r'(?:Gate )(.*?)(?: not)', str(de))[0]
+
+        return f"Exporting {option} does not support '{gate}' gates", 500
+
+    except QasmException as qe:
+
+        gate = re.findall(r'"(.*?)"', qe.message)[0]
+
+        return f"Exporting {option} does not support '{gate}' gates", 500
+
+    except NotImplementedError as nie:
+
+        gate = re.findall(r'(?:convert )(.*?)(?: |\()', str(nie))[0]
+
+        return f"Exporting {option} does not support '{gate}' gates", 500
+
+    except SyntaxError as se:
+
+        line = re.findall(r'(line \d+)', str(se))[0]
+
+        return f"Invalid syntax of input in line {line}"
+
     except Exception as e:
+
         traceback.print_exc()
+
         print(str(e))
-        return str(e), 500    
+
+        return f"General error while exporting {option}: {str(e)}", 500
     return output
 
 
@@ -205,6 +298,12 @@ def depth():
         depth["r_depth"] = wrapper.depth()
         depth["r_two_qubit"] = wrapper.depth_two_qubit_gates()
         depth["r_gate_times"] = wrapper.depth_gate_times()
+
+        wrapper = CircuitWrapper(qiskit_instructions=circuit)
+        wrapper.unroll_syncamore()
+        depth["s_depth"] = wrapper.depth()
+        depth["s_two_qubit"] = wrapper.depth_two_qubit_gates()
+        depth["s_gate_times"] = 0
         output = depth
     except Exception as e:
         traceback.print_exc()

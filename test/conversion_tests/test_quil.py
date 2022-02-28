@@ -6,7 +6,7 @@ import random
 
 
 class MyTestCase(unittest.TestCase):
-    def test_to_quil_random(self, n=50, max_depth=4, max_qbits=4):
+    def test_to_quil_random(self, n=50, max_depth=6, max_qbits=5):
         for i in range(n):
             qbits = random.randint(1, max_qbits)
             depth = random.randint(1, max_depth)
