@@ -17,6 +17,11 @@ class TestQsharp(unittest.TestCase):
             gates_data = unsupported_gates_json.read()
         unsupported_gates = json.loads(gates_data)
 
+        if "total" in unsupported_gates["to"]:
+            unsupported_gates["to"]["total"] += n
+        else:
+            unsupported_gates["to"]["total"] = n
+
         for i in range(n):
             qbits = random.randint(1, max_qbits)
             depth = random.randint(1, max_depth)
@@ -49,12 +54,17 @@ class TestQsharp(unittest.TestCase):
             gates_data = unsupported_gates_json.read()
         unsupported_gates = json.loads(gates_data)
 
+        if "total" in unsupported_gates["to"]:
+            unsupported_gates["to"]["total"] += n
+        else:
+            unsupported_gates["to"]["total"] = n
+
         for i in range(n):
             print("New")
             qbits = random.randint(1, max_qbits)
             depth = random.randint(1, max_depth)
             circ_qk = random_circuit(qbits, depth)
-            print(circ_qk)
+            print(circ_qk.qasm())
             try:
                 wrapper = CircuitWrapper(qiskit_circuit=circ_qk)
                 circ_qs = wrapper.export_qsharp()
@@ -73,6 +83,10 @@ class TestQsharp(unittest.TestCase):
             except Exception as ex:
                 traceback.print_exc()
 
+        if "total" in unsupported_gates["from"]:
+            unsupported_gates["from"]["total"] += to_success_counter
+        else:
+            unsupported_gates["from"]["total"] = to_success_counter
 
         dict_str = json.dumps(unsupported_gates, indent=4)
         with open(JSON_PATH, "w") as unsupported_gates_json:

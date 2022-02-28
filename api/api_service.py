@@ -14,6 +14,7 @@ app = Flask(__name__)
 cors = CORS(app)
 thandler = TranslationHandler()
 
+
 @app.route('/circuit_to_internal', methods=['Post'])
 def circuit_to_internal():
     data = request.json
@@ -34,6 +35,8 @@ def circuit_to_internal():
             wrapper = CircuitWrapper(braket_str=circuit)
         elif option.lower() == "qsharp":
             wrapper = CircuitWrapper(qsharp_instructions=circuit)
+        elif option.lower() == "quirk":
+            wrapper = CircuitWrapper(quirk_url=circuit)
         else:
             return "Bad Request!", 400
         output = wrapper.export_qiskit_commands()    
@@ -61,9 +64,11 @@ def export_circuit():
         elif option.lower() == "cirq":
             output = wrapper.export_cirq_json()
         elif option.lower() == "braket":
-            wrapper = CircuitWrapper(braket_str=circuit)
+            output = wrapper.export_braket_ir()
         elif option.lower() == "qsharp":
-            wrapper = CircuitWrapper(qsharp_instructions=circuit)
+            output = wrapper.export_qsharp()
+        elif option.lower == "quirk":
+            output = wrapper.export_quirk()
         else:
             return "Bad Request!", 400
     except Exception as e:
@@ -97,6 +102,8 @@ def convert():
             wrapper = CircuitWrapper(braket_instructions=circuit)
         elif option.lower() == "qsharp":
             wrapper = CircuitWrapper(qsharp_instructions=circuit)
+        elif option.lower() == "quirk":
+            wrapper = CircuitWrapper(quirk_url=circuit)
         else:
             return "Bad Request!", 400
 
@@ -114,6 +121,8 @@ def convert():
             output = wrapper.export_braket_ir()
         elif option_output.lower() == "qsharp":
             output = wrapper.export_qsharp()
+        elif option_output.lower() == "quirk":
+            output = wrapper.export_quirk()
         else:
             return "Bad Request!", 400
     except Exception as e:

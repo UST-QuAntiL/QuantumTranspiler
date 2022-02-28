@@ -7,3 +7,4 @@ class TranslatorNames(Enum):
     QSHARP = "qsharp_translator"
     QUIL = "quil_translator"
     OPENQASM = "openqasm_translator"
+    QUIRK = "quirk_translator"

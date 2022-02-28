@@ -1,6 +1,8 @@
 {
     "to": {
-        "Identity": 1
+        "total": 5
     },
-    "from": {}
+    "from": {
+        "total": 5
+    }
 }

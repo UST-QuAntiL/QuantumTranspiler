@@ -44,7 +44,7 @@ class TestBraket(unittest.TestCase):
             self.assertTrue((success_counter / (i + 1)) >= 0.5)
 
 
-    def test_to_and_from_braket_random(self, n=10, max_depth=3, max_qbits=3):
+    def test_to_and_from_braket_random(self, n=20, max_depth=3, max_qbits=3):
         to_success_counter = 0
         from_success_counter = 0
         with open(JSON_PATH, "r") as unsupported_gates_json:
@@ -76,7 +76,14 @@ class TestBraket(unittest.TestCase):
                     unsupported_gates["from"][gate] = 1
             except Exception as ex:
                 traceback.print_exc()
+
+        if "total" in unsupported_gates["from"]:
+            unsupported_gates["from"]["total"] += to_success_counter
+        else:
+            unsupported_gates["from"]["total"] = to_success_counter
+
         dict_str = json.dumps(unsupported_gates, indent=4)
+
         with open(JSON_PATH, "w") as unsupported_gates_json:
             unsupported_gates_json.write(dict_str)
         if n > 0:
