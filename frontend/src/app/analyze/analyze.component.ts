@@ -51,6 +51,9 @@ export class AnalyzeComponent implements OnInit {
     "r_depth": 0,
     "r_gate_times": 0,
     "r_two_qubit": 0
+    "s_depth": 0,
+    "s_gate_times": 0,
+    "s_two_qubit": -1
   };
 
   architecture: string;

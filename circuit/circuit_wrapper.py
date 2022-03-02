@@ -198,6 +198,11 @@ class CircuitWrapper:
         self.import_cirq_json(cirq.to_json(syncamore_circ))
         return self.circuit
 
+    def unroll_azure(self) -> QuantumCircuit:
+        qshrap_opt = self.export_qsharp()
+        self.import_qsharp(qshrap_opt)
+        return self.circuit
+
 
     def unroll(self, gates: List[str]) -> QuantumCircuit:
         unroll_pass = Unroller(gates)
