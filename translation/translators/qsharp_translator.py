@@ -22,8 +22,19 @@ class QsharpTranslator(Translator):
 
         return self.compiled_to_circuit(compiled)
 
-    def to_language(self, circuit: QuantumCircuit) -> str:
-        p: pystaq.Program = pystaq.parse_str(circuit.qasm())
+    def to_language(self, circuit: QuantumCircuit, framework: str = "Staq"):
+        if framework.__eq__("Staq"):
+            return self.to_language_staq(circuit)
+        elif framework.__eq__("Pennylane"):
+            return self.to_language_pl(circuit)
+        elif framework.__eq__("Pytket"):
+            return self.to_language_tk(circuit)
+        else:
+            raise ValueError(f"Unsupported framework '{framework}'")
+            
+    def to_language_staq(self, circuit: QuantumCircuit) -> str:
+        qasm = circuit.qasm()
+        p: pystaq.Program = pystaq.parse_str(qasm)
         circ_qs = p.to_qsharp()
         #remove namespace
         circ_qs = re.findall(r'namespace Quantum\.staq \{\n(.*)\}', circ_qs, re.DOTALL)[0]

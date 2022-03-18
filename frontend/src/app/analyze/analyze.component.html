@@ -48,10 +48,9 @@
                 Two Qubit Depth:</div>
             <div class="col">{{depth['s_two_qubit']}}</div>
             <div class="col"
-                matTooltip="Counts the number of pulses of the unrolled circuit for Google Syncamore architectures.">X90 Pulses
-                Depth:</div>
+                matTooltip="Pulses Depth not supported for Google Sycamore architectures">Unsupported</div>
             <div class="col">{{depth['s_gate_times']}}</div>
-            <div class="col"><button mat-mini-fab color="primary" class="col" (click)="useSyncamore()">
+            <div class="col"><button mat-mini-fab color="primary" class="col" (click)="useSycamore()">
                     <mat-icon>keyboard_arrow_right</mat-icon>
                 </button></div>
         </div>
@@ -97,9 +96,17 @@
                         matTooltipClass="tooltip-large" value="Pyquil">
                         Pyquil
                     </mat-option>
+                    <mat-option matTooltip="No rzz gate; Custom Gate definitions will be added for non qsharp native gates."
+                        matTooltipClass="tooltip-large"  value="QsharpStaq">
+                        QSharp(via Staq)
+                    </mat-option>
                     <mat-option matTooltip="No support for measurements, a single dummy measurement will be added to the circuit for compilation reasons."
-                        matTooltipClass="tooltip-large"  value="Qsharp">
-                        QSharp
+                        matTooltipClass="tooltip-large"  value="QsharpPenny">
+                        QSharp(via Pennylane)
+                    </mat-option>
+                    <mat-option matTooltip="Only Pauli XYZ, Exp. Pauli Tensor, H, S, T, Rx, Ry,Rz, CCX and CX gates; No measurements."
+                        matTooltipClass="tooltip-large"  value="QsharpPytket">
+                        QSharp(via Pytket)
                     </mat-option>
 
             </mat-select>

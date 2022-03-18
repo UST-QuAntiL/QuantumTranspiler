@@ -164,8 +164,12 @@ def convert():
             output = wrapper.export_cirq_json()
         elif option_output.lower() == "braket":
             output = wrapper.export_braket_ir()
-        elif option_output.lower() == "qsharp":
-            output = wrapper.export_qsharp()
+        elif option_output.lower() == "qsharpstaq":
+            output = wrapper.export_qsharp(framework="Staq")
+        elif option_output.lower() == "qsharppenny":
+            output = wrapper.export_qsharp(framework="Pennylane")
+        elif option_output.lower() == "qsharppytket":
+            output = wrapper.export_qsharp(framework="Pytket")
         elif option_output.lower() == "quirk":
             output = wrapper.export_quirk()
         else:
@@ -200,8 +204,8 @@ def unroll():
             wrapper.unroll_rigetti()
         elif option == "IBMQ":
             wrapper.unroll_ibm()
-        elif option == "Syncamore":
-            wrapper.unroll_syncamore()
+        elif option == "Sycamore":
+            wrapper.unroll_sycamore()
         else:
             return "Bad Request!", 400
 
@@ -292,23 +296,33 @@ def depth():
         depth["q_depth"] = wrapper.depth()
         depth["q_two_qubit"] = wrapper.depth_two_qubit_gates()
         depth["q_gate_times"] = wrapper.depth_gate_times()
-
+    except Exception as e:
+        traceback.print_exc()
+        depth["q_depth"] = -1
+        depth["q_two_qubit"] = -1
+        depth["q_gate_times"] = -1
+    try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
         wrapper.unroll_rigetti()
         depth["r_depth"] = wrapper.depth()
         depth["r_two_qubit"] = wrapper.depth_two_qubit_gates()
         depth["r_gate_times"] = wrapper.depth_gate_times()
-
+    except Exception as e:
+        depth["r_depth"] = wrapper.depth()
+        depth["r_two_qubit"] = wrapper.depth_two_qubit_gates()
+        depth["r_gate_times"] = wrapper.depth_gate_times()
+    try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
-        wrapper.unroll_syncamore()
+        wrapper.unroll_sycamore()
         depth["s_depth"] = wrapper.depth()
         depth["s_two_qubit"] = wrapper.depth_two_qubit_gates()
-        depth["s_gate_times"] = 0
-        output = depth
+        depth["s_gate_times"] = -1
     except Exception as e:
-        traceback.print_exc()
-        print(str(e))
-        return str(e), 500
+        depth["s_depth"] = -1
+        depth["s_two_qubit"] = -1
+        depth["s_gate_times"] = -1
+    output = depth
+
     return output
 
 

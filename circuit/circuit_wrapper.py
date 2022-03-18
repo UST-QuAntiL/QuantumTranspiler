@@ -23,6 +23,7 @@ from translation.translator_names import TranslatorNames
 import cirq
 import cirq_google as cg
 from cirq.contrib.qasm_import import circuit_from_qasm
+from translation.translators.qsharp_translator import QsharpTranslator
 
 
 class CircuitWrapper:
@@ -161,8 +162,9 @@ class CircuitWrapper:
     def export_braket_ir(self) -> str:
         return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.BRAKET.value)
 
-    def export_qsharp(self) -> str:
-        return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.QSHARP.value)
+    def export_qsharp(self, framework: str = "Staq") -> str:
+        trans = QsharpTranslator()
+        return trans.to_language(self.circuit, framework)
 
     def export_quirk(self) -> str:
         return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.QUIRK.value)
@@ -192,10 +194,10 @@ class CircuitWrapper:
     def unroll_rigetti(self) -> QuantumCircuit:
         return self.unroll(["rx", "rz", "cz", "id"])
 
-    def unroll_syncamore(self) -> QuantumCircuit:
+    def unroll_sycamore(self) -> QuantumCircuit:
         circ = circuit_from_qasm(self.circuit.qasm())
-        syncamore_circ = cg.optimized_for_sycamore(circ)
-        self.import_cirq_json(cirq.to_json(syncamore_circ))
+        sycamore_circ = cg.optimized_for_sycamore(circ)
+        self.import_cirq_json(cirq.to_json(sycamore_circ))
         return self.circuit
 
     def unroll_azure(self) -> QuantumCircuit:

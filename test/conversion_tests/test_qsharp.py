@@ -75,6 +75,7 @@ class TestQsharp(unittest.TestCase):
                 circ_qk_back = back_wrapper.export_qiskit()
                 from_success_counter += 1
             except RuntimeError as e:
+                traceback.print_exc()
                 gate = "Unknown"
                 if gate in unsupported_gates["to"]:
                     unsupported_gates["to"][gate] += 1
@@ -87,7 +88,6 @@ class TestQsharp(unittest.TestCase):
                 else:
                     unsupported_gates["to"][gate] = 1
             except Exception as ex:
-                print("Yep")
                 print(circ_qs)
                 traceback.print_exc()
 

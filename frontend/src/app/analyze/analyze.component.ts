@@ -50,7 +50,7 @@ export class AnalyzeComponent implements OnInit {
     "q_two_qubit": 0,
     "r_depth": 0,
     "r_gate_times": 0,
-    "r_two_qubit": 0
+    "r_two_qubit": 0,
     "s_depth": 0,
     "s_gate_times": 0,
     "s_two_qubit": -1
@@ -93,8 +93,8 @@ export class AnalyzeComponent implements OnInit {
     }
   }
 
-  useSyncamore() {
-    this.architecture = "Syncamore"
+  useSycamore() {
+    this.architecture = "Sycamore"
     this.selectedFormatOption = "Cirq"
     this.unroll()
     if (!this.isExpert) {
