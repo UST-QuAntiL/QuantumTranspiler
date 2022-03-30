@@ -36,24 +36,6 @@
                     <mat-icon>keyboard_arrow_right</mat-icon>
                 </button></div>
         </div>
-
-       <mat-divider class="mt-2 mb-2"></mat-divider>
-        <div mat-subheader>Google Syncamore</div>
-        <div class="row">
-            <div class="col"
-                matTooltip="Length of the longest path of the unrolled circuit for Google Syncamore architectures..">Depth:</div>
-            <div class="col">{{depth['s_depth']}}</div>
-            <div class="col"
-                matTooltip="Counts the two qubits gates on the longest path of the unrolled circuit for Google Syncamore architectures.">
-                Two Qubit Depth:</div>
-            <div class="col">{{depth['s_two_qubit']}}</div>
-            <div class="col"
-                matTooltip="Pulses Depth not supported for Google Sycamore architectures">Unsupported</div>
-            <div class="col">{{depth['s_gate_times']}}</div>
-            <div class="col"><button mat-mini-fab color="primary" class="col" (click)="useSycamore()">
-                    <mat-icon>keyboard_arrow_right</mat-icon>
-                </button></div>
-        </div>
     </mat-list>
 </div>
 

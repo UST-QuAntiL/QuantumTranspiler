@@ -9,9 +9,6 @@ from flask import request
 from flask_cors import CORS, cross_origin
 from circuit.circuit_wrapper import CircuitWrapper
 from translation.translation_handler import TranslationHandler
-import json
-import sys
-import os
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -120,7 +117,7 @@ def convert():
             wrapper = CircuitWrapper(qasm=circuit)
         elif option.lower() == "qiskit":
             wrapper = CircuitWrapper(qiskit_instructions=circuit)
-        elif option.lower() == "cirq":
+        elif option.lower() == "cirq" or option.lower() == "cirq-json":
             wrapper = CircuitWrapper(cirq_str=circuit)
         elif option.lower() == "cirqsdk":
             wrapper = CircuitWrapper(cirq_instructions=circuit)
@@ -160,11 +157,11 @@ def convert():
             output = wrapper.export_qasm()
         elif option_output.lower() == "qiskit":
             output = wrapper.export_qiskit_commands(include_imports=True)
-        elif option_output.lower() == "cirq":
+        elif option_output.lower() == "cirq" or option.lower() == "cirq-json":
             output = wrapper.export_cirq_json()
         elif option_output.lower() == "braket":
             output = wrapper.export_braket_ir()
-        elif option_output.lower() == "qsharpstaq":
+        elif option_output.lower() == "qsharpstaq" or option_output.lower() == "qsharp":
             output = wrapper.export_qsharp(framework="Staq")
         elif option_output.lower() == "qsharppenny":
             output = wrapper.export_qsharp(framework="Pennylane")
