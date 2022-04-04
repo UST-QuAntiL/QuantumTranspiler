@@ -157,7 +157,7 @@ def convert():
             output = wrapper.export_qasm()
         elif option_output.lower() == "qiskit":
             output = wrapper.export_qiskit_commands(include_imports=True)
-        elif option_output.lower() == "cirq" or option.lower() == "cirq-json":
+        elif option_output.lower() == "cirq" or option_output.lower() == "cirq-json":
             output = wrapper.export_cirq_json()
         elif option_output.lower() == "braket":
             output = wrapper.export_braket_ir()
