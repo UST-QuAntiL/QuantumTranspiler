@@ -13,10 +13,11 @@ ply==3.11
 amazon-braket-sdk==1.11.1
 pydot>=1.4.2
 qsharp
-cirq>=0.13.1
+cirq>=0.14.1
 IPython>=7.29.0
 pennylane==0.21.0
 pennylane-qsharp==0.19.0
 pennylane-qiskit==0.21.0
 amazon-braket-pennylane-plugin==1.5.6
 git+https://github.com/softwareQinc/staq
+

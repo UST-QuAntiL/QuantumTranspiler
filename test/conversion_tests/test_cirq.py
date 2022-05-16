@@ -65,7 +65,7 @@ class TestCirq(unittest.TestCase):
         for i in range(n):
             qbits = random.randint(1, max_qbits)
             moments = random.randint(1, max_moments)
-            circ_cq: Circuit = random_circuit_cq(qbits, moments, density)
+            circ_cq: Circuit = random_circuit_cq(qbits, moments, density, gate_domain={})
             json_cq = cirq.to_json(circ_cq)
 
             try:

@@ -157,16 +157,20 @@ class CircuitWrapper:
         return instructions
 
     def export_cirq_json(self) -> str:
+        self.decompose_to_standard_gates()
         return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.CIRQ.value)
 
     def export_braket_ir(self) -> str:
+        self.decompose_to_standard_gates()
         return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.BRAKET.value)
 
     def export_qsharp(self, framework: str = "Staq") -> str:
+        self.decompose_to_standard_gates()
         trans = QsharpTranslator()
         return trans.to_language(self.circuit, framework)
 
     def export_quirk(self) -> str:
+        self.decompose_to_standard_gates()
         return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.QUIRK.value)
 
     #  decomposing and unrolling functionality
