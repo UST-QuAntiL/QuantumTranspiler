@@ -1,7 +1,5 @@
 import numpy as np
-import qiskit.circuit.random
-from braket.devices import LocalSimulator
-from qiskit import QuantumCircuit, transpile, Aer
+from qiskit import QuantumCircuit, transpile
 from pytket.extensions.qiskit import qiskit_to_tk
 from pytket.extensions.qiskit import tk_to_qiskit
 from pytket.extensions.braket import tk_to_braket
@@ -13,26 +11,33 @@ from braket.circuits.circuit import Circuit
 from braket.circuits import Observable
 import pennylane as qml
 
+
+# Translator for translation from and to Amazon Braket's IR
 class BraketTranslator(Translator):
     name = TranslatorNames.BRAKET
     BRAKET_GATES = ["barrier", "c3x", "c4x", "ccx", "dcx", "h", "crx", "cry", "cswap", "cx", "cy", "cz",
-                  "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg", "x",
-                  "y", "z", "measure"]
+                    "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg", "x",
+                    "y", "z", "measure"]
 
+    # Converts a Braket circuit given as Braket's IR in JSON form into a Qiskit QuantumCircuit object using manual
+    # import into Braket and translation using pytket
     def from_language(self, text: str) -> QuantumCircuit:
         program = Program.parse_raw(text)
         return tk_to_qiskit(braket_to_tk(self.ir_to_circuit(program)))
 
+    # Converts a Braket circuit given as Braket's IR in JSON form into a Qiskit QuantumCircuit object using Pennylane
     def to_language(self, circuit: QuantumCircuit) -> str:
         circuit.data = [gate for gate in circuit.data if not gate[0].name == "id"]
         wires = range(circuit.num_qubits)
         dev = qml.device('braket.local.qubit', wires=wires)
         circ = qml.from_qiskit(circuit)
+
         @qml.qnode(dev)
         def new_circuit():
             # Add old circuit
             circ(wires=wires)
             return qml.expval(qml.PauliZ(0))
+
         new_circuit()
         program: Circuit = dev.circuit
         # Remove the measurement that was added by Pennylane
@@ -41,12 +46,14 @@ class BraketTranslator(Translator):
             new_program.add_instruction(inst)
         return new_program.to_ir().json(indent=4)
 
+    # Converts a Braket circuit given as Braket's IR in JSON form into a Qiskit QuantumCircuit object using pytket
     def to_language_tk(self, circuit: QuantumCircuit) -> str:
+        # Compile circuit to gate set supported by pytket and Braket
         circuit = transpile(circuit, basis_gates=self.BRAKET_GATES)
         program: Circuit = tk_to_braket(qiskit_to_tk(circuit))
         return program.to_ir().json(indent=4)
 
-    # Converts an intermediate representation of Braket back into a Circuit
+    # Converts an intermediate representation of Braket back into a Braket Circuit
     def ir_to_circuit(self, ir: Program) -> Circuit:
         instructions = ir.instructions
         circuit = Circuit()

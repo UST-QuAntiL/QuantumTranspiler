@@ -1,10 +1,10 @@
-import json
+from typing import Union, List
 
 import qiskit
+from qsharp.loader import QSharpCallable
 import qsharp
 import re
-from qsharp.loader import QSharpCallable
-from qiskit import QuantumCircuit, transpile, Aer
+from qiskit import QuantumCircuit, transpile
 from pytket.extensions.qiskit import qiskit_to_tk
 from pytket.extensions.qsharp import tk_to_qsharp
 from translation.translators.translator import Translator
@@ -15,22 +15,27 @@ import pennylane as qml
 import pystaq
 
 
+# Translator for translation from and to Q#
 class QsharpTranslator(Translator):
     name = TranslatorNames.QSHARP
     reg_counter = {}
     QSHARP_GATES_PYTKET = ["c3x", "c4x", "ccx", "dcx", "h", "crx", "cry", "cx",
-                  "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "t", "x",
-                  "y", "z", "measure"]
+                           "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "t", "x",
+                           "y", "z", "measure"]
 
-    QSHARP_GATES_STAQ = ["barrier", "c3x", "c4x", "ccx", "dcx", "h", "ch", "crx", "cry", "crz", "cswap", "cu1", "cu3", "cx", "cy", "cz",
-                  "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg", "u1", "u2", "u3", "x", "y", "z"]
+    QSHARP_GATES_STAQ = ["barrier", "c3x", "c4x", "ccx", "dcx", "h", "ch", "crx", "cry", "crz", "cswap", "cu1", "cu3",
+                         "cx", "cy", "cz",
+                         "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg",
+                         "u1", "u2", "u3", "x", "y", "z"]
 
+    # Converts a Q# string into a Qiskit QuantumCircuit object using manual translation.
     def from_language(self, text: str) -> QuantumCircuit:
         self.reg_counter = {}
         # Create a qsharp callable from Q# string
         compiled = qsharp.compile(text)
         return self.compiled_to_circuit(compiled)
 
+    # Converts a Qiskit QuantumCircuit to q# using various translation frameworks. Standard is pytket.
     def to_language(self, circuit: QuantumCircuit, framework: str = "Standard"):
         if framework.__eq__("Staq"):
             return self.to_language_staq(circuit)
@@ -40,30 +45,35 @@ class QsharpTranslator(Translator):
             return self.to_language_tk(circuit)
         else:
             raise ValueError(f"Unsupported framework '{framework}'")
-            
+
+    # Converts a Qiskit QuantumCircuit to q# using staq
     def to_language_staq(self, circuit: QuantumCircuit) -> str:
+        # Compile circuit to gate set supported by staq and Q#
         circuit = transpile(circuit, basis_gates=self.QSHARP_GATES_STAQ)
         circuit.data = [gate for gate in circuit.data if not gate[0].name == "barrier"]
         qasm = circuit.qasm()
         p: pystaq.Program = pystaq.parse_str(qasm)
         circ_qs = p.to_qsharp()
-        #remove namespace
+        # remove namespace
         circ_qs = re.findall(r'namespace Quantum\.staq \{\n(.*)\}', circ_qs, re.DOTALL)[0]
-        #Fix controlled operations by swapping argument order:
+        # Fix controlled operations by swapping argument order:
         circ_qs = re.sub(r'(\(Controlled .*\()(.+?)(, )(.+?)(,.+)?(\);)', r"\1[\4]\3(\2\5)\6", circ_qs)
         return circ_qs
 
-
+    # Converts a Qiskit QuantumCircuit to q# PennyLane
     def to_language_pl(self, circuit: QuantumCircuit) -> str:
+        # Removes identity gates which are unsupported by PennyLane
         circuit.data = [gate for gate in circuit.data if not gate[0].name == "id"]
         wires = range(circuit.num_qubits)
         dev = qml.device('microsoft.QuantumSimulator', wires=wires)
-        circ = qml.from_qiskit(circuit)
+        imported_circuit = qml.from_qiskit(circuit)
+
         @qml.qnode(dev)
         def new_circuit():
             # Add old circuit
-            circ(wires=wires)
+            imported_circuit(wires=wires)
             return [qml.expval(qml.PauliZ(i)) for i in wires]
+
         new_circuit()
         source_str = f"""open Microsoft.Quantum.Intrinsic;
 open Microsoft.Quantum.Canon;
@@ -73,16 +83,15 @@ open Microsoft.Quantum.Canon;
         source_str = re.sub(r'Bool\[\]', "Result[]", source_str)
         return source_str
 
-
-
-
+    # Converts a Qiskit QuantumCircuit to q# using pytket
     def to_language_tk(self, circuit: QuantumCircuit) -> str:
+        # Compile circuit to gate set supported by pytket and Q#
         circuit = transpile(circuit, basis_gates=self.QSHARP_GATES_PYTKET)
         circuit.data = [gate for gate in circuit.data if not gate[0].name == "barrier"]
         return tk_to_qsharp(qiskit_to_tk(circuit))
 
     # Converts a compiled qsharp circuit into a qiskit quantum circuit
-    def compiled_to_circuit(self, compiled: QSharpCallable) -> QuantumCircuit:
+    def compiled_to_circuit(self, compiled: Union[QSharpCallable, List[QSharpCallable]]) -> QuantumCircuit:
         if hasattr(compiled, '__len__'):
             compiled = compiled[-1]
         traced = compiled.trace()
@@ -114,13 +123,12 @@ open Microsoft.Quantum.Canon;
         # In case we reach an unsupported leaf node, we raise an exception
         else:
             raise NotImplementedError(f"Gate {operation['gate']} is not supported")
-        
+
     # Creates a dictionary of cregs and clbits to add to the Qiskit Circuit for measurement purposes
     def create_cregs(self, gate):
         for target in gate["targets"]:
             if not target["cId"] in self.reg_counter or target["qId"] > self.reg_counter[target["cId"]]:
                 self.reg_counter[target["cId"]] = target["qId"]
-
 
     # Builds a Qiskit Quantum circuit from a list of QSharp Gates
     def gatelist_to_circuit(self, gates: list, qubits: int) -> QuantumCircuit:
@@ -129,8 +137,8 @@ open Microsoft.Quantum.Canon;
         cregs = {}
         # Create registers from reg_counter dictionary
         for reg in self.reg_counter:
-            creg = ClassicalRegister(size=self.reg_counter[reg]+1, name=f"c{reg}")
-            cregs[reg]=creg
+            creg = ClassicalRegister(size=self.reg_counter[reg] + 1, name=f"c{reg}")
+            cregs[reg] = creg
             circuit.add_register(creg)
         # Iterates over gate and adds corresponding Qiskit Operation to circuit.
         for gate in gates:
@@ -172,15 +180,3 @@ open Microsoft.Quantum.Canon;
         # Reset clreg counter for next translation
 
         return circuit
-
-
-if __name__ == '__main__':
-    trans = QsharpTranslator()
-    ci = qiskit.QuantumCircuit(5,5)
-    ci.h(0)
-    ci.cnot(2,1)
-    ci.ccx(4,3,2)
-    trans_str=trans.to_language(ci, framework="Pennylane")
-    print(trans_str)
-    circ = trans.from_language(trans_str)
-    print(circ)
