@@ -1,60 +1,80 @@
 import numpy as np
-from qiskit import QuantumCircuit, transpile
+from typing import Tuple, Dict, List
+from qiskit.circuit import Qubit, Clbit
+from conversion.converter.converter_interface import ConverterInterface
+from qiskit.circuit import Parameter as qiskit_Parameter
+from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
+from qiskit import QuantumCircuit, transpile, ClassicalRegister
 from pytket.extensions.qiskit import qiskit_to_tk
 from pytket.extensions.qiskit import tk_to_qiskit
 from pytket.extensions.braket import tk_to_braket
 from pytket.extensions.braket import braket_to_tk
-from translation.translators.translator import Translator
-from translation.translator_names import TranslatorNames
 from braket.ir.jaqcd import Program
 from braket.circuits.circuit import Circuit
 from braket.circuits import Observable
-import pennylane as qml
 
 
-# Translator for translation from and to Amazon Braket's IR
-class BraketTranslator(Translator):
-    name = TranslatorNames.BRAKET
+class BraketConverter(ConverterInterface):
+    name = "braket"
+    is_control_capable = True
+    has_internal_export = True
     BRAKET_GATES = ["barrier", "c3x", "c4x", "ccx", "dcx", "h", "crx", "cry", "cswap", "cx", "cy", "cz",
                     "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg", "x",
                     "y", "z", "measure"]
 
-    # Converts a Braket circuit given as Braket's IR in JSON form into a Qiskit QuantumCircuit object using manual
-    # import into Braket and translation using pytket
-    def from_language(self, text: str) -> QuantumCircuit:
-        program = Program.parse_raw(text)
-        return tk_to_qiskit(braket_to_tk(self.ir_to_circuit(program)))
+    def import_circuit(self, circuit) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
+        self.program = circuit
+        qcircuit: QuantumCircuit = tk_to_qiskit(braket_to_tk(circuit))
+        qreg_mapping = {}
+        for counter, qubit in enumerate(qcircuit.qubits):
+            qreg_mapping[counter] = qubit
+        creg_mapping = {}
+        for counter, clbit in enumerate(qcircuit.clbits):
+            creg_mapping[str(counter)] = clbit
+        return qcircuit, qreg_mapping, creg_mapping
 
-    # Converts a Braket circuit given as Braket's IR in JSON form into a Qiskit QuantumCircuit object using Pennylane
-    def to_language(self, circuit: QuantumCircuit) -> str:
-        circuit.data = [gate for gate in circuit.data if not gate[0].name == "id"]
-        wires = range(circuit.num_qubits)
-        dev = qml.device('braket.local.qubit', wires=wires)
-        circ = qml.from_qiskit(circuit)
-
-        @qml.qnode(dev)
-        def new_circuit():
-            # Add old circuit
-            circ(wires=wires)
-            return qml.expval(qml.PauliZ(0))
-
-        new_circuit()
-        program: Circuit = dev.circuit
-        # Remove the measurement that was added by Pennylane
-        new_program: Circuit = Circuit()
-        for inst in program.instructions:
-            new_program.add_instruction(inst)
-        return new_program.to_ir().json(indent=4)
-
-    # Converts a Braket circuit given as Braket's IR in JSON form into a Qiskit QuantumCircuit object using pytket
-    def to_language_tk(self, circuit: QuantumCircuit) -> str:
+    def export_circuit(self, qcircuit: QuantumCircuit):
         # Compile circuit to gate set supported by pytket and Braket
-        circuit = transpile(circuit, basis_gates=self.BRAKET_GATES)
-        program: Circuit = tk_to_braket(qiskit_to_tk(circuit))
-        return program.to_ir().json(indent=4)
+        qcircuit = transpile(qcircuit, basis_gates=self.BRAKET_GATES)
+        circuit: Circuit = tk_to_braket(qiskit_to_tk(qcircuit))
+        return circuit
 
-    # Converts an intermediate representation of Braket back into a Braket Circuit
-    def ir_to_circuit(self, ir: Program) -> Circuit:
+    @property
+    def circuit(self):
+        return self.program
+
+    def init_circuit(self):
+        self.program = Circuit()
+
+    def create_qreg_mapping(self, qreg_mapping, qubit: Qubit, index: int):
+        raise NotImplementedError()
+
+    def create_creg_mapping(self, cregs: List[ClassicalRegister]):
+        raise NotImplementedError()
+
+    def gate(self, is_controlled=False):
+        raise NotImplementedError()
+
+    def custom_gate(self):
+        raise NotImplementedError()
+
+    def parameter_conversion(self, parameter: qiskit_Parameter):
+        raise NotImplementedError()
+
+    def parameter_expression_conversion(self, parameter: qiskit_Parameter_expression):
+        raise NotImplementedError()
+
+    def barrier(self, qubits):
+        raise NotImplementedError()
+
+    def measure(self):
+        raise NotImplementedError()
+
+    def subcircuit(self, subcircuit, qubits, clbits):
+        raise NotImplementedError()
+
+    def language_to_circuit(self, language: str):
+        ir = Program.parse_raw(language)
         instructions = ir.instructions
         circuit = Circuit()
         # adding of instructions
@@ -132,5 +152,7 @@ class BraketTranslator(Translator):
 
                 # Calls function with arguments
                 instcall(**kwargs)
-
         return circuit
+
+    def circuit_to_language(self, circuit: Circuit) -> str:
+        return circuit.to_ir().json(indent=4)

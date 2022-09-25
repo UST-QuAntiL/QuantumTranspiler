@@ -1,8 +1,9 @@
-from qiskit import QuantumCircuit, ClassicalRegister
+from cirq import Circuit
+from cirq.contrib.qasm_import import circuit_from_qasm
+from qiskit import QuantumCircuit, ClassicalRegister, transpile
 from typing import Tuple, Dict, List
 from qiskit.circuit import Qubit, Clbit
 from conversion.converter.converter_interface import ConverterInterface
-from translation.translators.quirk_translator import QuirkTranslator
 from qiskit.circuit import Parameter as qiskit_Parameter
 from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
 import cirq
@@ -11,18 +12,34 @@ import cirq
 class QuirkConverter(ConverterInterface):
     name = "quirk"
     is_control_capable = True
-    translator = QuirkTranslator()
+    QUIRK_GATES = ["c3x", "c4x", "ccx", "dcx", "h", "ch", "crx", "cry", "cswap", "cx", "cy", "cz",
+                   "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg", "x",
+                   "y", "z", "measure"]
+    has_internal_export = True
 
     def import_circuit(self, circuit) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
-        qkcircuit: QuantumCircuit = self.translator.from_language(circuit)
+        # Try to export this circuit, otherwise optimize further
+        try:
+            qcircuit = QuantumCircuit.from_qasm_str(circuit.to_qasm())
+        except ValueError as e:
+            optimizer = cirq.optimizers.ConvertToCzAndSingleGates()
+            circuit = optimizer.optimize_circuit(circuit)
+            qcircuit = QuantumCircuit.from_qasm_str(circuit.to_qasm())
         qreg_mapping = {}
-        for counter, qubit in enumerate(qkcircuit.qubits):
+        for counter, qubit in enumerate(qcircuit.qubits):
             qreg_mapping[counter] = qubit
         creg_mapping = {}
-        for counter, clbit in enumerate(qkcircuit.clbits):
+        for counter, clbit in enumerate(qcircuit.clbits):
             creg_mapping[str(counter)] = clbit
         self.program = cirq.quirk_url_to_circuit(circuit)
-        return qkcircuit, qreg_mapping, creg_mapping
+        return qcircuit, qreg_mapping, creg_mapping
+
+    def export_circuit(self, qcircuit: QuantumCircuit):
+        # Compile to basis gates compatible with Cirq and Quirk
+        qcircuit = transpile(qcircuit, basis_gates=self.QUIRK_GATES)
+        circuit: Circuit = circuit_from_qasm(qcircuit.qasm())
+        return circuit
+
 
     @property
     def circuit(self):
@@ -59,9 +76,9 @@ class QuirkConverter(ConverterInterface):
         raise NotImplementedError()
 
     def language_to_circuit(self, language: str):
-        raise NotImplementedError()
+        return cirq.quirk_url_to_circuit(language)
 
     def circuit_to_language(self, circuit) -> str:
-        raise NotImplementedError()
+        return cirq.contrib.quirk.circuit_to_quirk_url(circuit)
 
 

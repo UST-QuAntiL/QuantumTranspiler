@@ -82,7 +82,7 @@ websockets==10.1
 Werkzeug==2.0.2
 yfinance==0.1.67
 zipp==3.6.0
-amazon-braket-sdk==1.11.1
+amazon-braket-sdk>=1.11.1
 pydot>=1.4.2
 qsharp
 cirq>=0.14.1

@@ -1,8 +1,11 @@
+from cirq import Circuit
 from qiskit.transpiler.coupling import CouplingMap
+from conversion.converter.converter_interface import ConverterInterface
 from transpilation.topology_mapping import swap, swap_direction
 from circuit.qiskit_utility import count_gate_times, count_two_qubit_gates
 from qiskit.execute_function import execute
-from conversion.converter.command_converter import circuit_to_pyquil_commands, circuit_to_qiskit_commands, pyquil_commands_to_program, qiskit_commands_to_circuit, braket_commands_to_ir, cirq_commands_to_json
+from conversion.converter.command_converter import circuit_to_pyquil_commands, circuit_to_qiskit_commands, \
+    pyquil_commands_to_program, qiskit_commands_to_circuit, cirq_commands_to_circuit, braket_commands_to_circuit
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.dagcircuit.dagcircuit import DAGCircuit
 from qiskit.transpiler.passes.basis import decompose
@@ -18,46 +21,18 @@ from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
 from typing import List, Tuple
 from qiskit.providers.aer import QasmSimulator
-from translation.translation_handler import TranslationHandler
-from translation.translator_names import TranslatorNames
 import cirq
 import cirq_google as cg
 from cirq.contrib.qasm_import import circuit_from_qasm
-from translation.translators.qsharp_translator import QsharpTranslator
 
 
 class CircuitWrapper:
-    def __init__(self, pyquil_program: Program = None, quil_str: str = None, qiskit_circuit: QuantumCircuit = None, qasm: str = None, pyquil_instructions: str = None,
-                 qiskit_instructions: str = None,cirq_str: str= None, cirq_instructions: str = None, braket_str: str = None, braket_instructions: str = None,
-                 qsharp_instructions: str = None, quirk_url: str = None):
+    def __init__(self, qiskit_circuit: QuantumCircuit = None, qiskit_instructions: str = None):
 
-        if pyquil_program:
-            self.import_pyquil(pyquil_program)
-        elif quil_str:
-            self.import_quil(quil_str)
-        elif qiskit_circuit:
+        if qiskit_circuit:
             self._set_circuit(qiskit_circuit)
-        elif qasm:
-            self.import_qasm(qasm)
-        elif pyquil_instructions:
-            program = pyquil_commands_to_program(pyquil_instructions)
-            self.import_pyquil(program)
         elif qiskit_instructions:
-            self._set_circuit(qiskit_commands_to_circuit(qiskit_instructions))
-        elif cirq_str:
-            self.import_cirq_json(cirq_str)
-        elif cirq_instructions:
-            json = cirq_commands_to_json(cirq_instructions)
-            self.import_cirq_json(json)
-        elif braket_str:
-            self.import_braket_ir(braket_str)
-        elif braket_instructions:
-            ir = braket_commands_to_ir(braket_instructions)
-            self.import_braket_ir(ir)
-        elif qsharp_instructions:
-            self.import_qsharp(qsharp_instructions)
-        elif quirk_url:
-            self.import_quirk(quirk_url)
+            self.import_qiskit(qiskit_instructions)
         else:
             self._set_circuit(QuantumCircuit())
             self.qreg_mapping_import = {}
@@ -65,9 +40,8 @@ class CircuitWrapper:
             self.qreg_mapping_export = {}
             self.creg_mapping_export = {}
 
-        self.translation_handler = TranslationHandler()
-
-    def _import(self, handler: ConversionHandler, circuit, is_language: bool):
+    def _import(self, converter: ConverterInterface, circuit, is_language: bool):
+        handler = ConversionHandler(converter)
         if is_language:
             (circuit, self.qreg_mapping_import,
              self.creg_mapping) = handler.import_language(circuit)
@@ -80,42 +54,60 @@ class CircuitWrapper:
         self.circuit = circuit
         self.dag = circuit_to_dag(circuit)
 
+    def import_circuit(self, circuit: QuantumCircuit):
+        self._set_circuit(circuit)
+
     def import_qasm(self, qasm: str):
         circuit = QuantumCircuit.from_qasm_str(qasm)
         self._set_circuit(circuit)
 
-    def import_pyquil(self, program: Program) -> None:
+    def import_qiskit(self, circuit: str):
+        circuit = qiskit_commands_to_circuit(circuit)
+        self._set_circuit(circuit)
+
+
+    def import_pyquil(self, circuit: str) -> None:
+        program = pyquil_commands_to_program(circuit)
         converter = PyquilConverter()
-        handler = ConversionHandler(converter)
-        self._import(handler, program, False)
+        self._import(converter, program, False)
 
     def import_quil(self, quil: str) -> None:
         converter = PyquilConverter()
-        handler = ConversionHandler(converter)
-        self._import(handler, quil, True)
+        self._import(converter, quil, True)
+
+    def import_cirq(self, circuit: str) -> None:
+        ccircuit = cirq_commands_to_circuit(circuit)
+        converter = CirqConverter()
+        self._import(converter, ccircuit, False)
 
     def import_cirq_json(self, cirq: str) -> None:
         converter = CirqConverter()
-        handler = ConversionHandler(converter)
-        self._import(handler, cirq, False)
+        self._import(converter, cirq, True)
+
+    def import_braket(self, circuit: str) -> None:
+        circuit = braket_commands_to_circuit(circuit)
+        converter = BraketConverter()
+        self._import(converter, circuit, False)
 
     def import_braket_ir(self, braket: str) -> None:
         converter = BraketConverter()
-        handler = ConversionHandler(converter)
-        self._import(handler, braket, False)
+        self._import(converter, braket, True)
+
+    def import_braket_circuit(self, circuit) -> None:
+        converter = BraketConverter()
+        self._import(converter, circuit, False)
 
     def import_qsharp(self, qsharp: str) -> None:
         converter = QsharpConverter()
-        handler = ConversionHandler(converter)
-        self._import(handler, qsharp, False)
+        self._import(converter, qsharp, False)
 
     def import_quirk(self, quirk: str) -> None:
         converter = QuirkConverter()
+        self._import(converter, quirk, False)
+
+
+    def _export(self, converter: ConverterInterface, circuit: QuantumCircuit, is_language: bool):
         handler = ConversionHandler(converter)
-        self._import(handler, quirk, False)
-
-
-    def _export(self, handler: ConversionHandler, circuit: DAGCircuit, is_language: bool):
         if is_language:
             (circuit, self.qreg_mapping_export,
              self.creg_mapping_export) = handler.export_language(circuit)
@@ -128,14 +120,12 @@ class CircuitWrapper:
     def export_pyquil(self) -> Program:
         (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
         converter = PyquilConverter()
-        handler = ConversionHandler(converter)
-        return self._export(handler, circuit, False)
+        return self._export(converter, circuit, False)
 
     def export_quil(self) -> str:
         (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
         converter = PyquilConverter()
-        handler = ConversionHandler(converter)
-        return self._export(handler, circuit, True)
+        return self._export(converter, circuit, True)
 
     def export_qiskit(self) -> QuantumCircuit:
         return self.circuit
@@ -158,20 +148,28 @@ class CircuitWrapper:
 
     def export_cirq_json(self) -> str:
         self.decompose_to_standard_gates()
-        return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.CIRQ.value)
+        converter = CirqConverter()
+        return self._export(converter, self.circuit, True)
+
+    def export_braket(self):
+        self.decompose_to_standard_gates()
+        converter = BraketConverter()
+        return self._export(converter, self.circuit, False)
 
     def export_braket_ir(self) -> str:
         self.decompose_to_standard_gates()
-        return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.BRAKET.value)
+        converter = BraketConverter()
+        return self._export(converter, self.circuit, True)
 
-    def export_qsharp(self, framework: str = "Staq") -> str:
+    def export_qsharp(self) -> str:
         self.decompose_to_standard_gates()
-        trans = QsharpTranslator()
-        return trans.to_language(self.circuit, framework)
+        converter = QsharpConverter()
+        return self._export(converter, self.circuit, False)
 
     def export_quirk(self) -> str:
         self.decompose_to_standard_gates()
-        return self.translation_handler.translate(self.circuit.qasm(), TranslatorNames.OPENQASM.value, TranslatorNames.QUIRK.value)
+        converter = QuirkConverter()
+        return self._export(converter, self.circuit, True)
 
     #  decomposing and unrolling functionality
     def decompose_to_standard_gates(self) -> None:

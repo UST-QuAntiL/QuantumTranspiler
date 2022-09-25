@@ -1,5 +1,4 @@
 import traceback
-
 from cirq.contrib.qasm_import import QasmException
 from pennylane import DeviceError
 import re
@@ -8,11 +7,9 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
 from circuit.circuit_wrapper import CircuitWrapper
-from translation.translation_handler import TranslationHandler
 
 app = Flask(__name__)
 cors = CORS(app)
-thandler = TranslationHandler()
 
 
 @app.route('/circuit_to_internal', methods=['Post'])
@@ -21,22 +18,27 @@ def circuit_to_internal():
     option = data["option"]
     circuit = data["circuit"]
     try:
+        wrapper = CircuitWrapper()
         if option.lower() == "quil":
-            wrapper = CircuitWrapper(quil_str=circuit)
+            wrapper.import_quil(circuit)
         elif option.lower() == "pyquil":
-            wrapper = CircuitWrapper(pyquil_instructions=circuit)
+            wrapper.import_pyquil(circuit)
         elif option.lower() == "openqasm":
-            wrapper = CircuitWrapper(qasm=circuit)
+            wrapper.import_qasm(circuit)
         elif option.lower() == "qiskit":
-            wrapper = CircuitWrapper(qiskit_instructions=circuit)
+            wrapper.import_qiskit(circuit)
         elif option.lower() == "cirq":
-            wrapper = CircuitWrapper(cirq_str=circuit)
+            wrapper.import_cirq_json(circuit)
+        elif option.lower() == "cirqsdk":
+            wrapper.import_cirq(circuit)
         elif option.lower() == "braket":
-            wrapper = CircuitWrapper(braket_str=circuit)
+            wrapper.import_braket_ir(circuit)
+        elif option.lower() == "braketsdk":
+            wrapper.import_braket(circuit)
         elif option.lower() == "qsharp":
-            wrapper = CircuitWrapper(qsharp_instructions=circuit)
+            wrapper.import_qsharp(circuit)
         elif option.lower() == "quirk":
-            wrapper = CircuitWrapper(quirk_url=circuit)
+            wrapper.import_quirk(circuit)
         else:
             return "Bad Request!", 400
         output = wrapper.export_qiskit_commands()
@@ -80,7 +82,7 @@ def export_circuit():
             output = wrapper.export_braket_ir()
         elif option.lower() == "qsharp":
             output = wrapper.export_qsharp()
-        elif option.lower == "quirk":
+        elif option.lower() == "quirk":
             output = wrapper.export_quirk()
         else:
             return "Bad Request!", 400
@@ -109,26 +111,27 @@ def convert():
     option_output = data["optionOutput"]
     circuit = data["circuit"]
     try:
+        wrapper = CircuitWrapper()
         if option.lower() == "quil":
-            wrapper = CircuitWrapper(quil_str=circuit)
+            wrapper.import_quil(circuit)
         elif option.lower() == "pyquil":
-            wrapper = CircuitWrapper(pyquil_instructions=circuit)
+            wrapper.import_pyquil(circuit)
         elif option.lower() == "openqasm":
-            wrapper = CircuitWrapper(qasm=circuit)
+            wrapper.import_qasm(circuit)
         elif option.lower() == "qiskit":
-            wrapper = CircuitWrapper(qiskit_instructions=circuit)
-        elif option.lower() == "cirq" or option.lower() == "cirq-json":
-            wrapper = CircuitWrapper(cirq_str=circuit)
+            wrapper.import_qiskit(circuit)
+        elif option.lower() == "cirq":
+            wrapper.import_cirq_json(circuit)
         elif option.lower() == "cirqsdk":
-            wrapper = CircuitWrapper(cirq_instructions=circuit)
+            wrapper.import_cirq(circuit)
         elif option.lower() == "braket":
-            wrapper = CircuitWrapper(braket_str=circuit)
+            wrapper.import_braket_ir(circuit)
         elif option.lower() == "braketsdk":
-            wrapper = CircuitWrapper(braket_instructions=circuit)
+            wrapper.import_braket(circuit)
         elif option.lower() == "qsharp":
-            wrapper = CircuitWrapper(qsharp_instructions=circuit)
+            wrapper.import_qsharp(circuit)
         elif option.lower() == "quirk":
-            wrapper = CircuitWrapper(quirk_url=circuit)
+            wrapper.import_quirk(circuit)
         else:
             return "Bad Request!", 400
     except DeviceError as de:
@@ -161,12 +164,8 @@ def convert():
             output = wrapper.export_cirq_json()
         elif option_output.lower() == "braket":
             output = wrapper.export_braket_ir()
-        elif option_output.lower() == "qsharpstaq" or option_output.lower() == "qsharp":
-            output = wrapper.export_qsharp(framework="Staq")
-        elif option_output.lower() == "qsharppenny":
-            output = wrapper.export_qsharp(framework="Pennylane")
-        elif option_output.lower() == "qsharppytket":
-            output = wrapper.export_qsharp(framework="Pytket")
+        elif option_output.lower() == "qsharp":
+            output = wrapper.export_qsharp()
         elif option_output.lower() == "quirk":
             output = wrapper.export_quirk()
         else:
@@ -221,7 +220,7 @@ def unroll():
                 output = wrapper.export_braket_ir()
             elif format.lower() == "qsharp":
                 output = wrapper.export_qsharp()
-            elif format.lower == "quirk":
+            elif format.lower() == "quirk":
                 output = wrapper.export_quirk()
             else:
                 return "Bad Request!", 400
@@ -360,29 +359,6 @@ def depth_comparison_qpu():
         print(str(e))
         return str(e), 500
     return output
-
-
-""""@app.route('/translate', methods=['Post'])
-def translate():
-    if request.headers.get("Content-Type") == "application/json":
-        try:
-            request_json = request.json
-            circuit_string = request_json["circuit"]
-            circuit_list = circuit_string.split("\n")
-            circuit = "\n".join(circuit_list)
-            lg_from = request_json["from"]
-            lg_to = request_json["to"]
-            return thandler.translate(circuit, lg_from, lg_to), 200
-        except ValueError as ve:
-            print(ve)
-            return f"Error with the values passed for translation: {str(ve)}", 400
-        except Exception as e:
-            print(e)
-            return f"Error with the formatting of the json: {str(e)}", 400
-
-    else:
-        return "Only JSON requests are supported!", 415"""
-
 
 
 if __name__ == '__main__':

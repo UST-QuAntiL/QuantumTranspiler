@@ -20,6 +20,7 @@ import warnings
 class PyquilConverter(ConverterInterface):  
     name = "pyquil"
     is_control_capable = True
+    has_internal_export = False
 
     def import_circuit(self, circuit: Program) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
         program = circuit
@@ -211,11 +212,15 @@ class PyquilConverter(ConverterInterface):
         return Program(language)
 
     def circuit_to_language(self, circuit) -> str:
-        return circuit.out()  
+        return circuit.out()
+
+    def export_circuit(self, qcircuit: QuantumCircuit):
+        raise NotImplementedError()
 
     @property
     def circuit(self):
         return self.program
+
 
 
             

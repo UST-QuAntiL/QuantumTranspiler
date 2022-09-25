@@ -9,31 +9,34 @@ from qiskit.circuit.quantumregister import QuantumRegister
 from qiskit.circuit.library.standard_gates import *
 import pyquil.quilbase as pyquil_circuit_library
 from pyquil.gates import NOP, MEASURE
-from braket.circuits import Circuit as BraketCircuit
-from braket.ir.jaqcd import Program as BraketProgram
 import cirq
-from cirq import Circuit as CirqCircuit
+from cirq import Circuit
+from braket.circuits.circuit import Circuit as BRCircuit
 
-def pyquil_commands_to_program(commands: str) -> QuantumCircuit:    
+
+def pyquil_commands_to_program(commands: str) -> Program:
     exec(commands)
     val = eval("p")
     return val
 
-def braket_commands_to_ir(commands: str) -> str:
-    exec(commands)
-    val: BraketCircuit = eval("c")
-    program: BraketProgram = val.to_ir()
-    return program.json(indent=4)
 
-def cirq_commands_to_json(commands: str) -> str:
+def braket_commands_to_circuit(commands: str) -> BRCircuit:
     exec(commands)
-    circuit: CirqCircuit = eval("c")
-    return cirq.to_json(circuit)
+    val: BRCircuit = eval("c")
+    return val
+
+
+def cirq_commands_to_circuit(commands: str) -> Circuit:
+    exec(commands)
+    val: Circuit = eval("c")
+    return val
+
 
 def qiskit_commands_to_circuit(commands: str) -> QuantumCircuit:
     exec(commands)
     val = eval("qc")
     return val
+
 
 def circuit_to_qiskit_commands(circuit: QuantumCircuit, include_imports = False):
     commands = ""
@@ -47,6 +50,7 @@ from qiskit.circuit.library.standard_gates import *\n\n'''
     commands += reg_str
     commands += _handle_instructions(circuit, simple_registers)
     return commands
+
 
 def circuit_to_pyquil_commands(program: Program):
     commands = '''from pyquil import Program, get_qc
@@ -94,6 +98,7 @@ p = Program()\n'''
                     "Unsupported instruction: " + str(instr))
     
     return commands
+
 
 def _handle_regs(circuit: QuantumCircuit):
     commands = ""
