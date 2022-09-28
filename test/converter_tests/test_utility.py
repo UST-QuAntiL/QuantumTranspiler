@@ -1,6 +1,8 @@
 import random
 from braket.circuits import Circuit
 from braket.devices import LocalSimulator
+from pyquil import Program, get_qc
+from pyquil.api import local_forest_runtime
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit.random import random_circuit
 from qiskit.providers.aer import QasmSimulator
@@ -10,13 +12,26 @@ def simulate_qiskit(circuit: QuantumCircuit, shots=2000):
     simulator = QasmSimulator()
     compiled = transpile(circuit, simulator)
     result = simulator.run(compiled, shots=shots).result()
-    return result.get_counts(compiled)
+    counts = {key.replace(" ", "")[::-1]: value for key, value in result.get_counts(compiled).items()}
+    return counts
 
 
 def simulate_braket(circuit: Circuit, shots=2000):
     simulator = LocalSimulator()
     result = simulator.run(circuit, shots=shots).result()
     return result.measurement_counts
+
+def simulate_pyquil(program: Program, shots=2000):
+    program.wrap_in_numshots_loop(shots)
+    with local_forest_runtime():
+        qc = get_qc('8q-qvm')
+        results = qc.run(qc.compile(program)).readout_data.get("ro")
+        counts = {}
+        for result in results:
+            key = "".join(map(str, result))
+            counts[key] = counts.setdefault(key, 0) + 1
+        return counts
+
 
 
 def intersection(counts_1, counts_2):

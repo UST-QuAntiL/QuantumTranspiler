@@ -75,6 +75,10 @@ class CircuitWrapper:
         converter = PyquilConverter()
         self._import(converter, quil, True)
 
+    def import_pyquil_circuit(self, program: Program):
+        converter = PyquilConverter()
+        self._import(converter, program, False)
+
     def import_cirq(self, circuit: str) -> None:
         ccircuit = cirq_commands_to_circuit(circuit)
         converter = CirqConverter()

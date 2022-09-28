@@ -1,3 +1,5 @@
+from pyquil.quil import instantiate_labels
+
 from conversion.converter.command_utility import create_matrix, create_param_string
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from pyquil import Program
@@ -15,6 +17,7 @@ from conversion.converter.converter_interface import ConverterInterface
 from typing import Tuple, Dict, List
 import numpy as np
 import warnings
+import qiskit.circuit.library.standard_gates as qiskit_gates
 
 
 class PyquilConverter(ConverterInterface):  
@@ -26,9 +29,7 @@ class PyquilConverter(ConverterInterface):
         program = circuit
         qubit_set = program.get_qubits()
         qreg_mapping = {}
-        creg_mapping = {} 
-        print("qubit set")       
-        print(max(qubit_set))
+        creg_mapping = {}
         qr = QuantumRegister(max(qubit_set) + 1, "q")
         for counter, qubit in enumerate(qubit_set):
             qreg_mapping[qubit] = qr[qubit]
@@ -97,16 +98,24 @@ class PyquilConverter(ConverterInterface):
             for gate in program.defined_gates:
                 if gate.name == instr.name:
                     gate_found = True
-                    if gate.parameters:   
-                        # no possibility to bind pyquil parameter to value before execution on a device (like the qiskit equivalent assign_parameters)
-                        # and no possibility to define parametric custom gates in qiskit
-                        raise NotImplementedError("Cannot convert parameterized custom gates to Qiskit: " + str(instr))
-                        # for i, param in enumerate(instr.params):                            
-                            # if isinstance(param, pyquil_Parameter):
-                            #     raise NotImplementedError("Cannot convert parameterized custom gates (with general parameter) to Qiskit: " + str(instr))  
-                            # if isinstance(gate.parameters[i], pyquil_Parameter):
-                            #     raise NotImplementedError("Cannot convert parameterized custom gates to Qiskit: " + str(instr))     
-                        
+                    if gate.parameters:
+                        if gate.name + "Gate" in gate_mapping_qiskit:
+                            params = []
+                            for param in instr.params:
+                                if isinstance(param, pyquil_Parameter):
+                                    params.append(qiskit_Parameter(param.name))
+                                else:
+                                    params.append(param)
+                            instr_qiskit = getattr(qiskit_gates, gate.name + "Gate")(*(params))
+                        else:
+                            # no possibility to bind pyquil parameter to value before execution on a device (like the qiskit equivalent assign_parameters)
+                            # and no possibility to define parametric custom gates in qiskit
+                            raise NotImplementedError("Cannot convert parameterized custom gates to Qiskit: " + str(instr))
+                            # for i, param in enumerate(instr.params):
+                                # if isinstance(param, pyquil_Parameter):
+                                #     raise NotImplementedError("Cannot convert parameterized custom gates (with general parameter) to Qiskit: " + str(instr))
+                                # if isinstance(gate.parameters[i], pyquil_Parameter):
+                                #     raise NotImplementedError("Cannot convert parameterized custom gates to Qiskit: " + str(instr))
                     else:
                         instr_qiskit = UnitaryGate(gate.matrix, label=gate.name)
             

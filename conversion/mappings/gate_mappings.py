@@ -22,11 +22,11 @@ gate_mapping = {
     "T": {"qiskit": {"g": qiskit.TGate}, "pyquil": {"g": pyquil.T}, "qsharp": {"g": "T"}, "braket": {"g": braket.T}, "matrix": qiskit.TGate().to_matrix()},
     # single - parameterized
     "RX": {"qiskit": {"g": qiskit.RXGate}, "pyquil": {"g": pyquil.RX}, "qsharp": {"g": "Rx"}, "braket": {"g": braket.Rx}},
-    "CRX": {"qiskit": {"g": qiskit.CRXGate}, "pyquil": {"r": "-"}, "qsharp": {"g": "CRx"}, "braket": {"r": braket_replacement.crx_replacement}},
+    "CRX": {"qiskit": {"g": qiskit.CRXGate}, "pyquil": {"n": "-"}, "qsharp": {"g": "CRx"}, "braket": {"r": braket_replacement.crx_replacement}},
     "RY": {"qiskit": {"g": qiskit.RYGate}, "pyquil": {"g": pyquil.RY}, "qsharp": {"g": "Ry"}, "braket": {"g": braket.Ry}},
-    "CRY": {"qiskit": {"g": qiskit.CRYGate}, "pyquil": {"r": "-"}, "qsharp": {"g": "CRy"}, "braket": {"r": braket_replacement.cry_replacement}},
+    "CRY": {"qiskit": {"g": qiskit.CRYGate}, "pyquil": {"n": "-"}, "qsharp": {"g": "CRy"}, "braket": {"r": braket_replacement.cry_replacement}},
     "RZ": {"qiskit": {"g": qiskit.RZGate}, "pyquil": {"g": pyquil.RZ}, "qsharp": {"g": "Rz"}, "braket": {"g": braket.Rz}},
-    "CRZ": {"qiskit": {"g": qiskit.CRZGate}, "pyquil": {"r": "-"}, "qsharp": {"g": "CRz"}, "braket": {"r": braket_replacement.crz_replacement}},
+    "CRZ": {"qiskit": {"g": qiskit.CRZGate}, "pyquil": {"n": "-"}, "qsharp": {"g": "CRz"}, "braket": {"r": braket_replacement.crz_replacement}},
     "U1": {"qiskit": {"g": qiskit.U1Gate}, "pyquil": {"g": pyquil.PHASE}, "qsharp": {"r": "-"}, "braket": {"g": braket.PhaseShift}},
     "U2": {"qiskit": {"g": qiskit.U2Gate}, "pyquil": {"r": pyquil_replacement.u2_replacement}, "qsharp": {"r": "-"}, "braket": {"r": braket_replacement.u2_replacement}},
     "U3": {"qiskit": {"g": qiskit.U3Gate}, "pyquil": {"r": pyquil_replacement.u3_replacement}, "qsharp": {"r": "-"}, "braket": {"r": braket_replacement.u3_replacement}},
@@ -67,10 +67,10 @@ gate_mapping_qsharp = {}
 gate_mapping_braket = {}
 
 for key, value in gate_mapping.items():
-    qiskit_dict = value["qiskit"]
-    pyquil_dict = value["pyquil"]
-    qsharp_dict = value["qsharp"]
-    braket_dict = value["braket"]
+    qiskit_dict = value.get("qiskit")
+    pyquil_dict = value.get("pyquil")
+    qsharp_dict = value.get("qsharp")
+    braket_dict = value.get("braket")
 
     
     if qiskit_dict:

@@ -3,9 +3,10 @@ import numpy as np
 from pyquil import Program
 from pyquil.quilbase import DefGate
 from pyquil.quilatom import Parameter, quil_sin, quil_cos, quil_exp
+import qiskit.circuit.library.standard_gates as qiskit
 
 
-def u2_replacement(phi: float, lam: float):
+def u2_replacement(phi: float, lam: float, controlled=False):
     """ implemented with a custom gate """
     # implemented with X90 pulse: https://qiskit.org/documentation/stubs/qiskit.circuit.library.U2Gate.html
     # p = Program()
@@ -29,12 +30,12 @@ def u2_replacement(phi: float, lam: float):
     U2 = definition.get_constructor()
     p = Program()
     p += definition
-    p += U2(phi, lam)(0)
+    p += U2(phi, lam)(0) if not controlled else U2(phi, lam)(1).controlled(0)
 
     return p
 
 
-def u3_replacement(theta: float, phi: float, lam: float):
+def u3_replacement(theta: float, phi: float, lam: float, controlled=False):
     """ implemented with a custom gate """
 
     # implemented with two X90 pulse: https://arxiv.org/pdf/1707.03429.pdf
@@ -70,7 +71,7 @@ def u3_replacement(theta: float, phi: float, lam: float):
     U3 = definition.get_constructor()
     p = Program()
     p += definition
-    p += U3(theta, phi, lam)(0)
+    p += U3(theta, phi, lam)(0) if not controlled else U3(theta, phi, lam)(1).controlled(0)
 
     return p
 

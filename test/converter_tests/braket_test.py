@@ -18,8 +18,7 @@ class BraketTest(unittest.TestCase):
                 wrapper.import_circuit(org_circuit)
                 t_circuit = wrapper.export_braket()
                 t_counts = simulate_braket(t_circuit)
-                org_counts_reversed_keys = {key[::-1]: value for key, value in org_counts.items()}
-                similarity = intersection(org_counts_reversed_keys, t_counts)
+                similarity = intersection(org_counts, t_counts)
                 self.assertGreater(similarity, 0.90)
 
     def test_from_braket_rand(self):
@@ -34,8 +33,7 @@ class BraketTest(unittest.TestCase):
                 wrapper.import_braket_ir(org_ir)
                 t_circuit = wrapper.export_qiskit()
                 t_counts = simulate_qiskit(t_circuit)
-                t_counts_reversed_stripped_keys = {key.replace(" ", "")[::-1]: value for key, value in t_counts.items()}
-                similarity = intersection(org_counts, t_counts_reversed_stripped_keys)
+                similarity = intersection(org_counts, t_counts)
                 self.assertGreater(similarity, 0.90)
 
     def test_braket_replacements(self):
@@ -51,12 +49,7 @@ class BraketTest(unittest.TestCase):
         t_circuit = wrapper.export_braket()
         org_counts = simulate_qiskit(org_circuit)
         t_counts = simulate_braket(t_circuit)
-        org_counts_reversed_keys = {key[::-1]: value for key, value in org_counts.items()}
-        similarity = intersection(org_counts_reversed_keys, t_counts)
-        print(org_circuit)
-        print(org_counts)
-        print(t_circuit)
-        print(t_counts)
+        similarity = intersection(org_counts, t_counts)
         self.assertGreater(similarity, 0.90)
 
     def test_qiskit_replacements(self):
@@ -66,15 +59,12 @@ class BraketTest(unittest.TestCase):
         org_circuit.vi(1)
         org_circuit.xx(0, 1, 0.15)
         org_circuit.sample(Observable.Z())
-        print(org_circuit)
         org_counts = simulate_braket(org_circuit)
         wrapper.import_braket_ir(org_circuit.to_ir().json(indent=4))
         t_circuit = wrapper.export_qiskit()
         t_counts = simulate_qiskit(t_circuit)
-        t_counts_reversed_stripped_keys = {key.replace(" ", "")[::-1]: value for key, value in t_counts.items()}
-        similarity = intersection(org_counts, t_counts_reversed_stripped_keys)
+        similarity = intersection(org_counts, t_counts)
         self.assertGreater(similarity, 0.90)
-
 
     def test_params_defined(self):
         wrapper = CircuitWrapper()
@@ -107,9 +97,10 @@ class BraketTest(unittest.TestCase):
         wrapper.import_braket_ir(org_circuit.to_ir().json(indent=4))
         t_circuit = wrapper.export_qiskit()
         t_counts = simulate_qiskit(t_circuit)
-        t_counts_reversed_stripped_keys = {key.replace(" ", "")[::-1]: value for key, value in t_counts.items()}
-        similarity = intersection(org_counts, t_counts_reversed_stripped_keys)
+        similarity = intersection(org_counts, t_counts)
         self.assertGreater(similarity, 0.90)
+
+
 
 
 
