@@ -10,8 +10,8 @@ import cirq
 
 
 class CirqConverter(ConverterInterface):
-    CIRQ_GATES = ["c3x", "c4x", "ccx", "dcx", "h", "ch", "crx", "cry", "cswap", "cx", "cy", "cz",
-                  "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg", "x",
+    CIRQ_GATES = ["ccx", "h", "ch", "cswap", "cx", "cy", "cz",
+                  "i", "id", "rx", "ry", "rz", "s", "sdg", "t", "tdg", "x",
                   "y", "z", "measure"]
     name = "cirq"
     is_control_capable = True
@@ -30,6 +30,7 @@ class CirqConverter(ConverterInterface):
 
     def export_circuit(self, qcircuit: QuantumCircuit):
         qcircuit = transpile(qcircuit, basis_gates=self.CIRQ_GATES)
+        qcircuit.data = [gate for gate in qcircuit.data if not (gate[0].name == "barrier")]
         circuit: Circuit = circuit_from_qasm(qcircuit.qasm())
         return circuit
 

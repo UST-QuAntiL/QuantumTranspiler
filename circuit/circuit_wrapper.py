@@ -88,6 +88,10 @@ class CircuitWrapper:
         converter = CirqConverter()
         self._import(converter, cirq, True)
 
+    def import_cirq_circuit(self, circuit: Circuit) -> None:
+        converter = CirqConverter()
+        self._import(converter, circuit, False)
+
     def import_braket(self, circuit: str) -> None:
         circuit = braket_commands_to_circuit(circuit)
         converter = BraketConverter()
@@ -149,6 +153,11 @@ class CircuitWrapper:
         program = self.export_pyquil()
         instructions = circuit_to_pyquil_commands(program)
         return instructions
+
+    def export_cirq(self) -> Circuit:
+        self.decompose_to_standard_gates()
+        converter = CirqConverter()
+        return self._export(converter, self.circuit, False)
 
     def export_cirq_json(self) -> str:
         self.decompose_to_standard_gates()

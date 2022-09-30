@@ -138,7 +138,7 @@ class QsharpConverter(ConverterInterface):
 
     def export_circuit(self, qcircuit: QuantumCircuit):
         qcircuit = transpile(qcircuit, basis_gates=self.QSHARP_GATES)
-        qcircuit.data = [gate for gate in qcircuit.data if not (gate[0].name == "barrier" or gate[0].name == "id") ]
+        qcircuit.data = [gate for gate in qcircuit.data if not (gate[0].name == "barrier" or gate[0].name == "id")]
         circuit = tk_to_qsharp(qiskit_to_tk(qcircuit))
         return circuit
 
