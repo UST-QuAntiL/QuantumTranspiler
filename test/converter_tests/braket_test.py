@@ -7,9 +7,12 @@ from circuit import CircuitWrapper
 from test.converter_tests.test_utility import simulate_qiskit, simulate_braket, intersection, generate_circuit
 
 
+# Naming of tests is test_"tested property"_"target language"
+
+
 class BraketTest(unittest.TestCase):
 
-    def test_to_braket_rand(self):
+    def test_rand_braket(self):
         wrapper = CircuitWrapper()
         for i in range(100):
             with self.subTest(f"Testing circuit {i}."):
@@ -21,7 +24,7 @@ class BraketTest(unittest.TestCase):
                 similarity = intersection(org_counts, t_counts)
                 self.assertGreater(similarity, 0.90)
 
-    def test_from_braket_rand(self):
+    def test_rand_qiskit(self):
         wrapper = CircuitWrapper()
         for i in range(100):
             with self.subTest(f"Testing circuit {i}."):
@@ -36,7 +39,7 @@ class BraketTest(unittest.TestCase):
                 similarity = intersection(org_counts, t_counts)
                 self.assertGreater(similarity, 0.90)
 
-    def test_braket_replacements(self):
+    def test_replacements_braket(self):
         wrapper = CircuitWrapper()
         org_circuit = QuantumCircuit(2)
         org_circuit.u2(np.pi, np.pi, 0)
@@ -52,7 +55,7 @@ class BraketTest(unittest.TestCase):
         similarity = intersection(org_counts, t_counts)
         self.assertGreater(similarity, 0.90)
 
-    def test_qiskit_replacements(self):
+    def test_replacements_qiskit(self):
         wrapper = CircuitWrapper()
         org_circuit = Circuit()
         org_circuit.v(0)
@@ -66,7 +69,7 @@ class BraketTest(unittest.TestCase):
         similarity = intersection(org_counts, t_counts)
         self.assertGreater(similarity, 0.90)
 
-    def test_params_defined(self):
+    def test_params_defined_braket(self):
         wrapper = CircuitWrapper()
         org_circuit = QuantumCircuit(1)
         theta = Parameter('theta')
@@ -75,7 +78,7 @@ class BraketTest(unittest.TestCase):
         t_circuit = wrapper.export_braket()
         self.assertEqual(org_circuit.num_parameters, len(t_circuit.parameters))
 
-    def test_params_replacement(self):
+    def test_params_replacement_braket(self):
         wrapper = CircuitWrapper()
         org_circuit = QuantumCircuit(1)
         lam = Parameter('lam')
@@ -84,7 +87,7 @@ class BraketTest(unittest.TestCase):
         wrapper.import_circuit(org_circuit)
         self.assertRaises(ValueError, wrapper.export_braket)
 
-    def test_observable_translation(self):
+    def test_observable_translation_qiskit(self):
         wrapper = CircuitWrapper()
         org_circuit = Circuit()
         org_circuit.h(0)

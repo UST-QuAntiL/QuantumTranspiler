@@ -1,4 +1,5 @@
 import random
+import qsharp
 from braket.circuits import Circuit
 from braket.devices import LocalSimulator
 from pyquil import Program, get_qc
@@ -6,6 +7,7 @@ from pyquil.api import local_forest_runtime
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit.random import random_circuit
 from qiskit.providers.aer import QasmSimulator
+from qsharp import QSharpCallable
 
 
 def simulate_qiskit(circuit: QuantumCircuit, shots=2000):
@@ -31,6 +33,16 @@ def simulate_pyquil(program: Program, shots=2000):
             key = "".join(map(str, result))
             counts[key] = counts.setdefault(key, 0) + 1
         return counts
+
+
+def simulate_qsharp(code: str, shots=2000):
+    circuit: QSharpCallable = qsharp.compile(code)
+    counts = {}
+    for i in range(shots):
+        result = circuit.simulate()
+        key = "".join(map(str, result))
+        counts[key] = counts.setdefault(key, 0) + 1
+    return counts
 
 
 

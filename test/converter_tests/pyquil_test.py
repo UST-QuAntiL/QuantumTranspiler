@@ -1,5 +1,4 @@
 import unittest
-
 import numpy as np
 from pyquil import Program
 from qiskit import QuantumCircuit
@@ -10,9 +9,12 @@ from circuit import CircuitWrapper
 from test.converter_tests.test_utility import generate_circuit, intersection, simulate_qiskit, simulate_pyquil
 
 
+# Naming of tests is test_"tested property"_"target language"
+
+
 class PyQuilTest(unittest.TestCase):
 
-    def test_to_pyquil_rand(self):
+    def test_rand_pyquil(self):
         wrapper = CircuitWrapper()
         for i in range(10):
             with self.subTest(f"Testing circuit {i}."):
@@ -24,7 +26,7 @@ class PyQuilTest(unittest.TestCase):
                 similarity = intersection(org_counts, t_counts)
                 self.assertGreater(similarity, 0.90, str(org_circuit.qasm()) + " \n " + str(org_counts) + " \n " + str(t_circuit) + " \n " + str(t_counts))
 
-    def test_from_pypuil_rand(self):
+    def test_rand_qiskit(self):
         wrapper = CircuitWrapper()
         for i in range(10):
             with self.subTest(f"Testing circuit {i}."):
@@ -38,7 +40,7 @@ class PyQuilTest(unittest.TestCase):
                 similarity = intersection(org_counts, t_counts)
                 self.assertGreater(similarity, 0.90)
 
-    def test_pyquil_replacements(self):
+    def test_replacements_pyquil(self):
         wrapper = CircuitWrapper()
         org_circuit = QuantumCircuit(2)
         org_circuit.u2(np.pi, np.pi, 0)
@@ -56,7 +58,7 @@ class PyQuilTest(unittest.TestCase):
         similarity = intersection(org_counts, t_counts)
         self.assertGreater(similarity, 0.90)
 
-    def test_qiskit_replacements(self):
+    def test_replacements_qiskit(self):
         wrapper = CircuitWrapper()
         org_circuit = Program()
         org_circuit += X(0)
@@ -73,7 +75,7 @@ class PyQuilTest(unittest.TestCase):
         similarity = intersection(org_counts, t_counts)
         self.assertGreater(similarity, 0.90)
 
-    def test_params_qiskit(self):
+    def test_params_pyquil(self):
         wrapper = CircuitWrapper()
         org_circuit = QuantumCircuit(1)
         theta = Parameter('theta')
@@ -83,7 +85,7 @@ class PyQuilTest(unittest.TestCase):
         instr = t_circuit.instructions[1]
         self.assertEqual(len(org_circuit.parameters), len(instr.params))
 
-    def test_params_pyquil(self):
+    def test_params_qiskit(self):
         wrapper = CircuitWrapper()
         org_circuit = Program()
         theta = PyQuilParameter("theta")

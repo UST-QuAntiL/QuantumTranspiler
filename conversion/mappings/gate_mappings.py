@@ -53,7 +53,6 @@ gate_mapping = {
     "MEASURE": {"qiskit": {"g": directives.Measure}, "pyquil": {"n": "-"}, "qsharp": {"g": "M"}, "braket": {"n": "-"}},
     "R1": {"qiskit": {"r": qiskit_replacement.r1_replacement}, "pyquil": {"n": "-"}, "qsharp": {"g": "R1"}, "braket": {"n": "-"}},
     "Reset": {"qiskit": {"r": directives.Reset}, "pyquil": {"n": "-"}, "qsharp": {"g": "Reset"}, "braket": {"n": "-"}},
-    "MReset": {"qiskit": {"r": directives.Measure}, "pyquil": {"n": "-"}, "qsharp": {"g": "MResetZ"}, "braket": {"n": "-"}},
 
     # unnecessary with controlled modifier (for pyquil)
     # "CRX": {"qiskit": {"g": qiskit.CRXGate}, "pyquil": {"r": pyquil_replacement.crx_replacement}},

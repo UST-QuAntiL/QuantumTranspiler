@@ -4,7 +4,7 @@ from qiskit import QuantumCircuit, ClassicalRegister, transpile
 from typing import Tuple, Dict, List, Union
 from qiskit.circuit import Qubit, Clbit
 from qsharp import QSharpCallable
-
+import warnings
 from conversion.converter.converter_interface import ConverterInterface
 from conversion.mappings.gate_mappings import gate_mapping_qsharp
 from qiskit.circuit import Parameter as qiskit_Parameter
@@ -13,9 +13,9 @@ import qsharp
 
 
 class QsharpConverter(ConverterInterface):
-    QSHARP_GATES = ["c3x", "c4x", "ccx", "dcx", "h", "crx", "cry", "cx",
-                           "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "t", "x",
-                           "y", "z", "measure"]
+    QSHARP_GATES = ["ccx", "i", "id", "h", "cx",
+                           "rx", "ry", "rz", "s", "t", "x",
+                           "y", "z", "measure", "swap"]
     name = "qsharp"
     is_control_capable = True
     has_internal_export = True
@@ -73,8 +73,12 @@ class QsharpConverter(ConverterInterface):
     # Creates a dictionary of cregs and clbits to add to the Qiskit Circuit for measurement purposes
     def create_cregs(self, gate):
         for target in gate["targets"]:
-            if not target["cId"] in self.reg_counter or target["qId"] > self.reg_counter[target["cId"]]:
-                self.reg_counter[target["cId"]] = target["qId"]
+            # qId is the qbit that measured
+            # cId is (probably) the amount of measurement and resets performed on it up to this point
+            # We note every instance of a measurement as a pair of qbit and cId
+            q_list = self.reg_counter.get(target["qId"], [])
+            q_list.append(target["cId"])
+            self.reg_counter[target["qId"]] = q_list
 
     # Builds a Qiskit Quantum circuit from a list of QSharp Gates
     def gatelist_to_circuit(self, gates: list, qubits: int) -> QuantumCircuit:
@@ -82,9 +86,15 @@ class QsharpConverter(ConverterInterface):
         circuit = QuantumCircuit(qubits)
         cregs = {}
         # Create registers from reg_counter dictionary
-        for reg in self.reg_counter:
-            creg = ClassicalRegister(size=self.reg_counter[reg] + 1, name=f"c{reg}")
-            cregs[reg] = creg
+        # There is a separate register for every qbit, with an amount of bits equal to the times the bit got measured.
+        # For identification which clbit belongs to which measurement, the (qbit, measurement no. i) pair is used.
+        # The reg is sorted, since the order of measurements does not actually correspond their order in the result.
+        # Ordering increases the chance to get the original order.
+        for reg in sorted(self.reg_counter):
+            warnings.warn("Measurements will be ordered by QBit Id!")
+            creg = ClassicalRegister(size=len(self.reg_counter[reg]), name=f"c{reg}")
+            for i in range(len(self.reg_counter[reg])):
+                cregs[(reg, self.reg_counter[reg][i])] = creg[i]
             circuit.add_register(creg)
         # Iterates over gate and adds corresponding Qiskit Operation to circuit.
         for gate in gates:
@@ -118,7 +128,8 @@ class QsharpConverter(ConverterInterface):
                     if not gate["isMeasurement"]:
                         qargs.append(target["qId"])
                     else:
-                        cargs.append(cregs[target["cId"]][target["qId"]])
+                        # (Qbit, No. Measurement) used as identification
+                        cargs.append(cregs[(target["qId"], target["cId"])])
                 circuit.append(instr_qiskit, qargs=qargs, cargs=cargs)
             else:
                 raise NotImplementedError(f"{gate_name} is not supported.{gate['gate']}")
@@ -127,7 +138,7 @@ class QsharpConverter(ConverterInterface):
 
     def export_circuit(self, qcircuit: QuantumCircuit):
         qcircuit = transpile(qcircuit, basis_gates=self.QSHARP_GATES)
-        qcircuit.data = [gate for gate in qcircuit.data if not gate[0].name == "barrier"]
+        qcircuit.data = [gate for gate in qcircuit.data if not (gate[0].name == "barrier" or gate[0].name == "id") ]
         circuit = tk_to_qsharp(qiskit_to_tk(qcircuit))
         return circuit
 
