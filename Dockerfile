@@ -5,7 +5,7 @@ WORKDIR /code
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Notice that we're installing the SDK for both .NET Core 3.1 as well as .NET 6.0 for compatibility.
+# Installing .NET.
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg && \
     mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ && \
     wget -q https://packages.microsoft.com/config/debian/9/prod.list && \
@@ -20,7 +20,7 @@ RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor 
 ENV PATH=$PATH:${HOME}/dotnet:${HOME}/.dotnet/tools \
     DOTNET_ROOT=${HOME}/dotnet
 
-RUN dotnet new -i "Microsoft.Quantum.ProjectTemplates::0.23.198514-beta"
+RUN dotnet new -i "Microsoft.Quantum.ProjectTemplates::0.26.233415"
 RUN dotnet tool install \
            --global \
            Microsoft.Quantum.IQSharp
