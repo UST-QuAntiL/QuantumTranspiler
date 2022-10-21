@@ -5,10 +5,6 @@ from conversion.converter.converter_interface import ConverterInterface
 from qiskit.circuit import Parameter as qiskit_Parameter
 from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
 from qiskit import QuantumCircuit, transpile, ClassicalRegister, QuantumRegister
-from pytket.extensions.qiskit import qiskit_to_tk
-from pytket.extensions.qiskit import tk_to_qiskit
-from pytket.extensions.braket import tk_to_braket
-from pytket.extensions.braket import braket_to_tk
 from braket.ir.jaqcd import Program
 from braket.circuits.circuit import Circuit
 from braket.circuits import Observable, observable
