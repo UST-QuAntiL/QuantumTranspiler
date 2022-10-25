@@ -6,3 +6,10 @@ services:
     image: kuhnmx/quantum-transpiler:latest
     ports:
       - "5012:5012"
+  frontend:
+    build: ./frontend
+    image: kuhnmx/quantum-transpiler-frontend:latest
+    ports:
+      - "${FRONTEND_PORT}:80"
+    depends_on:
+      - backend
