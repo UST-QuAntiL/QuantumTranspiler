@@ -2,69 +2,59 @@
 
 The Vendor-Independent Quantum Transpiler is a quantum transpiling and analyzing framework written in Python3 that compiles quantum circuits for several QPUs. The user is guided through the whole process of importing, visualizing, editing, simulating and exporting quantum circuits. Additionally, the quantum circuit is analyzed regarding various QPUs and the transpiled, executable quantum circuit can be exported in the respective quantum instruction language. 
 
-## Dependencies
+## Setup
 
-There are several dependencies that need to be installed on the system. Some of the dependencies (e.g Qiskit and Pyquil) need gcc to be installed on the system. Furthermore, Python dev must be installed (e.g. sudo dnf install python3-devel).
-It is recommended to install the following dependencies with [Pip](https://pip.pypa.io/en/stable/). 
+### Docker
 
-```bash
-pip install qiskit
-pip install pyquil
-pip install flask
-pip install flask-cors
-pip install pydot
-pip install IPython
+* Clone repository:
 ```
+git clone https://github.com/UST-QuAntiL/QuantumTranspiler.git
+```
+* Start containers:
+```
+docker-compose pull
+docker-compose up
+```
+
+This makes the QuantumTranspiler backend and frontend available at http://localhost:5012/ and http://localhost:5011/ respectively.
+
+### Local
+
+#### Backend
+Python dependencies are installed using pip.
+```
+pip install -r requirements.txt
+```
+
+Since this project uses [Q#](https://learn.microsoft.com/en-us/azure/quantum/install-python-qdk?tabs=tabid-conda) and [Rigetti](https://pyquil-docs.rigetti.com/en/stable/start.html) simulation, these frameworks also need to be installed.
 
 To access the coupling maps of the IBM QPUs an [IBM QX Token](https://quantum-computing.ibm.com/account) is needed. This must be saved in the environment to access the services (see [Access IBM Quantum Systems](https://qiskit.org/documentation/install.html#install-access-ibm-q-devices-label)).
 
-### Frontend
+To start the backend run 
+```bash
+python -m api.api_service
+```
+#### Frontend
 The fronted is developed with [Angular](https://angular.io/):
  ```bash
 npm install -g @angular/cli
 cd frontend
 npm install
 ```
+The frontend needs the URL of the Backend as input. This can be set via the apiUrl variable in frontend/src/environments/environment.ts (default 5012).
 
-## Usage
-The framework can be started in different ways that are explained in the following.
-
-### Docker
-The recommended way to setup the framework is by using docker_compose to start the webapp. The port for the frontend can be specified in the .env file. If the port of the backend should be adjusted, the port must be changed in the docker_compose file.yml file and the frontend/src/environments/environment.ts file (where the api of the backend is specified).
-```bash
-docker-compose up
-```
-
-To start only the backend run
-```bash
-docker build --tag backend .
-docker run --publish 5012:5012 --detach --name b backend
-```
-
-### Python Module
-Alternatively
-To start the server run (the default port is 5012):
-```bash
-python -m api.api_service
-```
-The library is executed as a module.
-Test Examples:
-```bash
-python3 -m conversion.test_circuit_converter   
-python3 -m circuit.test_circuit_wrapper   
-python3 -m test.e2e_test
-```
-
-The file e2e_test can be used to test the convert and unroll functionality of the transpiler. The results are compared with results from the Qiskit and Quil Transpiler (quilc). For this purpose the qvm and the quilc must be installed (see [PyQuil Docs](https://pyquil-docs.rigetti.com/en/stable/start.html)).
-
-To use the transpiler within another application, the methods of the CircuitWrapper in circuit/circuit_wrapper.py provide the functionality to import, transpile, analyze, and export quantum circuits.
-
-### Frontend
-To start the frontend run:
+To start the it run:
 ```bash
 ng serve --open
 ```
-The frontend needs the URL of the Backend as input. This can be set via the apiUrl variable in frontend/src/environments/environment.ts (default 5012).
+#### Tests
+Tests are executed as modules.
+Basic converter tests are located in test.converter_tests
+```bash 
+python -m test.converter_tests.braket_test
+```
+
+The file e2e_test can be used to test the convert and unroll functionality of the transpiler. The results are compared with results from the Qiskit and Quil Transpiler (quilc). For this purpose the qvm and the quilc must be installed (see [PyQuil Docs](https://pyquil-docs.rigetti.com/en/stable/start.html)).
 
 ## Structure
 In the following the structure of the directories and python files is explained.
@@ -88,9 +78,7 @@ Contains the Angular Webapp.
 Contains the HTTP backend server (flask) that provides the functionality of the developed framework to other services like the frontend.
 
 ### /test
-The TestTranspilation class in e2e_test.py can be used to test the transpilation and conversion functionality of the framework by comparing the simulation results of quantum circuits that are imported, transpiled, and exported with the developed framework with results that are achieved by directly executing the quantum circuit on Rigetti or Qiskit simulators.
-
-/test/third_party_converter contains classes to interoperate with the frameworks Pennylane, Pytket, Quantastica, and Staq to test their functionality.
+Contains tests for the converters, as well as other tests.
 
 ## Issues
 The Drag and Drop tool has some minor bugs. Custom gates and quantum circuits consisting of several quantum/classical registers cannot be properly displayed in the graphical quantum circuit. Furthermore, the dragging of gates behaves incosistent in some cases.
