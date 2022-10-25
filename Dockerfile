@@ -5,7 +5,7 @@ WORKDIR /code
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Installing .NET.
+# Installing .NET (https://github.com/microsoft/iqsharp/blob/main/images/iqsharp-base/Dockerfile)
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg && \
     mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ && \
     wget -q https://packages.microsoft.com/config/debian/9/prod.list && \
