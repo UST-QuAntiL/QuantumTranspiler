@@ -1,10 +1,7 @@
-from examples.custom_circuits import iden_circuit, qiskit_custom
-from qiskit.aqua.quantum_instance import QuantumInstance
 from qiskit.compiler.assemble import assemble
 from qiskit.compiler.transpile import transpile
 from qiskit.execute import execute
 from qiskit.providers.aer import Aer
-from qiskit.providers.aer.backends.qasm_simulator import QasmSimulator
 from qiskit.providers.ibmq import IBMQ, least_busy
 from examples.planqk_examples import bernstein_vazirani_general_qiskit_binary_string, bernstein_vazirani_general_qiskit_integer
 from qiskit.circuit.quantumcircuit import QuantumCircuit
@@ -14,6 +11,7 @@ from qiskit.visualization import plot_histogram
 # decompose algorithms:
 # from qiskit.extensions.unitary import UnitaryGate
 # from qiskit.quantum_info.synthesis
+
 
 def run_circuit(circuit: QuantumCircuit):
     """account must be saved first: https://quantum-computing.ibm.com/"""
@@ -34,9 +32,11 @@ def run_circuit(circuit: QuantumCircuit):
     counts = result.get_counts()
     print(counts)
 
+
 def draw(circuit: QuantumCircuit):
     # circuit.draw(output='latex_source', filename="./test/results/circuit.tex")
     circuit.draw(output='mpl', filename="./test/results/circuit.png")
+
 
 def analyze_circuit(circuit: QuantumCircuit):
     provider = IBMQ.load_account()
@@ -47,6 +47,7 @@ def analyze_circuit(circuit: QuantumCircuit):
     print(mapped_circuit)
     print(qobj)
 
+
 def simulate_circuit(circuit: QuantumCircuit):
     simulator = Aer.get_backend('qasm_simulator')
     job = execute(circuit, simulator, shots=1000)
@@ -54,11 +55,4 @@ def simulate_circuit(circuit: QuantumCircuit):
     counts = result.get_counts(circuit)    
     figure = plot_histogram(counts)
     figure.savefig("./test/results/plot.pdf")
-
-if __name__ == "__main__":
-    pass
-    # circuit = bernstein_vazirani_general_qiskit_integer(4, 8, True)
-    # circuit = bernstein_vazirani_general_qiskit_binary_string("010000110")
-    # circuit = iden_circuit(False)
-    # simulate_circuit(circuit)
      

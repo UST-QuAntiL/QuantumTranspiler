@@ -65,7 +65,6 @@ class CircuitWrapper:
         circuit = qiskit_commands_to_circuit(circuit)
         self._set_circuit(circuit)
 
-
     def import_pyquil(self, circuit: str) -> None:
         program = pyquil_commands_to_program(circuit)
         converter = PyquilConverter()
@@ -112,7 +111,6 @@ class CircuitWrapper:
     def import_quirk(self, quirk: str) -> None:
         converter = QuirkConverter()
         self._import(converter, quirk, False)
-
 
     def _export(self, converter: ConverterInterface, circuit: QuantumCircuit, is_language: bool):
         handler = ConversionHandler(converter)
@@ -220,7 +218,6 @@ class CircuitWrapper:
         self.import_qsharp(qshrap_opt)
         return self.circuit
 
-
     def unroll(self, gates: List[str]) -> QuantumCircuit:
         unroll_pass = Unroller(gates)
         self.decompose_non_standard_non_unitary_gates()
@@ -238,7 +235,6 @@ class CircuitWrapper:
             self.unroll_ibm()
             self.circuit = swap_direction(self.circuit, coupling)
             self.dag = circuit_to_dag(self.circuit)
-        
 
     def simulate(self, shots=1000):
         simulator = QasmSimulator()

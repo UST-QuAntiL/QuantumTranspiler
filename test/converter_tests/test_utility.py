@@ -11,6 +11,7 @@ from qiskit.providers.aer import QasmSimulator
 from qsharp import QSharpCallable
 from cirq import Circuit as CirqCircuit
 
+
 def simulate_qiskit(circuit: QuantumCircuit, shots=2000):
     simulator = QasmSimulator()
     compiled = transpile(circuit, simulator)
@@ -30,11 +31,11 @@ def simulate_pyquil(program: Program, shots=2000):
     with local_forest_runtime():
         qc = get_qc('8q-qvm')
         results = qc.run(qc.compile(program)).readout_data.get("ro")
-        counts = {}
-        for result in results:
-            key = "".join(map(str, result))
-            counts[key] = counts.setdefault(key, 0) + 1
-        return counts
+    counts = {}
+    for result in results:
+        key = "".join(map(str, result))
+        counts[key] = counts.setdefault(key, 0) + 1
+    return counts
 
 
 def simulate_qsharp(code: str, shots=2000):
