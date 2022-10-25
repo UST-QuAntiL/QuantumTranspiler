@@ -1,7 +1,8 @@
 amazon_braket_sdk>=1.32.0
 cirq>=1.0.0
 cirq_google>=1.0.0
-Flask==1.1.2
+Flask==2.1.0
+flask-cors==3.0.10
 matplotlib==3.5.0
 numpy>=1.20.3
 PennyLane==0.24.0
