@@ -1,6 +1,6 @@
 # Vendor-Independent Quantum Transpiler
 
-The Vendor-Independent Quantum Transpiler is a quantum transpiling and analyzing framework written in Python3 that compiles quantum circuits for several QPUs. The user is guided through the whole process of importing, visualizing, editing, simulating and exporting quantum circuits. Additionally, the quantum circuit is analyzed regarding various QPUs and the transpiled, executable quantum circuit can be exported in the respective quantum instruction language. 
+The Vendor-Independent Quantum Transpiler is a quantum transpilation and analysis framework written in Python that compiles quantum circuits for several QPUs. The user is guided through the whole process of importing, visualizing, editing, simulating and exporting quantum circuits. Additionally, the quantum circuit is analyzed regarding various QPUs and the transpiled, executable quantum circuit can be exported in the respective quantum instruction language. 
 
 ## Setup
 
@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
 Since this project uses [Q#](https://learn.microsoft.com/en-us/azure/quantum/install-python-qdk?tabs=tabid-conda) and [Rigetti](https://pyquil-docs.rigetti.com/en/stable/start.html) simulation, these frameworks also need to be installed.
 
-To access the coupling maps of the IBM QPUs an [IBM QX Token](https://quantum-computing.ibm.com/account) is needed. This must be saved in the environment to access the services (see [Access IBM Quantum Systems](https://qiskit.org/documentation/install.html#install-access-ibm-q-devices-label)).
+To access the coupling maps of the IBM QPUs, an [IBM Quantum Token](https://quantum-computing.ibm.com/account) is needed. This must be saved in the environment to access the services (see [Access IBM Quantum Systems](https://qiskit.org/documentation/install.html#install-access-ibm-q-devices-label)).
 
 To start the backend run 
 ```bash
@@ -69,7 +69,7 @@ Contains the functionality for the import and export of quantum cirucits from Qu
 Contains the functionality to unroll a quantum circuit for a specific native gate set (in unroll.py). decompose.py can be used to decompose non standard gates to the Qiskit standard gates without specifying a native gate set. topology_mapping.py executes the mapping to physical qubits of the Qiskit library. equivalence_library.py contains the equivalent gates of the Qiskit gates U2 and U3, as well as, the gate CX for the unrolling step if the Rigetti native gate set is chosen.
 
 ### /examples
-Contains example quantum circuits written in OpenQASM, Qiskit, Quil, and pyQuil. Furthermore, common QPU architectures from Rigetti and IBM QX are specified with their coupling maps.
+Contains example quantum circuits written in OpenQASM, Qiskit, Quil, and pyQuil. Furthermore, common QPU architectures from Rigetti and IBM Quantum are specified with their coupling maps.
 
 ### /frontend
 Contains the Angular Webapp.
