@@ -33,7 +33,6 @@ class BraketTest(unittest.TestCase):
                 org_circuit = wrapper.export_braket()
                 org_counts = simulate_braket(org_circuit)
                 org_ir = wrapper.export_braket_ir()
-                print(org_ir)
                 wrapper.import_braket_ir(org_ir)
                 t_circuit = wrapper.export_qiskit()
                 t_counts = simulate_qiskit(t_circuit)

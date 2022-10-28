@@ -37,7 +37,6 @@ class MyTestCase(unittest.TestCase):
         for i in range(100):
             with self.subTest(f"Testing circuit {i}."):
                 org_circuit = generate_circuit_cirq()
-                print(org_circuit)
                 org_counts = simulate_cirq(org_circuit)
                 wrapper.import_cirq_circuit(org_circuit)
                 t_circuit = wrapper.export_qiskit()

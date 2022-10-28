@@ -338,9 +338,7 @@ def depth_comparison_qpu():
                 depth["q_depth"] = wrapper.depth() * qpu_multiplier
                 depth["q_two_qubit"] = wrapper.depth_two_qubit_gates() * qpu_multiplier
                 depth["q_gate_times"] = wrapper.depth_gate_times() * qpu_multiplier
-            
             else:
-
                 wrapper.unroll_rigetti()
                 depth["r_depth"] = wrapper.depth()
                 depth["r_two_qubit"] = wrapper.depth_two_qubit_gates()

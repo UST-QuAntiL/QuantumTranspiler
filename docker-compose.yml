@@ -2,14 +2,12 @@ version: "3.8"
    
 services:
   backend:
-    build: .
-    image: kuhnmx/quantum-transpiler:latest
+    image: planqk/quantum-transpiler-backend:latest
     ports:
       - "5012:5012"
   frontend:
-    build: ./frontend
-    image: kuhnmx/quantum-transpiler-frontend:latest
+    image: planqk/quantum-transpiler-frontend:latest
     ports:
-      - "${FRONTEND_PORT}:80"
+      - "5011:80"
     depends_on:
       - backend

@@ -210,7 +210,7 @@ class CircuitWrapper:
     def unroll_sycamore(self) -> QuantumCircuit:
         circ = circuit_from_qasm(self.circuit.qasm())
         sycamore_circ = cg.optimized_for_sycamore(circ)
-        self.import_cirq_json(cirq.to_json(sycamore_circ))
+        self.import_cirq_circuit(sycamore_circ)
         return self.circuit
 
     def unroll_azure(self) -> QuantumCircuit:
@@ -270,7 +270,6 @@ class CircuitWrapper:
             self.unroll_ibm()
         else:
             self.unroll_rigetti()
-
         depth = depth_method()
         self.topology_mapping(coupling)
         if ibm:
