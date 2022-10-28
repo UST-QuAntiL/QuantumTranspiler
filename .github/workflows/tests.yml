@@ -1,0 +1,20 @@
+name: Test converters
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: planqk/quantum-transpiler-backend:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      # PyQuil Testing does not currently work in a containerized environment
+      # - name: Testing PyQuil
+      #  run: python -m unittest test.converter_tests.pyquil_test
+      - name: Test Cirq
+        run: python -m unittest test.converter_tests.cirq_test
+      - name: Testing Braket
+        run: python -m unittest test.converter_tests.braket_test
+      - name: Testing QSharp
+        run: python -m unittest test.converter_tests.qsharp_test
