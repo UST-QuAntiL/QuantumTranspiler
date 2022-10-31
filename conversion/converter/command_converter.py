@@ -3,42 +3,48 @@ from conversion.converter.command_utility import (
     create_param_string,
     create_reg_string,
 )
-from pyquil.gates import *
-from pyquil import Program, get_qc
+from pyquil import Program
 from circuit.qiskit_utility import standard_instructions
-import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.circuit.classicalregister import ClassicalRegister
-from qiskit.circuit.quantumregister import QuantumRegister
-from qiskit.circuit.library.standard_gates import *
 import pyquil.quilbase as pyquil_circuit_library
 from pyquil.gates import NOP, MEASURE
-import cirq
 from cirq import Circuit
 from braket.circuits.circuit import Circuit as BRCircuit
+from conversion.converter.globals_util import get_custom_builtins
+
+
+def get_custom_globals():
+    custom_builtins = get_custom_builtins()
+    custom_globals = globals()
+    custom_globals["__builtins__"] = custom_builtins
+    return custom_globals
 
 
 def pyquil_commands_to_program(commands: str) -> Program:
-    exec(commands)
-    val = eval("p")
+    custom_globals = get_custom_globals()
+    exec(commands, custom_globals)
+    val = eval("p", custom_globals)
     return val
 
 
 def braket_commands_to_circuit(commands: str) -> BRCircuit:
-    exec(commands)
-    val: BRCircuit = eval("c")
+    custom_globals = get_custom_globals()
+    exec(commands, custom_globals)
+    val: BRCircuit = eval("c", custom_globals)
     return val
 
 
 def cirq_commands_to_circuit(commands: str) -> Circuit:
-    exec(commands)
-    val: Circuit = eval("c")
+    custom_globals = get_custom_globals()
+    exec(commands, custom_globals)
+    val: Circuit = eval("c", custom_globals)
     return val
 
 
 def qiskit_commands_to_circuit(commands: str) -> QuantumCircuit:
-    exec(commands)
-    val = eval("qc")
+    custom_globals = get_custom_globals()
+    exec(commands, custom_globals)
+    val = eval("qc", custom_globals)
     return val
 
 
