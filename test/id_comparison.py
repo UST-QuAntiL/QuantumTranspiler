@@ -3,9 +3,13 @@ from qiskit.compiler.transpile import transpile
 from qiskit.execute import execute
 from qiskit.providers.aer import Aer
 from qiskit.providers.ibmq import IBMQ, least_busy
-from examples.planqk_examples import bernstein_vazirani_general_qiskit_binary_string, bernstein_vazirani_general_qiskit_integer
+from examples.planqk_examples import (
+    bernstein_vazirani_general_qiskit_binary_string,
+    bernstein_vazirani_general_qiskit_integer,
+)
 from qiskit.circuit.quantumcircuit import QuantumCircuit
 from qiskit.visualization import plot_histogram
+
 # optimizing algorithms:
 # from qiskit.optimization.algorithms
 # decompose algorithms:
@@ -35,7 +39,7 @@ def run_circuit(circuit: QuantumCircuit):
 
 def draw(circuit: QuantumCircuit):
     # circuit.draw(output='latex_source', filename="./test/results/circuit.tex")
-    circuit.draw(output='mpl', filename="./test/results/circuit.png")
+    circuit.draw(output="mpl", filename="./test/results/circuit.png")
 
 
 def analyze_circuit(circuit: QuantumCircuit):
@@ -49,10 +53,9 @@ def analyze_circuit(circuit: QuantumCircuit):
 
 
 def simulate_circuit(circuit: QuantumCircuit):
-    simulator = Aer.get_backend('qasm_simulator')
+    simulator = Aer.get_backend("qasm_simulator")
     job = execute(circuit, simulator, shots=1000)
     result = job.result()
-    counts = result.get_counts(circuit)    
+    counts = result.get_counts(circuit)
     figure = plot_histogram(counts)
     figure.savefig("./test/results/plot.pdf")
-     

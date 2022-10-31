@@ -34,9 +34,9 @@ class EquivalenceLibraryBasis(EquivalenceLibrary):
         phi = Parameter("phi")
         lam = Parameter("lam")
         circuit = QuantumCircuit(1)
-        circuit.rz(phi + np.pi/2, 0)
-        circuit.rx(np.pi/2, 0)
-        circuit.rz(lam - np.pi/2, 0)
+        circuit.rz(phi + np.pi / 2, 0)
+        circuit.rx(np.pi / 2, 0)
+        circuit.rz(lam - np.pi / 2, 0)
         self.add_equivalence(Gates.U2Gate(phi, lam), circuit)
 
         # u3
@@ -47,9 +47,9 @@ class EquivalenceLibraryBasis(EquivalenceLibrary):
         circuit = QuantumCircuit(1)
 
         circuit.rz(lam, 0)
-        circuit.rx(np.pi/2, 0)
+        circuit.rx(np.pi / 2, 0)
         circuit.rz(theta, 0)
-        circuit.rx(-np.pi/2, 0)
+        circuit.rx(-np.pi / 2, 0)
         circuit.rz(phi, 0)
 
         # the following formulas give wrong results for the circuit (the bit is in 50% of the cases flipped but should not be flipped):

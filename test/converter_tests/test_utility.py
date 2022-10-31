@@ -16,7 +16,10 @@ def simulate_qiskit(circuit: QuantumCircuit, shots=2000):
     simulator = QasmSimulator()
     compiled = transpile(circuit, simulator)
     result = simulator.run(compiled, shots=shots).result()
-    counts = {key.replace(" ", "")[::-1]: value for key, value in result.get_counts(compiled).items()}
+    counts = {
+        key.replace(" ", "")[::-1]: value
+        for key, value in result.get_counts(compiled).items()
+    }
     return counts
 
 
@@ -29,7 +32,7 @@ def simulate_braket(circuit: Circuit, shots=2000):
 def simulate_pyquil(program: Program, shots=2000):
     program.wrap_in_numshots_loop(shots)
     with local_forest_runtime():
-        qc = get_qc('8q-qvm')
+        qc = get_qc("8q-qvm")
         results = qc.run(qc.compile(program)).readout_data.get("ro")
     counts = {}
     for result in results:
@@ -53,14 +56,15 @@ def simulate_cirq(circuit: CirqCircuit, shots=2000, reorder=False):
     result = simulator.run(circuit, repetitions=shots)
 
     def fold(l):
-        return ''.join(str(e[0]) for e in l)
+        return "".join(str(e[0]) for e in l)
 
     stats = result.measurements
     # Cirq measurements by the time they occured, in translating and execution. Thus, they need to be ordered
     # differently based on if they are compared with pre- translation or post-translation qiskit measurements
-    counts = result.multi_measurement_histogram(keys=sorted(stats.keys()) if reorder else stats.keys(), fold_func=fold)
+    counts = result.multi_measurement_histogram(
+        keys=sorted(stats.keys()) if reorder else stats.keys(), fold_func=fold
+    )
     return counts
-
 
 
 def intersection(counts_1, counts_2):
@@ -71,7 +75,7 @@ def intersection(counts_1, counts_2):
         result_2 = counts_2[key_1] if key_1 in counts_2.keys() else 0
         int_sum += min(result_1, result_2)
         org_sum += result_1
-    return int_sum/org_sum
+    return int_sum / org_sum
 
 
 def generate_circuit():
@@ -92,6 +96,8 @@ def generate_circuit_cirq():
             return f"c_{str(qid)}"
 
         circuit = cirq.testing.random_circuit(width, depth, 0.5)
-        circuit.append(cirq.measure_each(*(circuit.all_qubits()), key_func=mapping_func))
+        circuit.append(
+            cirq.measure_each(*(circuit.all_qubits()), key_func=mapping_func)
+        )
         has_m = circuit.has_measurements()
     return circuit

@@ -22,11 +22,43 @@ class BraketConverter(ConverterInterface):
     name = "braket"
     is_control_capable = False
     has_internal_export = False
-    BRAKET_GATES = ["barrier", "c3x", "c4x", "ccx", "dcx", "h", "crx", "cry", "cswap", "cx", "cy", "cz",
-                    "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg", "x",
-                    "y", "z", "measure"]
+    BRAKET_GATES = [
+        "barrier",
+        "c3x",
+        "c4x",
+        "ccx",
+        "dcx",
+        "h",
+        "crx",
+        "cry",
+        "cswap",
+        "cx",
+        "cy",
+        "cz",
+        "i",
+        "id",
+        "rccx",
+        "ms",
+        "rc3x",
+        "rx",
+        "rxx",
+        "ry",
+        "ryy",
+        "rz",
+        "rzx",
+        "s",
+        "sdg",
+        "t",
+        "tdg",
+        "x",
+        "y",
+        "z",
+        "measure",
+    ]
 
-    def import_circuit(self, circuit: Circuit) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
+    def import_circuit(
+        self, circuit: Circuit
+    ) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
         self.program = circuit
         qubit_set = circuit.qubits
         qreg_mapping = {}
@@ -40,13 +72,22 @@ class BraketConverter(ConverterInterface):
                 self._handle_gate_import(qcircuit, instruction, qreg_mapping)
         for result_type in circuit.result_types:
             if isinstance(result_type, braket.circuits.result_types.Sample):
-                self._handle_result_import(qcircuit, result_type, qreg_mapping, creg_mapping)
+                self._handle_result_import(
+                    qcircuit, result_type, qreg_mapping, creg_mapping
+                )
             else:
-                raise NotImplementedError("Unsupported Result Type: " + result_type.name)
+                raise NotImplementedError(
+                    "Unsupported Result Type: " + result_type.name
+                )
 
         return qcircuit, qreg_mapping, creg_mapping
 
-    def _handle_gate_import(self, circuit: QuantumCircuit, instr: braket.circuits.instruction.Instruction, mapping) -> None:
+    def _handle_gate_import(
+        self,
+        circuit: QuantumCircuit,
+        instr: braket.circuits.instruction.Instruction,
+        mapping,
+    ) -> None:
         if instr.operator.name in gate_mapping_braket:
             # get the instruction
             if "g" in gate_mapping_braket[instr.operator.name]:
@@ -56,7 +97,9 @@ class BraketConverter(ConverterInterface):
                 instr_qiskit_class = gate_mapping_braket[instr.operator.name]["r"]
             else:
                 raise NameError(
-                    "Gate defined in gate mapping but neither gate nor replacement circuit is given: " + str(instr))
+                    "Gate defined in gate mapping but neither gate nor replacement circuit is given: "
+                    + str(instr)
+                )
             qargs = []
             for qbit in instr.target:
                 qargs.append(mapping[qbit])
@@ -75,9 +118,9 @@ class BraketConverter(ConverterInterface):
         else:
             raise NotImplementedError("Unsupported Instruction: " + str(instr))
 
-
-
-    def _handle_result_import(self, circuit: QuantumCircuit, result_type, qreg_mapping, creg_mapping):
+    def _handle_result_import(
+        self, circuit: QuantumCircuit, result_type, qreg_mapping, creg_mapping
+    ):
         if isinstance(result_type.observable, Observable.Z):
             if len(result_type.target) == 0:
                 qbits = qreg_mapping.keys()
@@ -121,9 +164,9 @@ class BraketConverter(ConverterInterface):
                 else:
                     creg_mapping[qbit] = [creg[i]]
         else:
-            raise NotImplementedError("Observable not supported: " + str(result_type.observable))
-
-
+            raise NotImplementedError(
+                "Observable not supported: " + str(result_type.observable)
+            )
 
     def export_circuit(self, qcircuit: QuantumCircuit):
         raise NotImplementedError()
@@ -147,10 +190,12 @@ class BraketConverter(ConverterInterface):
 
         return creg_mapping
 
-    def gate(self, gate, qubits, params, is_controlled = False, num_qubits_base_gate = None):
+    def gate(
+        self, gate, qubits, params, is_controlled=False, num_qubits_base_gate=None
+    ):
         self.program.add_instruction(Instruction(gate(*params), qubits))
 
-    def custom_gate(self, matrix, name, qubits, params = []):
+    def custom_gate(self, matrix, name, qubits, params=[]):
         if len(params) > 0:
             raise NotImplementedError("Custom gates in Braket do not support params.")
         # Qiskit Unitary Gates use reverse Qubit order!
@@ -165,14 +210,18 @@ class BraketConverter(ConverterInterface):
             return float(parameter._symbol_expr)
         else:
             raise NotImplementedError(
-                "Parameter Expressions with unbound parameters are not supported: " + str(parameter))
+                "Parameter Expressions with unbound parameters are not supported: "
+                + str(parameter)
+            )
 
     def barrier(self, qubits):
         warnings.warn("The Barrier operation is skipped in the braket circuit.")
         return
 
     def measure(self, qubit, clbit):
-        warnings.warn("Measurement operations will be added to the END of the circuit only!")
+        warnings.warn(
+            "Measurement operations will be added to the END of the circuit only!"
+        )
         self.program.add_result_type(Sample(Observable.Z(), qubit))
 
     def subcircuit(self, subcircuit, qubits, clbits=None):
@@ -249,7 +298,9 @@ class BraketConverter(ConverterInterface):
                 kwargs = {}
                 # Adding of parameters to kwargs
                 if hasattr(result, "observable"):
-                    obscall = getattr(Observable, f"{(str(result.observable[0])).upper()}")
+                    obscall = getattr(
+                        Observable, f"{(str(result.observable[0])).upper()}"
+                    )
                     kwargs["observable"] = obscall()
                 if hasattr(result, "states"):
                     kwargs["states"] = result.states

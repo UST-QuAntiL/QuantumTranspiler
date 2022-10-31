@@ -13,9 +13,23 @@ import qsharp
 
 
 class QsharpConverter(ConverterInterface):
-    QSHARP_GATES = ["ccx", "i", "id", "h", "cx",
-                           "rx", "ry", "rz", "s", "t", "x",
-                           "y", "z", "measure", "swap"]
+    QSHARP_GATES = [
+        "ccx",
+        "i",
+        "id",
+        "h",
+        "cx",
+        "rx",
+        "ry",
+        "rz",
+        "s",
+        "t",
+        "x",
+        "y",
+        "z",
+        "measure",
+        "swap",
+    ]
     name = "qsharp"
     is_control_capable = True
     has_internal_export = True
@@ -23,7 +37,9 @@ class QsharpConverter(ConverterInterface):
     def __init__(self):
         self.reg_counter = {}
 
-    def import_circuit(self, circuit) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
+    def import_circuit(
+        self, circuit
+    ) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
         self.reg_counter = {}
         # Create a qsharp callable from Q# string
         compiled = qsharp.compile(circuit)
@@ -37,8 +53,10 @@ class QsharpConverter(ConverterInterface):
         return qcircuit, qreg_mapping, creg_mapping
 
     # Converts a compiled qsharp circuit into a qiskit quantum circuit
-    def compiled_to_circuit(self, compiled: Union[QSharpCallable, List[QSharpCallable]]) -> QuantumCircuit:
-        if hasattr(compiled, '__len__'):
+    def compiled_to_circuit(
+        self, compiled: Union[QSharpCallable, List[QSharpCallable]]
+    ) -> QuantumCircuit:
+        if hasattr(compiled, "__len__"):
             compiled = compiled[-1]
         traced = compiled.trace()
         operations = traced["operations"]
@@ -132,13 +150,19 @@ class QsharpConverter(ConverterInterface):
                         cargs.append(cregs[(target["qId"], target["cId"])])
                 circuit.append(instr_qiskit, qargs=qargs, cargs=cargs)
             else:
-                raise NotImplementedError(f"{gate_name} is not supported.{gate['gate']}")
+                raise NotImplementedError(
+                    f"{gate_name} is not supported.{gate['gate']}"
+                )
         # Reset clreg counter for next translation
         return circuit
 
     def export_circuit(self, qcircuit: QuantumCircuit):
         qcircuit = transpile(qcircuit, basis_gates=self.QSHARP_GATES)
-        qcircuit.data = [gate for gate in qcircuit.data if not (gate[0].name == "barrier" or gate[0].name == "id")]
+        qcircuit.data = [
+            gate
+            for gate in qcircuit.data
+            if not (gate[0].name == "barrier" or gate[0].name == "id")
+        ]
         circuit = tk_to_qsharp(qiskit_to_tk(qcircuit))
         return circuit
 

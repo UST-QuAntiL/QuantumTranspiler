@@ -4,8 +4,14 @@ from conversion.converter.converter_interface import ConverterInterface
 from transpilation.topology_mapping import swap, swap_direction
 from circuit.qiskit_utility import count_gate_times, count_two_qubit_gates
 from qiskit.execute_function import execute
-from conversion.converter.command_converter import circuit_to_pyquil_commands, circuit_to_qiskit_commands, \
-    pyquil_commands_to_program, qiskit_commands_to_circuit, cirq_commands_to_circuit, braket_commands_to_circuit
+from conversion.converter.command_converter import (
+    circuit_to_pyquil_commands,
+    circuit_to_qiskit_commands,
+    pyquil_commands_to_program,
+    qiskit_commands_to_circuit,
+    cirq_commands_to_circuit,
+    braket_commands_to_circuit,
+)
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.dagcircuit.dagcircuit import DAGCircuit
 from qiskit.transpiler.passes.basis import decompose
@@ -27,7 +33,9 @@ from cirq.contrib.qasm_import import circuit_from_qasm
 
 
 class CircuitWrapper:
-    def __init__(self, qiskit_circuit: QuantumCircuit = None, qiskit_instructions: str = None):
+    def __init__(
+        self, qiskit_circuit: QuantumCircuit = None, qiskit_instructions: str = None
+    ):
 
         if qiskit_circuit:
             self._set_circuit(qiskit_circuit)
@@ -43,16 +51,47 @@ class CircuitWrapper:
     def _import(self, converter: ConverterInterface, circuit, is_language: bool):
         handler = ConversionHandler(converter)
         if is_language:
-            (circuit, self.qreg_mapping_import,
-             self.creg_mapping) = handler.import_language(circuit)
+            (
+                circuit,
+                self.qreg_mapping_import,
+                self.creg_mapping,
+            ) = handler.import_language(circuit)
         else:
-            (circuit, self.qreg_mapping_import,
-             self.creg_mapping) = handler.import_circuit(circuit)
+            (
+                circuit,
+                self.qreg_mapping_import,
+                self.creg_mapping,
+            ) = handler.import_circuit(circuit)
         self._set_circuit(circuit)
 
     def _set_circuit(self, circuit: QuantumCircuit):
         self.circuit = circuit
         self.dag = circuit_to_dag(circuit)
+
+    def import_language(self, circuit, language):
+        language_lower = language.lower()
+        if language_lower == "quil":
+            self.import_quil(circuit)
+        elif language_lower == "pyquil":
+            self.import_pyquil(circuit)
+        elif language_lower == "openqasm":
+            self.import_qasm(circuit)
+        elif language_lower == "qiskit":
+            self.import_qiskit(circuit)
+        elif language_lower == "cirq":
+            self.import_cirq_json(circuit)
+        elif language_lower == "cirqsdk":
+            self.import_cirq(circuit)
+        elif language_lower == "braket":
+            self.import_braket_ir(circuit)
+        elif language_lower == "braketsdk":
+            self.import_braket(circuit)
+        elif language_lower == "qsharp":
+            self.import_qsharp(circuit)
+        elif language_lower == "quirk":
+            self.import_quirk(circuit)
+        else:
+            raise ValueError("Unsupported language")
 
     def import_circuit(self, circuit: QuantumCircuit):
         self._set_circuit(circuit)
@@ -112,16 +151,45 @@ class CircuitWrapper:
         converter = QuirkConverter()
         self._import(converter, quirk, False)
 
-    def _export(self, converter: ConverterInterface, circuit: QuantumCircuit, is_language: bool):
+    def _export(
+        self, converter: ConverterInterface, circuit: QuantumCircuit, is_language: bool
+    ):
         handler = ConversionHandler(converter)
         if is_language:
-            (circuit, self.qreg_mapping_export,
-             self.creg_mapping_export) = handler.export_language(circuit)
+            (
+                circuit,
+                self.qreg_mapping_export,
+                self.creg_mapping_export,
+            ) = handler.export_language(circuit)
         else:
-            (circuit, self.qreg_mapping_export,
-             self.creg_mapping_export) = handler.export_circuit(circuit)
+            (
+                circuit,
+                self.qreg_mapping_export,
+                self.creg_mapping_export,
+            ) = handler.export_circuit(circuit)
 
         return circuit
+
+    def export_language(self, language):
+        language_lower = language.lower()
+        if language_lower == "quil":
+            return self.export_quil()
+        elif language_lower == "pyquil":
+            return self.export_pyquil_commands()
+        elif language_lower == "openqasm":
+            return self.export_qasm()
+        elif language_lower == "qiskit":
+            return self.export_qiskit_commands()
+        elif language_lower == "cirq":
+            return self.export_cirq_json()
+        elif language_lower == "braket":
+            return self.export_braket_ir()
+        elif language_lower == "qsharp":
+            return self.export_qsharp()
+        elif language_lower == "quirk":
+            return self.export_quirk()
+        else:
+            raise ValueError("Unsupported language")
 
     def export_pyquil(self) -> Program:
         (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
@@ -141,7 +209,7 @@ class CircuitWrapper:
         qasm = circuit.qasm()
         return qasm
 
-    def export_qiskit_commands(self, include_imports = False) -> str:
+    def export_qiskit_commands(self, include_imports=False) -> str:
         (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
         instructions = circuit_to_qiskit_commands(circuit, include_imports)
         return instructions
@@ -193,9 +261,14 @@ class CircuitWrapper:
         return (circuit, dag)
 
     def decompose_non_standard_non_unitary_gates(self) -> None:
-        (self.circuit, self.dag) = self.decompose_non_standard_non_unitary_gates_return()
+        (
+            self.circuit,
+            self.dag,
+        ) = self.decompose_non_standard_non_unitary_gates_return()
 
-    def decompose_non_standard_non_unitary_gates_return(self) -> Tuple[QuantumCircuit, DAGCircuit]:
+    def decompose_non_standard_non_unitary_gates_return(
+        self,
+    ) -> Tuple[QuantumCircuit, DAGCircuit]:
         decomposer = Decomposer()
         dag = decomposer.decompose_non_standard_non_unitary_gates(self.dag)
         circuit = dag_to_circuit(dag)
@@ -229,7 +302,7 @@ class CircuitWrapper:
     def topology_mapping(self, coupling: CouplingMap):
         self.circuit = swap(self.circuit, coupling)
         self.dag = circuit_to_dag(self.circuit)
-        # needed to swap direction of the gates if the coupling_map is not symmetric        
+        # needed to swap direction of the gates if the coupling_map is not symmetric
         if not coupling.is_symmetric:
             # rigetti's coupling_maps are symmetric because of cz as native gate instead of cx
             self.unroll_ibm()
@@ -265,7 +338,9 @@ class CircuitWrapper:
         count = count_two_qubit_gates(ops_path)
         return count
 
-    def compare_depth_topology(self, coupling: CouplingMap, depth_method, ibm: bool = True):
+    def compare_depth_topology(
+        self, coupling: CouplingMap, depth_method, ibm: bool = True
+    ):
         if ibm:
             self.unroll_ibm()
         else:
@@ -279,5 +354,4 @@ class CircuitWrapper:
         depth_mapped = depth_method()
         print("Depth before topology mapping: " + str(depth))
         print("Depth after topology mapping: " + str(depth_mapped))
-        print("Increase: " + str(depth_mapped/depth))
-
+        print("Increase: " + str(depth_mapped / depth))

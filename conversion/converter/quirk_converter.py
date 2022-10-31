@@ -12,12 +12,44 @@ import cirq
 class QuirkConverter(ConverterInterface):
     name = "quirk"
     is_control_capable = True
-    QUIRK_GATES = ["c3x", "c4x", "ccx", "dcx", "h", "ch", "crx", "cry", "cswap", "cx", "cy", "cz",
-                   "i", "id", "rccx", "ms", "rc3x", "rx", "rxx", "ry", "ryy", "rz", "rzx", "s", "sdg", "t", "tdg", "x",
-                   "y", "z", "measure"]
+    QUIRK_GATES = [
+        "c3x",
+        "c4x",
+        "ccx",
+        "dcx",
+        "h",
+        "ch",
+        "crx",
+        "cry",
+        "cswap",
+        "cx",
+        "cy",
+        "cz",
+        "i",
+        "id",
+        "rccx",
+        "ms",
+        "rc3x",
+        "rx",
+        "rxx",
+        "ry",
+        "ryy",
+        "rz",
+        "rzx",
+        "s",
+        "sdg",
+        "t",
+        "tdg",
+        "x",
+        "y",
+        "z",
+        "measure",
+    ]
     has_internal_export = True
 
-    def import_circuit(self, circuit) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
+    def import_circuit(
+        self, circuit
+    ) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
         # Try to export this circuit, otherwise optimize further
         try:
             qcircuit = QuantumCircuit.from_qasm_str(circuit.to_qasm())
@@ -39,7 +71,6 @@ class QuirkConverter(ConverterInterface):
         qcircuit = transpile(qcircuit, basis_gates=self.QUIRK_GATES)
         circuit: Circuit = circuit_from_qasm(qcircuit.qasm())
         return circuit
-
 
     @property
     def circuit(self):
@@ -80,5 +111,3 @@ class QuirkConverter(ConverterInterface):
 
     def circuit_to_language(self, circuit) -> str:
         return cirq.contrib.quirk.circuit_to_quirk_url(circuit)
-
-

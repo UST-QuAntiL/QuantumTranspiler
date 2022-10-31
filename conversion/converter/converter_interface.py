@@ -49,11 +49,13 @@ class ConverterInterface(ABC):
         pass
 
     @abstractmethod
-    def gate(self, gate, qubits, params, is_controlled = False, num_qubits_base_gate = None):
+    def gate(
+        self, gate, qubits, params, is_controlled=False, num_qubits_base_gate=None
+    ):
         pass
 
     @abstractmethod
-    def custom_gate(self, matrix, name, qubits, params = []):
+    def custom_gate(self, matrix, name, qubits, params=[]):
         pass
 
     @abstractmethod

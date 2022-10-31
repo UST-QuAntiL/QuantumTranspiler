@@ -10,14 +10,35 @@ import cirq
 
 
 class CirqConverter(ConverterInterface):
-    CIRQ_GATES = ["ccx", "h", "ch", "cswap", "cx", "cy", "cz",
-                  "i", "id", "rx", "ry", "rz", "s", "sdg", "t", "tdg", "x",
-                  "y", "z", "measure"]
+    CIRQ_GATES = [
+        "ccx",
+        "h",
+        "ch",
+        "cswap",
+        "cx",
+        "cy",
+        "cz",
+        "i",
+        "id",
+        "rx",
+        "ry",
+        "rz",
+        "s",
+        "sdg",
+        "t",
+        "tdg",
+        "x",
+        "y",
+        "z",
+        "measure",
+    ]
     name = "cirq"
     is_control_capable = True
     has_internal_export = True
 
-    def import_circuit(self, circuit) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
+    def import_circuit(
+        self, circuit
+    ) -> Tuple[QuantumCircuit, Dict[int, Qubit], Dict[str, Clbit]]:
         self.program = circuit
         qcircuit: QuantumCircuit = QuantumCircuit.from_qasm_str(circuit.to_qasm())
         qreg_mapping = {}
@@ -30,7 +51,9 @@ class CirqConverter(ConverterInterface):
 
     def export_circuit(self, qcircuit: QuantumCircuit):
         qcircuit = transpile(qcircuit, basis_gates=self.CIRQ_GATES)
-        qcircuit.data = [gate for gate in qcircuit.data if not (gate[0].name == "barrier")]
+        qcircuit.data = [
+            gate for gate in qcircuit.data if not (gate[0].name == "barrier")
+        ]
         circuit: Circuit = circuit_from_qasm(qcircuit.qasm())
         return circuit
 
@@ -47,7 +70,9 @@ class CirqConverter(ConverterInterface):
     def create_creg_mapping(self, cregs: List[ClassicalRegister]):
         raise NotImplementedError()
 
-    def gate(self, is_controlled=False):
+    def gate(
+        self, gate, qubits, params, is_controlled=False, num_qubits_base_gate=None
+    ):
         raise NotImplementedError()
 
     def custom_gate(self):
@@ -73,5 +98,3 @@ class CirqConverter(ConverterInterface):
 
     def circuit_to_language(self, circuit) -> str:
         return cirq.to_json(circuit)
-
-

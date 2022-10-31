@@ -6,14 +6,18 @@ from qiskit.circuit import Parameter
 from pyquil.gates import *
 from pyquil.quilatom import Parameter as PyQuilParameter
 from circuit import CircuitWrapper
-from test.converter_tests.test_utility import generate_circuit, intersection, simulate_qiskit, simulate_pyquil
+from test.converter_tests.test_utility import (
+    generate_circuit,
+    intersection,
+    simulate_qiskit,
+    simulate_pyquil,
+)
 
 
 # Naming of tests is test_"tested property"_"target language"
 
 
 class PyQuilTest(unittest.TestCase):
-
     def test_rand_pyquil(self):
         wrapper = CircuitWrapper()
         for i in range(10):
@@ -24,7 +28,17 @@ class PyQuilTest(unittest.TestCase):
                 t_circuit = wrapper.export_pyquil()
                 t_counts = simulate_pyquil(t_circuit)
                 similarity = intersection(org_counts, t_counts)
-                self.assertGreater(similarity, 0.90, str(org_circuit.qasm()) + " \n " + str(org_counts) + " \n " + str(t_circuit) + " \n " + str(t_counts))
+                self.assertGreater(
+                    similarity,
+                    0.90,
+                    str(org_circuit.qasm())
+                    + " \n "
+                    + str(org_counts)
+                    + " \n "
+                    + str(t_circuit)
+                    + " \n "
+                    + str(t_counts),
+                )
 
     def test_rand_qiskit(self):
         wrapper = CircuitWrapper()
@@ -44,11 +58,11 @@ class PyQuilTest(unittest.TestCase):
         wrapper = CircuitWrapper()
         org_circuit = QuantumCircuit(2)
         org_circuit.u2(np.pi, np.pi, 0)
-        org_circuit.u3(np.pi, np.pi, np.pi/2, 1)
-        org_circuit.crx(np.pi/2, 0, 1)
+        org_circuit.u3(np.pi, np.pi, np.pi / 2, 1)
+        org_circuit.crx(np.pi / 2, 0, 1)
         org_circuit.cry(np.pi / 2, 1, 0)
         org_circuit.crz(np.pi / 2, 0, 1)
-        org_circuit.cu3(np.pi, np.pi, np.pi/2, 0, 1)
+        org_circuit.cu3(np.pi, np.pi, np.pi / 2, 0, 1)
         org_circuit.ch(1, 0)
         org_circuit.measure_all()
         wrapper.import_circuit(org_circuit)
@@ -62,10 +76,10 @@ class PyQuilTest(unittest.TestCase):
         wrapper = CircuitWrapper()
         org_circuit = Program()
         org_circuit += X(0)
-        org_circuit += CPHASE00(np.pi/2, 0, 1)
-        org_circuit += CPHASE01(np.pi/4, 1, 0)
-        org_circuit += CPHASE10(np.pi/2, 0, 1)
-        org_circuit += PSWAP(np.pi/2, 0, 1)
+        org_circuit += CPHASE00(np.pi / 2, 0, 1)
+        org_circuit += CPHASE01(np.pi / 4, 1, 0)
+        org_circuit += CPHASE10(np.pi / 2, 0, 1)
+        org_circuit += PSWAP(np.pi / 2, 0, 1)
         org_circuit += CNOT(1, 2).controlled(0)
         org_circuit.measure_all()
         org_counts = simulate_pyquil(org_circuit)
@@ -78,7 +92,7 @@ class PyQuilTest(unittest.TestCase):
     def test_params_pyquil(self):
         wrapper = CircuitWrapper()
         org_circuit = QuantumCircuit(1)
-        theta = Parameter('theta')
+        theta = Parameter("theta")
         org_circuit.rz(theta, 0)
         wrapper.import_circuit(org_circuit)
         t_circuit = wrapper.export_pyquil()
@@ -94,5 +108,3 @@ class PyQuilTest(unittest.TestCase):
         t_circuit = wrapper.export_qiskit()
         instr = org_circuit.instructions[0]
         self.assertEqual(len(instr.params), len(t_circuit.parameters))
-
-
