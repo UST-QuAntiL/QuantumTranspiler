@@ -28,12 +28,36 @@ pip install -r requirements.txt
 
 Since this project uses [Q#](https://learn.microsoft.com/en-us/azure/quantum/install-python-qdk?tabs=tabid-conda) and [Rigetti](https://pyquil-docs.rigetti.com/en/stable/start.html) simulation, these frameworks also need to be installed.
 
+* Installing .NET 6.0
+```bash
+https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
+```
+
+* Installing IQSharp using .NET
+```bash
+dotnet tool install -g Microsoft.Quantum.IQSharp
+dotnet iqsharp install
+```
+
+* Installing the ForestSDK
+
+Download the fitting SDK for your operating system from [here](https://qcs.rigetti.com/sdk-downloads).
+
+On Windows, simply execute the .msi file.
+
+On Linux (deb), execute the following commands:
+```bash
+tar -xf forest-sdk-linux-deb.tar.bz2
+cd forest-sdk-<version>-linux-deb
+sudo ./forest-sdk-<version>-linux-deb.run
+```
 To access the coupling maps of the IBM QPUs, an [IBM Quantum Token](https://quantum-computing.ibm.com/account) is needed. This must be saved in the environment to access the services (see [Access IBM Quantum Systems](https://qiskit.org/documentation/install.html#install-access-ibm-q-devices-label)).
 
-To start the backend run 
+To start the backend, run:
 ```bash
 python -m api.api_service
 ```
+It will now be available at http://localhost:5012/.
 #### Frontend
 The fronted is developed with [Angular](https://angular.io/):
  ```bash
@@ -43,18 +67,19 @@ npm install
 ```
 The frontend needs the URL of the Backend as input. This can be set via the apiUrl variable in frontend/src/environments/environment.ts (default 5012).
 
-To start the it run:
+To start the frontend, run:
 ```bash
 ng serve --open
 ```
+It can now be accessed at http://localhost:5011/. 
 #### Tests
-Tests are executed as modules.
+Tests are executed using unittest.
 Basic converter tests are located in test.converter_tests
 ```bash 
-python -m test.converter_tests.braket_test
+python -m unittest test.converter_tests.<language>_test
 ```
 
-The file e2e_test can be used to test the convert and unroll functionality of the transpiler. The results are compared with results from the Qiskit and Quil Transpiler (quilc). For this purpose the qvm and the quilc must be installed (see [PyQuil Docs](https://pyquil-docs.rigetti.com/en/stable/start.html)).
+The file e2e_test can be used to test the convert and unroll functionality of the transpiler. The results are compared with results from the Qiskit and Quil Transpiler (quilc).
 
 ## Structure
 In the following the structure of the directories and python files is explained.
