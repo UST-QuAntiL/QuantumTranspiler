@@ -26,12 +26,15 @@ Python dependencies are installed using pip.
 pip install -r requirements.txt
 ```
 
-Since this project uses [Q#](https://learn.microsoft.com/en-us/azure/quantum/install-python-qdk?tabs=tabid-conda) and [Rigetti](https://pyquil-docs.rigetti.com/en/stable/start.html) simulation, these frameworks also need to be installed.
 
-* Installing .NET 6.0
+Since this project uses [Q#](https://learn.microsoft.com/en-us/azure/quantum/install-python-qdk?tabs=tabid-conda) and [Rigetti](https://pyquil-docs.rigetti.com/en/stable/start.html) simulation, these frameworks also need to be installed.
+Make sure that the qsharp package is installed and the python environment is active before attempting to install iqsharp.
+* Installing .NET 6.0  
+  * On Windows, dotnet can be installed using winget.
 ```bash
-https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
+winget install Microsoft.DotNet.SDK.6
 ```
+  * For Linux and other platforms, follow the instructions [here](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
 
 * Installing IQSharp using .NET
 ```bash
