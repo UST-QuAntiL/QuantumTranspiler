@@ -140,7 +140,7 @@ def unroll():
 
         if is_custom_export:
             try:
-                wrapper.export_language(language)
+                output = wrapper.export_language(language)
             except ValueError:
                 return "Bad Request!", 400
 

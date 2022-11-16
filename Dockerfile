@@ -43,7 +43,6 @@ RUN dotnet tool install \
 RUN ~/.dotnet/tools/dotnet-iqsharp install --user --path-to-tool="~/.dotnet/tools/dotnet-iqsharp"
 
 COPY . .
-ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 5012
 
 CMD [ "python", "-m","api.api_service" ]
