@@ -31,17 +31,22 @@ Since this project uses [Q#](https://learn.microsoft.com/en-us/azure/quantum/ins
 Make sure that the qsharp package is installed and the python environment is active before attempting to install iqsharp.
 * Installing .NET 6.0  
   * On Windows, dotnet can be installed using winget.
+  * For Linux and other platforms, follow the instructions [here](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
 ```bash
 winget install Microsoft.DotNet.SDK.6
 ```
-  * For Linux and other platforms, follow the instructions [here](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
+  * Troubleshooting:  
+If the installation fails, check that python and jupyter are installed and active in the current environment or
+try adding nuget with dotnet.
+```bash
+dotnet nuget add source --name nuget.org https://api.nuget.org/v3/index.json
+```
 
-* Installing IQSharp using .NET
+  * Installing IQSharp using .NET
 ```bash
 dotnet tool install -g Microsoft.Quantum.IQSharp
 dotnet iqsharp install
 ```
-
 * Installing the ForestSDK
 
 Download the fitting SDK for your operating system from [here](https://qcs.rigetti.com/sdk-downloads).
@@ -61,6 +66,7 @@ To start the backend, run:
 python -m api.api_service
 ```
 It will now be available at http://localhost:5012/.
+
 #### Frontend
 The fronted is developed with [Angular](https://angular.io/):
  ```bash
