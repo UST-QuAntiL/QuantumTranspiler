@@ -209,7 +209,7 @@ class CircuitWrapper:
         qasm = circuit.qasm()
         return qasm
 
-    def export_qiskit_commands(self, include_imports=False) -> str:
+    def export_qiskit_commands(self, include_imports=True) -> str:
         (circuit, _) = self.decompose_non_standard_non_unitary_gates_return()
         instructions = circuit_to_qiskit_commands(circuit, include_imports)
         return instructions

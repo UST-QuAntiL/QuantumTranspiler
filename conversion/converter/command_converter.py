@@ -7,7 +7,7 @@ from pyquil import Program
 from circuit.qiskit_utility import standard_instructions
 from qiskit import QuantumCircuit
 import pyquil.quilbase as pyquil_circuit_library
-from pyquil.gates import NOP, MEASURE
+from pyquil.gates import NOP
 from cirq import Circuit
 from braket.circuits.circuit import Circuit as BRCircuit
 from conversion.converter.globals_util import get_custom_builtins
@@ -48,7 +48,7 @@ def qiskit_commands_to_circuit(commands: str) -> QuantumCircuit:
     return val
 
 
-def circuit_to_qiskit_commands(circuit: QuantumCircuit, include_imports=False):
+def circuit_to_qiskit_commands(circuit: QuantumCircuit, include_imports=True):
     commands = ""
     if include_imports:
         commands = """from qiskit import QuantumCircuit
@@ -66,7 +66,7 @@ def circuit_to_pyquil_commands(program: Program):
     commands = """from pyquil import Program, get_qc
 from pyquil.gates import *
 import numpy as np
-p = Program()\n"""
+p = Program()\n\n"""
 
     for instr in program.instructions:
         if isinstance(instr, pyquil_circuit_library.Declare):
