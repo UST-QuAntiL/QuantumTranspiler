@@ -20,22 +20,25 @@ jobs:
       #- name: Setup Forest SDK
       #  run: |
       #    apt-get update
-      #    sudo apt-get install -y liblapack-dev libblas-dev libffi-dev libzmq3-dev
+      #    apt-get install -y liblapack-dev libblas-dev libffi-dev libzmq3-dev
       #    wget https://downloads.rigetti.com/qcs-sdk/forest-sdk-2.23.0-linux-deb.tar.bz2
       #    tar -xf forest-sdk-2.23.0-linux-deb.tar.bz2
       #    cd forest-sdk-2.23.0-linux-deb
-      #    sudo ./forest-sdk-2.23.0-linux-deb.run
+      #    ./forest-sdk-2.23.0-linux-deb.run
       #- name: Starting Forest SDK
       #  run: |
+      #    qvm --version
       #    qvm -S &
       #    sleep 10
+      #    quilc --version
       #    quilc -S &
       #    sleep 10
-      - name: Setup QSharp
+      - name: Setup dotnet
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.401'
-      - run: |
+      - name: Install iQSharp
+        run: |
           dotnet new -i "Microsoft.Quantum.ProjectTemplates::0.26.233415"
           dotnet tool install \
           --global \

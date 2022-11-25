@@ -1,19 +1,21 @@
 import random
+import time
+
 import qsharp
 import cirq
 from braket.circuits import Circuit
 from braket.devices import LocalSimulator
 from pyquil import Program, get_qc
 from pyquil.api import local_forest_runtime
-from qiskit import QuantumCircuit, transpile
+from qiskit import QuantumCircuit, transpile, Aer
+from qiskit_aer import AerSimulator
 from qiskit.circuit.random import random_circuit
-from qiskit.providers.aer import QasmSimulator
 from qsharp import QSharpCallable
 from cirq import Circuit as CirqCircuit
 
 
 def simulate_qiskit(circuit: QuantumCircuit, shots=2000):
-    simulator = QasmSimulator()
+    simulator = AerSimulator()
     compiled = transpile(circuit, simulator)
     result = simulator.run(compiled, shots=shots).result()
     counts = {
@@ -29,10 +31,24 @@ def simulate_braket(circuit: Circuit, shots=2000):
     return result.measurement_counts
 
 
+# https://stackoverflow.com/questions/2470971/fast-way-to-test-if-a-port-is-in-use-using-python
+def is_port_in_use(port: int) -> bool:
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('localhost', port)) == 0
+
+# PyQuil Simulation has issues with contexts and ports being in use. This makes using it in a container impossible.
+# Checking for ports and waiting before execution tries to mitigate it, but it does not currently work
 def simulate_pyquil(program: Program, shots=2000):
     program.wrap_in_numshots_loop(shots)
-    with local_forest_runtime():
+    while is_port_in_use(5000) or is_port_in_use(5555):
+        print("Port in use")
+        time.sleep(0.5)
+    with local_forest_runtime(host="localhost"):
+        time.sleep(1)
+        print("In Context")
         qc = get_qc("8q-qvm")
+        print("Created QVM")
         results = qc.run(qc.compile(program)).readout_data.get("ro")
     counts = {}
     for result in results:
@@ -59,8 +75,8 @@ def simulate_cirq(circuit: CirqCircuit, shots=2000, reorder=False):
         return "".join(str(e[0]) for e in l)
 
     stats = result.measurements
-    # Cirq measurements by the time they occured, in translating and execution. Thus, they need to be ordered
-    # differently based on if they are compared with pre- translation or post-translation qiskit measurements
+    # Cirq measurements by the time they occurred, in translating and execution. Thus, they need to be ordered
+    # differently based on if they are compared with pre-translation or post-translation qiskit measurements
     counts = result.multi_measurement_histogram(
         keys=sorted(stats.keys()) if reorder else stats.keys(), fold_func=fold
     )

@@ -26,7 +26,7 @@ from qiskit.converters import circuit_to_dag, dag_to_circuit
 from transpilation.decompose import Decomposer
 from transpilation.unroll import Unroller
 from typing import List, Tuple
-from qiskit.providers.aer import QasmSimulator
+from qiskit_aer import AerSimulator
 import cirq
 import cirq_google as cg
 from cirq.contrib.qasm_import import circuit_from_qasm
@@ -310,7 +310,7 @@ class CircuitWrapper:
             self.dag = circuit_to_dag(self.circuit)
 
     def simulate(self, shots=1000):
-        simulator = QasmSimulator()
+        simulator = AerSimulator()
         result = execute(self.circuit, simulator, shots=shots).result()
         counts = result.get_counts(self.circuit)
         return counts
