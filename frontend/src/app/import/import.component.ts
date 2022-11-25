@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { InputComponent } from '../input/input.component';
 import { DataService } from '../services/data.service';
+import {MatSelectChange} from "@angular/material/select";
 
 @Component({
   selector: 'app-import',
@@ -16,6 +17,10 @@ export class ImportComponent implements OnInit {
 
   async computeInternal() {
     this.child.computeInternal()
+  }
+
+  async changedInput(event: MatSelectChange) {
+    this.child.changedInput(event)
   }
 
 }

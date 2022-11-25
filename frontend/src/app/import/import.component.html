@@ -3,7 +3,7 @@
         <div class="col">
             <mat-form-field class="w-100">
                 <mat-label> Choose Input</mat-label>
-                <mat-select (selectionChange)="this.data.changedInput($event)">
+                <mat-select (selectionChange)="changedInput($event)">
                     <p class="pl-2 pt-2 selectionTitle">Languages</p>
                     <mat-option value="OpenQASM">
                         OpenQASM
