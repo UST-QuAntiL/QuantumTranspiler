@@ -20,7 +20,7 @@ def circuit_to_internal():
     try:
         wrapper = CircuitWrapper()
         wrapper.import_language(circuit, language)
-        output = wrapper.export_qiskit_commands()
+        output = wrapper.export_qiskit_commands(include_imports=False)
     except ValueError:
         return "Bad Request!", 400
     except DeviceError as de:

@@ -3,15 +3,21 @@ from conversion.converter.command_utility import (
     create_param_string,
     create_reg_string,
 )
-from pyquil import Program
 from circuit.qiskit_utility import standard_instructions
-from qiskit import QuantumCircuit
+
 import pyquil.quilbase as pyquil_circuit_library
-from pyquil.gates import NOP
 from cirq import Circuit
 from braket.circuits.circuit import Circuit as BRCircuit
 from conversion.converter.globals_util import get_custom_builtins
 
+# Imports needed for simulation and easier conversion
+from qiskit import QuantumCircuit
+from qiskit.circuit.classicalregister import ClassicalRegister
+from qiskit.circuit.quantumregister import QuantumRegister
+from qiskit.circuit.library.standard_gates import *
+from pyquil import Program, get_qc
+from pyquil.gates import *
+import numpy as np
 
 def get_custom_globals():
     custom_builtins = get_custom_builtins()
@@ -48,7 +54,7 @@ def qiskit_commands_to_circuit(commands: str) -> QuantumCircuit:
     return val
 
 
-def circuit_to_qiskit_commands(circuit: QuantumCircuit, include_imports=True):
+def circuit_to_qiskit_commands(circuit: QuantumCircuit, include_imports=False):
     commands = ""
     if include_imports:
         commands = """from qiskit import QuantumCircuit
@@ -66,7 +72,7 @@ def circuit_to_pyquil_commands(program: Program):
     commands = """from pyquil import Program, get_qc
 from pyquil.gates import *
 import numpy as np
-p = Program()\n\n"""
+p = Program()\n"""
 
     for instr in program.instructions:
         if isinstance(instr, pyquil_circuit_library.Declare):
