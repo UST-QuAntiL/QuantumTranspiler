@@ -63,7 +63,7 @@ class QuirkConverter(ConverterInterface):
         creg_mapping = {}
         for counter, clbit in enumerate(qcircuit.clbits):
             creg_mapping[str(counter)] = clbit
-        self.program = cirq.quirk_url_to_circuit(circuit)
+        self.program = circuit
         return qcircuit, qreg_mapping, creg_mapping
 
     def export_circuit(self, qcircuit: QuantumCircuit):

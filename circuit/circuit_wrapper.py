@@ -149,7 +149,7 @@ class CircuitWrapper:
 
     def import_quirk(self, quirk: str) -> None:
         converter = QuirkConverter()
-        self._import(converter, quirk, False)
+        self._import(converter, quirk, True)
 
     def _export(
         self, converter: ConverterInterface, circuit: QuantumCircuit, is_language: bool

@@ -16,7 +16,7 @@ docker-compose pull
 docker-compose up
 ```
 
-This makes the QuantumTranspiler backend and frontend available at http://localhost:5012/ and http://localhost:5011/ respectively.
+After the containers started, the QuantumTranspiler backend and frontend are available at http://localhost:5012/ and http://localhost:5011/ respectively.
 
 ### Local
 

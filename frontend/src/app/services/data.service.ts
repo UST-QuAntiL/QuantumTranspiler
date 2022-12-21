@@ -73,8 +73,6 @@ MEASURE 2 ro[2]
       this.setCircuit(circuitRef, circuit);
     } catch (e) {
       // happens when a user is changing the circuit (and data is just partly changed), but should not happen otherwise
-      console.log("Circuit data cannot be parsed.")
-      console.log(e)
     }
 
   }

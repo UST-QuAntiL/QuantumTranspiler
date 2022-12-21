@@ -16,7 +16,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      # Forest SDK setup does not work currently
+      # Since PyQuil test don't currently work, Forest SDK Setup is no requried
       #- name: Setup Forest SDK
       #  run: |
       #    apt-get update
@@ -44,7 +44,7 @@ jobs:
           --global \
           Microsoft.Quantum.IQSharp
           ~/.dotnet/tools/dotnet-iqsharp install --user --path-to-tool="~/.dotnet/tools/dotnet-iqsharp"
-      # PyQuil tests do not work currently
+      # PyQuil tests do not currently work on GitHub actions. The cause seems to be an issue when accessing the Forest SDK a lot programmatically.
       #- name: Testing PyQuil
       #  run: python -m unittest test.converter_tests.pyquil_test
       - name: Test Cirq
