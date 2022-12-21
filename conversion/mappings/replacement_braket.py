@@ -50,7 +50,7 @@ def crx_replacement(theta: float):
         raise ValueError("Parameters are not supported for replaced gates")
     matrix = np.array([[1, 0, 0, 0],
                       [0, 1, 0, 0],
-                      [0, 0, np.cos(theta/2), -1j*np.cos(theta/2)],
+                      [0, 0, np.cos(theta/2), -1j*np.sin(theta/2)],
                       [0, 0, -1j*np.sin(theta/2), np.cos(theta/2)]])
     gate = braket_gates.Unitary(matrix=matrix, display_name="CRX")
     instruction = Instruction(gate, [0, 1])
@@ -81,5 +81,4 @@ def crz_replacement(theta: float):
     gate = braket_gates.Unitary(matrix=matrix, display_name="CRZ")
     instruction = Instruction(gate, [0, 1])
     return instruction
-
 

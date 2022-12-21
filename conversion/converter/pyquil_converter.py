@@ -65,6 +65,9 @@ class PyquilConverter(ConverterInterface):
                 # e.g. rewiring and delays
                 # can be alternatively implemented with qiskit (https://qiskit.org/documentation/stubs/qiskit.pulse.Delay.html)
                 continue
+            elif isinstance(instr, pyquil_circuit_library.ResetQubit):
+                qubit = qreg_mapping[instr.qubit.index]
+                circuit.reset(qubit)
             elif isinstance(instr, NOP):
                 continue
             elif isinstance(instr, pyquil_circuit_library.Halt):

@@ -80,6 +80,7 @@ def convert():
     try:
         wrapper = CircuitWrapper()
         wrapper.import_language(circuit, language)
+        traceback.print_exc()
     except ValueError:
         return "Bad Request!", 400
     except DeviceError as de:
@@ -102,6 +103,7 @@ def convert():
     try:
         output = wrapper.export_language(language_output)
     except ValueError:
+        traceback.print_exc()
         return "Bad Request!", 400
     except DeviceError as de:
         gate = re.findall(r"(?:Gate )(.*?)(?: not)", str(de))[0]

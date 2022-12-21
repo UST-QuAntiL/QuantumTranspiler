@@ -102,9 +102,10 @@ p = Program()\n"""
 
         elif isinstance(instr, pyquil_circuit_library.Measurement):
             commands += f"p += MEASURE({instr.qubit.index}, {instr.classical_reg.name}[{instr.classical_reg.offset}])\n"
-
         elif isinstance(instr, pyquil_circuit_library.Pragma):
             continue
+        elif isinstance(instr, pyquil_circuit_library.ResetQubit):
+            commands += f"p += RESET({instr.qubit.index})\n"
         elif isinstance(instr, NOP):
             continue
         elif isinstance(instr, pyquil_circuit_library.Halt):

@@ -1,5 +1,6 @@
 import inspect
 
+import qiskit
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 
 from conversion.mappings.gate_mappings import gate_mapping_qiskit, gate_mapping_pyquil
@@ -60,7 +61,7 @@ class ConversionHandler:
                 qiskit_gate = instr[0]
                 qubits = [qreg_mapping[qubit] for qubit in instr[1]]
 
-                if isinstance(qiskit_gate, qiskit_circuit_library.Gate):
+                if isinstance(qiskit_gate, qiskit_circuit_library.Gate) or instr[0].name == "reset":
                     # usual gates
                     self._handle_gate_export(converter, qiskit_gate, qubits)
 
@@ -126,7 +127,6 @@ class ConversionHandler:
                     ):
                         qiskit_gate_class_name = base_gate.__class__.__name__
                         is_controlled = True
-
         if qiskit_gate_class_name in gate_mapping_qiskit:
             params = qiskit_gate.params
             # parameter conversion
