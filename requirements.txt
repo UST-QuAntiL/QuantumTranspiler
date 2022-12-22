@@ -4,7 +4,7 @@ cirq_google>=1.0.0
 Flask==2.1.0
 flask-cors==3.0.10
 matplotlib==3.5.0
-numpy>=1.20.3
+numpy>=1.22.0
 PennyLane==0.24.0
 PennyLane_qiskit==0.24.0
 pyquil>=3.3.2
