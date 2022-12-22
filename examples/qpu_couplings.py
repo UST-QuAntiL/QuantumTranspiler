@@ -1,5 +1,3 @@
-
-from qiskit.providers.basebackend import BaseBackend
 from qiskit.providers.ibmq import IBMQ
 from qiskit.transpiler import CouplingMap
 

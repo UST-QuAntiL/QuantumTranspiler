@@ -21,7 +21,8 @@ from qiskit.dagcircuit import DAGCircuit
 from qiskit.exceptions import QiskitError
 from transpilation.Utility import isometry_gates
 
-class DecomposeIsometryGates():
+
+class DecomposeIsometryGates:
     def run(self, dag):
         """
         Args:
@@ -36,9 +37,10 @@ class DecomposeIsometryGates():
             # TODO: allow choosing other possible decompositions
             rule = node.op.definition
             if not rule:
-                raise QiskitError("Cannot unroll all 3q or more gates. "
-                                  "No rule to expand instruction %s." %
-                                  node.op.name)
+                raise QiskitError(
+                    "Cannot unroll all 3q or more gates. "
+                    "No rule to expand instruction %s." % node.op.name
+                )
 
             # hacky way to build a dag on the same register as the rule is defined
             # TODO: need anonymous rules to address wires by index

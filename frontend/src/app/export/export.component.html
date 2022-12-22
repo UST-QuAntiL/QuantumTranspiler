@@ -19,17 +19,33 @@
                     <mat-option value="Quil">
                         Quil
                     </mat-option>
+                    <mat-option matTooltip="No support for Braket CPhaseShift00, CPhaseShift01, CPhaseShift10, PSwap; No export of measurements."
+                        matTooltipClass="tooltip-large" value="Braket">
+                        Braket(IR)
+                    </mat-option>
+                    <mat-option  matTooltip="No custom gates, barriers resets and Conditionals; No CRZ, CU1, CU3, RZZ."
+                        matTooltipClass="tooltip-large" value="Cirq">
+                        Cirq(JSON)
+                    </mat-option>
+                    <mat-option matTooltip="Via Cirq; No custom gates, barriers resets and Conditionals; No CRZ, CU1, CU3, RZZ, ISWAP."
+                        matTooltipClass="tooltip-large" value="Quirk">
+                        Quirk(URL)
+                    </mat-option>
                     <mat-divider></mat-divider>
-                    <p class="pl-2 pt-2 selectionTitle">Frameworks</p>
-                    <mat-option value="Qiskit">
+                    <p class="pl-2 pt-2">Frameworks</p>
+                    <mat-option
+                        matTooltipClass="tooltip-large" value="Qiskit">
                         Qiskit
                     </mat-option>
-                    <mat-option 
-                    matTooltip="Pyquil program can be exported in the backend. The export of Pyquil skeleton code is experimential."
+                    <mat-option
+                        matTooltip="Pyquil program can be exported in the backend. The export of Pyquil skeleton code is experimental."
                         matTooltipClass="tooltip-large" value="Pyquil">
                         Pyquil
                     </mat-option>
-
+                    <mat-option matTooltip="No rzz gate; Custom Gate definitions will be added for non qsharp native gates."
+                        matTooltipClass="tooltip-large"  value="Qsharp">
+                        QSharp
+                    </mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
@@ -47,3 +63,4 @@
             <app-output></app-output>
         </div>
     </div>
+</div>

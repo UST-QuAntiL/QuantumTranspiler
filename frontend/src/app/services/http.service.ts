@@ -34,7 +34,7 @@ export class HttpService {
     } catch (err) {
       console.log(err)
       console.log("Backend error:" +  err.error)
-      this.snackbar.open("Error at handling the data. The log shows detailed information about this error.");
+      this.snackbar.open("Error at handling the data: " + err.error);
     }
 
   }
