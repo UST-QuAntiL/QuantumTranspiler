@@ -51,15 +51,15 @@ def ibmq_santiago():
 def qpus():
     qpus = {
         "aspen_4": ["r", 3, aspen_4()],
-        "ibmqx2": ["q", 3, ibmqx2()],
-        "ibmq_16_melbourne": ["q", 3, ibmq_16_melbourne()],
-        "ibmq_vigo": ["q", 3, ibmq_vigo()],
-        "ibmq_ourense": ["q", 3, ibmq_ourense()],
-        "ibmq_valencia": ["q", 3, ibmq_valencia()],
-        "ibmq_london": ["q", 3, ibmq_london()],
-        "ibmq_essex": ["q", 3, ibmq_essex()],
-        "ibmq_burlington": ["q", 3, ibmq_burlington()],
-        "ibmq_santiago": ["q", 3, ibmq_santiago()],
+#        "ibmqx2": ["q", 3, ibmqx2()],
+#        "ibmq_16_melbourne": ["q", 3, ibmq_16_melbourne()],
+#        "ibmq_vigo": ["q", 3, ibmq_vigo()],
+#        "ibmq_ourense": ["q", 3, ibmq_ourense()],
+#        "ibmq_valencia": ["q", 3, ibmq_valencia()],
+#        "ibmq_london": ["q", 3, ibmq_london()],
+#        "ibmq_essex": ["q", 3, ibmq_essex()],
+#        "ibmq_burlington": ["q", 3, ibmq_burlington()],
+#        "ibmq_santiago": ["q", 3, ibmq_santiago()],
     }
     return qpus
 

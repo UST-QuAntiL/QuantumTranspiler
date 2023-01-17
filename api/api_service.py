@@ -2,21 +2,44 @@ import traceback
 from cirq.contrib.qasm_import import QasmException
 from pennylane import DeviceError
 import re
+from api.request_schemas import ImportRequestSchema, ImportRequest, ExportRequestSchema, ExportRequest, \
+    ConversionRequestSchema, ConversionRequest, UnrollRequestSchema, UnrollRequest, SimulationRequestSchema, \
+    SimulationRequest, DepthRequestSchema, DepthRequest
+from api.response_schemas import CircuitResponse, \
+    DepthResponseSchema, DepthResponse
 from examples.qpu_couplings import qpus
-from flask import Flask
-from flask import request
+from flask import Flask, Response
 from flask_cors import CORS
 from circuit.circuit_wrapper import CircuitWrapper
+from flask_smorest import Api, Blueprint, abort
+from config import Config
+from example_circuits import QISKIT_EXAMPLE, QASM_EXAMPLE
 
 app = Flask(__name__)
+app.config.from_object(Config)
+api = Api(app)
 cors = CORS(app)
 
+blp = Blueprint("api", __name__, url_prefix="/", description="All QuantumTranspiler operations")
 
-@app.route("/circuit_to_internal", methods=["Post"])
-def circuit_to_internal():
-    data = request.json
-    language = data["option"]
-    circuit = data["circuit"]
+
+@app.route("/")
+def heartbeat():
+    return '<h1>The QuantumTranspiler is running</h1> <h3>View the API Docs <a href="/api/swagger-ui">here</a></h3>'
+
+
+@blp.route("/circuit_to_internal", methods=["POST"])
+@blp.arguments(
+    ImportRequestSchema,
+    example={
+        "option": "OpenQASM",
+        "circuit": QASM_EXAMPLE
+    }
+)
+@blp.response(200, content_type="text/plain")
+def circuit_to_internal(data: ImportRequest):
+    language = data.get("option")
+    circuit = data.get("circuit")
     try:
         wrapper = CircuitWrapper()
         wrapper.import_language(circuit, language)
@@ -39,14 +62,21 @@ def circuit_to_internal():
         traceback.print_exc()
         print(str(e))
         return f"General error while importing {language}: {str(e)}", 500
-    return output
+    return CircuitResponse(output)
 
 
-@app.route("/export_circuit", methods=["Post"])
-def export_circuit():
-    data = request.json
-    language = data["option"]
-    circuit = data["circuit"]
+@blp.route("/export_circuit", methods=["POST"])
+@blp.arguments(
+    ExportRequestSchema,
+    example={
+        "option": "Cirq",
+        "circuit": QISKIT_EXAMPLE,
+    }
+)
+@blp.response(200, content_type="text/plain")
+def export_circuit(data: ExportRequest):
+    language = data.get("option")
+    circuit = data.get("circuit")
     try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
         output = wrapper.export_language(language)
@@ -68,15 +98,23 @@ def export_circuit():
         traceback.print_exc()
         print(str(e))
         return f"General error while exporting {language}: {str(e)}", 500
-    return output
+    return CircuitResponse(output)
 
 
-@app.route("/convert", methods=["Post"])
-def convert():
-    data = request.json
-    language = data["option"]
-    language_output = data["optionOutput"]
-    circuit = data["circuit"]
+@blp.route("/convert", methods=["POST"])
+@blp.arguments(
+    ConversionRequestSchema,
+    example={
+        "option": "OpenQASM",
+        "optionOutput": "Cirq",
+        "circuit": QASM_EXAMPLE
+    }
+)
+@blp.response(200, content_type="text/plain")
+def convert(data: ConversionRequest):
+    language = data.get("option")
+    language_output = data.get("output_option")
+    circuit = data.get("circuit")
     try:
         wrapper = CircuitWrapper()
         wrapper.import_language(circuit, language)
@@ -118,16 +156,25 @@ def convert():
         traceback.print_exc()
         print(str(e))
         return f"General error while converting to {language_output}: {str(e)}", 500
-    return output
+    return CircuitResponse(output)
 
 
-@app.route("/unroll", methods=["Post"])
-def unroll():
-    data = request.json
-    architecture = data["option"]
-    circuit = data["circuit"]
-    is_custom_export = data["isExpert"]
-    language = data["format"]
+@blp.route("/unroll", methods=["POST"])
+@blp.arguments(
+    UnrollRequestSchema,
+    example={
+        "option": "IBMQ",
+        "circuit": QISKIT_EXAMPLE,
+        "isExpert": True,
+        "format": "Qiskit"
+    }
+)
+@blp.response(200, content_type="text/plain")
+def unroll(data: UnrollRequest):
+    architecture = data.get("option")
+    circuit = data.get("circuit")
+    is_custom_export = data.get("is_expert")
+    language = data.get("format")
 
     try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
@@ -172,13 +219,21 @@ def unroll():
         traceback.print_exc()
         print(str(e))
         return f"General error while exporting {architecture}: {str(e)}", 500
-    return output
+    return CircuitResponse(output)
 
 
-@app.route("/simulate", methods=["Post"])
-def simulate():
-    data = request.json
-    circuit = data["circuit"]
+@blp.route("/simulate", methods=["POST"])
+@blp.arguments(
+    SimulationRequestSchema,
+    example={
+        "circuit": QISKIT_EXAMPLE
+    }
+)
+@blp.response(
+    200,
+    example={"01": 250, "10": 750})
+def simulate(data: SimulationRequest):
+    circuit = data.get("circuit")
     try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
         output = wrapper.simulate()
@@ -189,10 +244,16 @@ def simulate():
     return output
 
 
-@app.route("/depth", methods=["Post"])
-def depth():
-    data = request.json
-    circuit = data["circuit"]
+@blp.route("/depth", methods=["POST"])
+@blp.arguments(
+    DepthRequestSchema,
+    example={
+        "circuit": QISKIT_EXAMPLE
+    }
+)
+@blp.response(200, DepthResponseSchema)
+def depth(data: DepthRequest):
+    circuit = data.get("circuit")
     depth = {}
     try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
@@ -227,13 +288,19 @@ def depth():
         depth["s_gate_times"] = -1
     output = depth
 
-    return output
+    return DepthResponse(output)
 
 
-@app.route("/depth_comparison_qpu", methods=["Post"])
-def depth_comparison_qpu():
-    data = request.json
-    circuit = data["circuit"]
+@blp.route("/depth_comparison_qpu", methods=["POST"])
+@blp.arguments(
+    DepthRequestSchema,
+    example={
+        "circuit": QISKIT_EXAMPLE
+    }
+)
+@blp.response(200, DepthResponseSchema)
+def depth_comparison_qpu(data: DepthRequest):
+    circuit = data.get("circuit")
     depth = {}
     try:
         wrapper = CircuitWrapper(qiskit_instructions=circuit)
@@ -264,8 +331,10 @@ def depth_comparison_qpu():
         traceback.print_exc()
         print(str(e))
         return str(e), 500
-    return output
+    return DepthResponse(output)
 
+
+api.register_blueprint(blp)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5012, debug=False)
