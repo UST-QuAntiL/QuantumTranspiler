@@ -79,6 +79,6 @@ traitlets==5.1.1
 urllib3==1.26.7
 wcwidth==0.2.5
 websockets==10.1
-Werkzeug==2.0.2
+Werkzeug==2.2.3
 yfinance==0.1.67
 zipp==3.6.0
