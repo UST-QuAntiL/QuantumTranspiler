@@ -1,6 +1,5 @@
 import traceback
 from cirq.contrib.qasm_import import QasmException
-from pennylane import DeviceError
 import re
 from api.request_schemas import ImportRequestSchema, ImportRequest, ExportRequestSchema, ExportRequest, \
     ConversionRequestSchema, ConversionRequest, UnrollRequestSchema, UnrollRequest, SimulationRequestSchema, \
@@ -46,9 +45,6 @@ def circuit_to_internal(data: ImportRequest):
         output = wrapper.export_qiskit_commands(include_imports=False)
     except ValueError:
         return "Bad Request!", 400
-    except DeviceError as de:
-        gate = re.findall(r"(?:Gate )(.*?)(?: not)", str(de))[0]
-        return f"Importing {language} does not support '{gate}' gates", 500
     except QasmException as qe:
         gate = re.findall(r'"(.*?)"', qe.message)[0]
         return f"Importing {language} does not support '{gate}' gates", 500
@@ -82,9 +78,6 @@ def export_circuit(data: ExportRequest):
         output = wrapper.export_language(language)
     except ValueError:
         return "Bad Request!", 400
-    except DeviceError as de:
-        gate = re.findall(r"(?:Gate )(.*?)(?: not)", str(de))[0]
-        return f"Exporting {language} does not support '{gate}' gates", 500
     except QasmException as qe:
         gate = re.findall(r'"(.*?)"', qe.message)[0]
         return f"Exporting {language} does not support '{gate}' gates", 500
@@ -121,9 +114,6 @@ def convert(data: ConversionRequest):
         traceback.print_exc()
     except ValueError:
         return "Bad Request!", 400
-    except DeviceError as de:
-        gate = re.findall(r"(?:Gate )(.*?)(?: not)", str(de))[0]
-        return f"Converting from {language} does not support '{gate}' gates", 500
     except QasmException as qe:
         gate = re.findall(r'"(.*?)"', qe.message)[0]
         return f"Converting from {language} does not support '{gate}' gates", 500
@@ -143,9 +133,6 @@ def convert(data: ConversionRequest):
     except ValueError:
         traceback.print_exc()
         return "Bad Request!", 400
-    except DeviceError as de:
-        gate = re.findall(r"(?:Gate )(.*?)(?: not)", str(de))[0]
-        return f"Converting to {language_output} does not support '{gate}' gates", 500
     except QasmException as qe:
         gate = re.findall(r'"(.*?)"', qe.message)[0]
         return f"Converting to {language_output} does not support '{gate}' gates", 500

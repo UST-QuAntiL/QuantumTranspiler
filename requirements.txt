@@ -5,14 +5,12 @@ Flask==2.1.0
 flask-cors==3.0.10
 matplotlib==3.5.0
 numpy>=1.22.0
-PennyLane==0.24.0
-PennyLane_qiskit==0.24.0
 pyquil>=3.3.2
 pytket==1.7.3
 pytket_qsharp==0.29.0
 pytket_qiskit==0.29.0
 qiskit
 qiskit_terra>=0.19.1
-qsharp>=0.26.233415
+qsharp==0.26.233415
 sympy==1.9
 flask-smorest

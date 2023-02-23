@@ -4,14 +4,18 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Python 3.8
+      - name: Update using apt
+        run: |
+          sudo apt-get update
+          sudo apt install libgomp1
+      - name: Set up Python 3.9
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -36,7 +40,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.401'
+          dotnet-version: '6.0.404'
       - name: Install iQSharp
         run: |
           dotnet new -i "Microsoft.Quantum.ProjectTemplates::0.26.233415"
@@ -44,12 +48,14 @@ jobs:
           --global \
           Microsoft.Quantum.IQSharp
           ~/.dotnet/tools/dotnet-iqsharp install --user --path-to-tool="~/.dotnet/tools/dotnet-iqsharp"
+      - run: export PATH="$PATH:/root/.dotnet/tools"
       # PyQuil tests do not currently work on GitHub actions. The cause seems to be an issue when accessing the Forest SDK a lot programmatically.
       #- name: Testing PyQuil
       #  run: python -m unittest test.converter_tests.pyquil_test
+      - name: Testing QSharp
+        run: python -m unittest test.converter_tests.qsharp_test
       - name: Test Cirq
         run: python -m unittest test.converter_tests.cirq_test
       - name: Testing Braket
         run: python -m unittest test.converter_tests.braket_test
-      - name: Testing QSharp
-        run: python -m unittest test.converter_tests.qsharp_test
+

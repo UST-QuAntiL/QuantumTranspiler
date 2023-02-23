@@ -1,6 +1,6 @@
 FROM rigetti/quilc:1.20.0 as quilc
 FROM rigetti/qvm:1.17.1 as qvm
-FROM python:3.8-buster
+FROM python:3.9
 
 # use an entrypoint script to add startup commands (qvm & quilc server spinup)
 WORKDIR /code
@@ -20,6 +20,9 @@ RUN apt-get update && apt-get -yq dist-upgrade && \
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+# Installing Q# Dependency
+RUN apt install libgomp1
 
 # Installing .NET (https://github.com/microsoft/iqsharp/blob/main/images/iqsharp-base/Dockerfile)
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg && \
@@ -41,6 +44,8 @@ RUN dotnet tool install \
            --global \
            Microsoft.Quantum.IQSharp
 RUN ~/.dotnet/tools/dotnet-iqsharp install --user --path-to-tool="~/.dotnet/tools/dotnet-iqsharp"
+
+RUN export PATH="$PATH:/root/.dotnet/tools"
 
 COPY . .
 EXPOSE 5012

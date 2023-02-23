@@ -59,6 +59,7 @@ class QsharpConverter(ConverterInterface):
         if hasattr(compiled, "__len__"):
             compiled = compiled[-1]
         traced = compiled.trace()
+
         operations = traced["operations"]
         base_gates = []
         for operation in operations:
