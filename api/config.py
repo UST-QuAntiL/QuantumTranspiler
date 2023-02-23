@@ -1,4 +1,5 @@
-import os
+
+
 class Config(object):
     API_TITLE = "QuantumTranspiler API"
     API_VERSION = "1.0"

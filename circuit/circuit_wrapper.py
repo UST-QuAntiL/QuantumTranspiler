@@ -78,13 +78,13 @@ class CircuitWrapper:
             self.import_qasm(circuit)
         elif language_lower == "qiskit":
             self.import_qiskit(circuit)
-        elif language_lower == "cirq":
+        elif language_lower == "cirq-json":
             self.import_cirq_json(circuit)
-        elif language_lower == "cirqsdk":
+        elif language_lower == "cirq":
             self.import_cirq(circuit)
-        elif language_lower == "braket":
+        elif language_lower == "braket-ir":
             self.import_braket_ir(circuit)
-        elif language_lower == "braketsdk":
+        elif language_lower == "braket":
             self.import_braket(circuit)
         elif language_lower == "qsharp":
             self.import_qsharp(circuit)
@@ -180,9 +180,9 @@ class CircuitWrapper:
             return self.export_qasm()
         elif language_lower == "qiskit":
             return self.export_qiskit_commands()
-        elif language_lower == "cirq":
+        elif language_lower == "cirq-json":
             return self.export_cirq_json()
-        elif language_lower == "braket":
+        elif language_lower == "braket-ir":
             return self.export_braket_ir()
         elif language_lower == "qsharp":
             return self.export_qsharp()

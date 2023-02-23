@@ -12,8 +12,8 @@ from flask import Flask, Response
 from flask_cors import CORS
 from circuit.circuit_wrapper import CircuitWrapper
 from flask_smorest import Api, Blueprint, abort
-from config import Config
-from example_circuits import QISKIT_EXAMPLE, QASM_EXAMPLE
+from api.config import Config
+from api.example_circuits import QISKIT_EXAMPLE, QASM_EXAMPLE
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -69,7 +69,7 @@ def circuit_to_internal(data: ImportRequest):
 @blp.arguments(
     ExportRequestSchema,
     example={
-        "option": "Cirq",
+        "option": "Cirq-JSON",
         "circuit": QISKIT_EXAMPLE,
     }
 )
@@ -106,7 +106,7 @@ def export_circuit(data: ExportRequest):
     ConversionRequestSchema,
     example={
         "option": "OpenQASM",
-        "optionOutput": "Cirq",
+        "optionOutput": "Cirq-JSON",
         "circuit": QASM_EXAMPLE
     }
 )
