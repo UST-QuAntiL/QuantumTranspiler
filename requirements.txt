@@ -13,7 +13,7 @@ dlx==1.0.4
 docplex==2.22.213
 fastdtw==0.3.4
 fastjsonschema==2.15.1
-Flask==1.1.2
+Flask==2.3.2
 Flask-Cors==3.0.9
 h5py==3.6.0
 idna==3.3
