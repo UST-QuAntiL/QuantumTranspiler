@@ -40,7 +40,7 @@ import { MatSelectChange } from '@angular/material/select';
 })
 export class AnalyzeComponent implements OnInit {
   isExpert = false;
-  formatOptions: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil"]
+  formatOptions: string[] = ["OpenQASM", "Quil", "Qiskit", "Pyquil", "Cirq", "CirqSDK", "Qsharp", "Braket", "BraketSDK", "Quirk"]
   selectedFormatOption: string;
 
 
@@ -50,12 +50,15 @@ export class AnalyzeComponent implements OnInit {
     "q_two_qubit": 0,
     "r_depth": 0,
     "r_gate_times": 0,
-    "r_two_qubit": 0
+    "r_two_qubit": 0,
+    "s_depth": 0,
+    "s_gate_times": 0,
+    "s_two_qubit": -1
   };
 
   architecture: string;
   formatUsed: string;
-  
+
   constructor(private http: HttpService, private data: DataService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -78,7 +81,7 @@ export class AnalyzeComponent implements OnInit {
     this.unroll()
     if (!this.isExpert) {
       this.formatUsed = "qasm"
-    }    
+    }
   }
 
   useRigetti() {
@@ -87,16 +90,25 @@ export class AnalyzeComponent implements OnInit {
     this.unroll()
     if (!this.isExpert) {
       this.formatUsed = "quil"
-    }   
+    }
   }
 
-  private async unroll() {  
+  useSycamore() {
+    this.architecture = "Sycamore"
+    this.selectedFormatOption = "Cirq"
+    this.unroll()
+    if (!this.isExpert) {
+      this.formatUsed = "cirq"
+    }
+  }
+
+  private async unroll() {
     if (this.isExpert) {
       if (!(this.formatOptions.includes(this.selectedFormatOption))) {
         this.snackbar.open("You must choose an output language/framework or disable expert mode.");
         return
       }
-    }  
+    }
 
     this.snackbar.open("Request sent to backend. Results will be available shortly.");
     let object = {
@@ -130,7 +142,7 @@ export class AnalyzeComponent implements OnInit {
     this.formatUsed = this.selectedFormatOption;
     if (this.architecture) {
       this.unroll()
-    }    
-  } 
+    }
+  }
 
 }

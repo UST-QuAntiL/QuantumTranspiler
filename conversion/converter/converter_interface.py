@@ -6,6 +6,7 @@ from qiskit.circuit import ParameterExpression as qiskit_Parameter_expression
 from qiskit.circuit import parameter
 from typing import List
 
+
 class ConverterInterface(ABC):
     @property
     @abstractmethod
@@ -22,9 +23,18 @@ class ConverterInterface(ABC):
     def circuit(self):
         pass
 
+    @property
+    @abstractmethod
+    def has_internal_export(self) -> bool:
+        pass
+
     @abstractmethod
     def import_circuit(self, circuit):
-        pass   
+        pass
+
+    @abstractmethod
+    def export_circuit(self, qcircuit: QuantumCircuit):
+        pass
 
     @abstractmethod
     def init_circuit(self):
@@ -39,11 +49,13 @@ class ConverterInterface(ABC):
         pass
 
     @abstractmethod
-    def gate(self, is_controlled = False):
+    def gate(
+        self, gate, qubits, params, is_controlled=False, num_qubits_base_gate=None
+    ):
         pass
 
     @abstractmethod
-    def custom_gate(self):
+    def custom_gate(self, matrix, name, qubits, params=[]):
         pass
 
     @abstractmethod
@@ -52,19 +64,19 @@ class ConverterInterface(ABC):
 
     @abstractmethod
     def parameter_expression_conversion(self, parameter: qiskit_Parameter_expression):
-        pass    
+        pass
 
     @abstractmethod
     def barrier(self, qubits):
         pass
 
     @abstractmethod
-    def measure(self):
+    def measure(self, qubit, clbit):
         pass
 
     @abstractmethod
     def subcircuit(self, subcircuit, qubits, clbits):
-        pass  
+        pass
 
     @abstractmethod
     def language_to_circuit(self, language: str):

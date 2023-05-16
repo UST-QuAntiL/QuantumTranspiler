@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation, ViewChild, Input } from '@angular
 import { MatSelectChange } from '@angular/material/select';
 import { HttpService } from '../services/http.service';
 import { DataService } from '../services/data.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar, MatSnackBarConfig} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-input',
@@ -13,7 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class InputComponent implements OnInit {
   @Input() compute: string;
   convert: boolean = false;
-  
+
   constructor(private http: HttpService, private data: DataService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -45,6 +45,13 @@ export class InputComponent implements OnInit {
     reader.readAsText(file);
   }
 
+  async changedInput(event: MatSelectChange) {
+    if (event.value == "CirqSDK" || event.value == "BraketSDK") {
+      this.snackbar.open("In order to avoid ambiguity of classes, including imports when converting from " + event.value + " is recommended!", undefined, {duration: 4000});
+    }
+    this.data.changedInput(event)
+  }
+
   async computeInternal() {
     if (!(this.data.options.includes(this.data.inputFormat))) {
       this.snackbar.open("You must choose an input language/framework.");
@@ -71,7 +78,7 @@ export class InputComponent implements OnInit {
       } else {
         index = "internal";
       }
-      this.data.setCircuit(index, circuit)      
-    }    
+      this.data.setCircuit(index, circuit)
+    }
   }
 }

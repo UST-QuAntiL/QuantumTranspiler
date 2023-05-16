@@ -14,6 +14,7 @@ from examples import *
 import qiskit.circuit.library.standard_gates as Gates
 from qiskit.circuit import Parameter
 
+
 class TestCircuitWrapper:
     def test_pyquil_import(self):
         wrapper = CircuitWrapper(pyquil_program=pyquil_custom())
@@ -38,19 +39,23 @@ class TestCircuitWrapper:
     def test_qiskit_commands(self):
         wrapper = CircuitWrapper(qiskit_circuit=shor_general(3))
         # print(wrapper.circuit)
-        commands = wrapper.export_qiskit_commands()        
+        commands = wrapper.export_qiskit_commands()
         print(commands)
         circuit = qiskit_commands_to_circuit(commands)
         print(circuit)
 
     def test_pyquil_commands(self):
-        wrapper = CircuitWrapper(qiskit_circuit=grover_general_logicalexpression_qiskit("(A | B) & (A | ~B) & (~A | B)"))
-        print(wrapper.circuit)        
-        commands = wrapper.export_pyquil_commands()        
+        wrapper = CircuitWrapper(
+            qiskit_circuit=grover_general_logicalexpression_qiskit(
+                "(A | B) & (A | ~B) & (~A | B)"
+            )
+        )
+        print(wrapper.circuit)
+        commands = wrapper.export_pyquil_commands()
         print(commands)
         # circuit = commands_to_circuit(commands)
         # print(circuit)
-        
+
     def test_unroll(self):
         wrapper = CircuitWrapper(qiskit_circuit=shor_general(3))
         wrapper.unroll_rigetti()
@@ -59,7 +64,7 @@ class TestCircuitWrapper:
         # wrapper.unroll(["rz", "rx", "cz"])
         # wrapper.unroll(["rx", "cz"])
 
-    def test_analysis(self):       
+    def test_analysis(self):
         wrapper = CircuitWrapper(qiskit_circuit=shor_15())
         print(wrapper.circuit)
         wrapper.unroll_ibm()
@@ -76,11 +81,12 @@ class TestCircuitWrapper:
         print(wrapper.circuit)
         wrapper.topology_mapping(aspen_4())
         print(wrapper.circuit)
-        
+
     def test_compare_depth_topology(self):
         wrapper = CircuitWrapper(qiskit_circuit=grover_fix_SAT_qiskit())
         # print(ibmq_16_melbourne())
         wrapper.compare_depth_topology(aspen_4(), wrapper.depth_two_qubit_gates)
+
 
 if __name__ == "__main__":
     test = TestCircuitWrapper()

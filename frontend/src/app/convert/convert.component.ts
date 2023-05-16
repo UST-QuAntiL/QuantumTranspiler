@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { InputComponent } from '../input/input.component';
+import {MatSelectChange} from "@angular/material/select";
 
 @Component({
   selector: 'app-convert',
@@ -21,4 +22,7 @@ export class ConvertComponent implements OnInit {
     this.child.computeInternal()
   }
 
+  async changedInput(event: MatSelectChange) {
+    this.child.changedInput(event)
+  }
 }
