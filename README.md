@@ -2,6 +2,14 @@
 
 The Vendor-Independent Quantum Transpiler is a quantum transpilation and analysis framework written in Python that compiles quantum circuits for several QPUs. The user is guided through the whole process of importing, visualizing, editing, simulating and exporting quantum circuits. Additionally, the quantum circuit is analyzed regarding various QPUs and the transpiled, executable quantum circuit can be exported in the respective quantum instruction language. 
 
+## API Documentation
+The Quantum Transpiler provides a Swagger UI, specifying the request schemas and showcasing exemplary requests for all API endpoints.
+* http://localhost:5012/api/swagger-ui
+* 
+The OpenAPI specifications are also statically available:
+[OpenAPI JSON](./docs/openapi.json)  
+[OpenAPI YAML](./docs/openapi.yaml)
+
 ## Setup
 
 ### Docker

@@ -1,0 +1,380 @@
+openapi: 3.0.2
+info:
+  title: QuantumTranspiler API
+  description: This is the API Specification of the QuantumTranspiler
+  version: "1.0"
+servers:
+- url: /
+tags:
+- name: api
+  description: All QuantumTranspiler operations
+paths:
+  /circuit_to_internal:
+    post:
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+            example:
+              option: OpenQASM
+              circuit: |-
+                OPENQASM 2.0;
+                            include "qelib1.inc";
+                            qreg q[2];
+                            creg c[2];
+                            h q[0];
+                            h q[1];
+                            cx q[0],q[1];
+                            measure q[0] -> c[0];
+                            measure q[1] -> c[1];
+        required: true
+      responses:
+        "200":
+          description: OK
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /export_circuit:
+    post:
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+            example:
+              option: Cirq-JSON
+              circuit: |-
+                qc = QuantumCircuit(2,2)
+                qc.h(0)
+                qc.h(1)
+                qc.cx(0, 1)
+                qc.measure(0, 0)
+                qc.measure(1, 1)
+        required: true
+      responses:
+        "200":
+          description: OK
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /convert:
+    post:
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionRequest'
+            example:
+              option: OpenQASM
+              optionOutput: Cirq-JSON
+              circuit: |-
+                OPENQASM 2.0;
+                            include "qelib1.inc";
+                            qreg q[2];
+                            creg c[2];
+                            h q[0];
+                            h q[1];
+                            cx q[0],q[1];
+                            measure q[0] -> c[0];
+                            measure q[1] -> c[1];
+        required: true
+      responses:
+        "200":
+          description: OK
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /unroll:
+    post:
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnrollRequest'
+            example:
+              option: IBMQ
+              circuit: |-
+                qc = QuantumCircuit(2,2)
+                qc.h(0)
+                qc.h(1)
+                qc.cx(0, 1)
+                qc.measure(0, 0)
+                qc.measure(1, 1)
+              isExpert: true
+              format: Qiskit
+        required: true
+      responses:
+        "200":
+          description: OK
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /simulate:
+    post:
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimulationRequest'
+            example:
+              circuit: |-
+                qc = QuantumCircuit(2,2)
+                qc.h(0)
+                qc.h(1)
+                qc.cx(0, 1)
+                qc.measure(0, 0)
+                qc.measure(1, 1)
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                "10": 750
+                "01": 250
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /depth:
+    post:
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepthRequest'
+            example:
+              circuit: |-
+                qc = QuantumCircuit(2,2)
+                qc.h(0)
+                qc.h(1)
+                qc.cx(0, 1)
+                qc.measure(0, 0)
+                qc.measure(1, 1)
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepthResponse'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /depth_comparison_qpu:
+    post:
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepthRequest'
+            example:
+              circuit: |-
+                qc = QuantumCircuit(2,2)
+                qc.h(0)
+                qc.h(1)
+                qc.cx(0, 1)
+                qc.measure(0, 0)
+                qc.measure(1, 1)
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepthResponse'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Error name
+        code:
+          type: integer
+          description: Error code
+        errors:
+          type: object
+          description: Errors
+        message:
+          type: string
+          description: Error message
+    PaginationMetadata:
+      type: object
+      properties:
+        total:
+          type: integer
+        total_pages:
+          type: integer
+        first_page:
+          type: integer
+        last_page:
+          type: integer
+        page:
+          type: integer
+        previous_page:
+          type: integer
+        next_page:
+          type: integer
+    ImportRequest:
+      type: object
+      properties:
+        circuit:
+          type: string
+        option:
+          type: string
+    ExportRequest:
+      type: object
+      properties:
+        circuit:
+          type: string
+        option:
+          type: string
+    ConversionRequest:
+      type: object
+      properties:
+        circuit:
+          type: string
+        option:
+          type: string
+        optionOutput:
+          type: string
+    UnrollRequest:
+      type: object
+      properties:
+        circuit:
+          type: string
+        option:
+          type: string
+        format:
+          type: string
+        isExpert:
+          type: boolean
+    SimulationRequest:
+      type: object
+      properties:
+        circuit:
+          type: string
+    DepthRequest:
+      type: object
+      properties:
+        circuit:
+          type: string
+    DepthResponse:
+      type: object
+      properties:
+        r_gate_times:
+          type: integer
+        s_two_qubit:
+          type: integer
+        q_two_qubit:
+          type: integer
+        r_depth:
+          type: integer
+        q_gate_times:
+          type: integer
+        r_two_qubit:
+          type: integer
+        q_depth:
+          type: integer
+        s_depth:
+          type: integer
+        s_gate_times:
+          type: integer
+  responses:
+    UNPROCESSABLE_ENTITY:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    DEFAULT_ERROR:
+      description: Default error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
